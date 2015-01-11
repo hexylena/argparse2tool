@@ -34,3 +34,7 @@ This code doesn't cover the entirety of the `argparse` API yet, and there are so
     - bugs in repeats
     - bugs in conditionals/whens
     - bugs, bugs, bugs!
+
+# License
+
+GPLv3
