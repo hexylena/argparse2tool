@@ -1,0 +1,41 @@
+<tool force_history_refresh="false" hidden="false" id="test.py" name="test.py" workflow_compatible="true" version="2.0">
+  <description>Process some integers.</description>
+  <stdio>
+    <exit_code level="fatal" range="1:"/>
+  </stdio>
+  <command><![CDATA[test.py 
+#set repeat_var = '" "'.join([ str($var) for $var in $repeat_name ])
+repeat_name $repeat_name
+
+$sum
+--foo $foo
+--file $file
+
+#set repeat_var = '" "'.join([ str($var) for $var in $repeat_name ])
+repeat_name $repeat_name
+
+$true
+$false
+#for $i in $repeat
+repeat $repeat
+#end for]]></command>
+  <inputs>
+    <repeat min="1" name="repeat_name" title="repeat_title">
+      <param help="() None" label="an integer for the accumulator" name="" type="integer" value="0"/>
+    </repeat>
+    <param checked="false" help="(--sum) None" label="sum the integers (default: find the max)" name="sum" type="boolean" truevalue="--sum"/>
+    <param area="false" help="(--foo) None" label="foo help" name="foo" type="text"/>
+    <param help="(--file) None" label="foo help" name="file" type="data"/>
+    <repeat name="repeat_name" title="repeat_title">
+      <param area="false" help="(--bar) None" label="BAR!" name="bar" type="text"/>
+    </repeat>
+    <param checked="false" help="(--true) None" name="true" type="boolean" truevalue="--true"/>
+    <param checked="false" help="(--false) None" name="false" type="boolean" truevalue="--false"/>
+    <repeat name="repeat" title="Repeated Variable">
+      <param checked="false" help="(--append) None" name="append" type="boolean" truevalue="--append"/>
+    </repeat>
+  </inputs>
+  <outputs/>
+  <help><![CDATA[HI]]></help>
+</tool>
+
