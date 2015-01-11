@@ -9,7 +9,7 @@ import gxargparse as argparse
 
 and continue writing code as normal. All functions are passed straight through
 to argparse, but gxargparse captures them and copies some information along the
-way. This information captured is used to produce [https://github.com/erasche/galaxyxml](Galaxy Tool XML) when it's
+way. This information captured is used to produce [Galaxy Tool XML](https://github.com/erasche/galaxyxml) when it's
 requested with the `--generate_galaxy_xml` flag
 
 ## How it works
