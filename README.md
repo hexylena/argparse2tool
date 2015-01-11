@@ -41,4 +41,4 @@ This code doesn't cover the entirety of the `argparse` API yet, and there are so
 
 # License
 
-GPLv3
+- Apache License, v2
