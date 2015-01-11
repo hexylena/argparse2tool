@@ -9,7 +9,7 @@ import gxargparse as argparse
 
 and continue writing code as normal. All functions are passed straight through
 to argparse, but gxargparse captures them and copies some information along the
-way. This information captured is used to produce Galaxy Tool XML when it's
+way. This information captured is used to produce [https://github.com/erasche/galaxyxml](Galaxy Tool XML) when it's
 requested with the `--generate_galaxy_xml` flag
 
 ## How it works
@@ -31,9 +31,13 @@ This code doesn't cover the entirety of the `argparse` API yet, and there are so
     - groups not supported
     - some features like "epilogue" and templating of the version string
 - galaxyxml
-    - bugs in repeats
+    - bugs in repeats (and names in general)
     - bugs in conditionals/whens
     - bugs, bugs, bugs!
+    - validation of passed arguments/unique parameter names/proper labelling
+- gxargparse
+    - support help text
+    - support declaring output files in an `argparse`-esque manner
 
 # License
 
