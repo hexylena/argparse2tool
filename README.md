@@ -4,13 +4,16 @@ Galaxy argparse aims to be a drop-in replacement for argparse, quite literally.
 You can write
 
 ```python
-import gxargparse as argparse
+import argparse
 ```
 
 and continue writing code as normal. All functions are passed straight through
-to argparse, but gxargparse captures them and copies some information along the
+to argparse, but `gxargparse` captures them and copies some information along the
 way. This information captured is used to produce [Galaxy Tool XML](https://github.com/erasche/galaxyxml) when it's
-requested with the `--generate_galaxy_xml` flag
+requested with the `--generate_galaxy_xml` flag.
+
+Internally, `gxargparse`, masquerading as `argparse` attempts to find and
+import the **real** argparse.
 
 ## How it works
 
