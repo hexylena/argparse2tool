@@ -22,7 +22,7 @@ class ArgparseTranslation(object):
 
         return gxparam
 
-    def __args_from_nargs(self, param, repeat_name, repeat_var_name, positional):
+    def __args_from_nargs(self, param, repeat_name, repeat_var_name, positional, flag):
         """Based on param.nargs, return the appropriate overrides
         """
         gxrepeat_args = []
@@ -61,12 +61,12 @@ class ArgparseTranslation(object):
             gxrepeat_args = [repeat_name, 'repeat_title']
             #gxrepeat_cli_after = '#end if\n'
             gxrepeat_cli_after = ''
-            gxrepeat_cli_before = """\n#set %s = '" "'.join([ str($var) for $var in $%s ])""" % (repeat_var_name, repeat_name)
+            gxrepeat_cli_before = """\n#set %s = '" "'.join([ str($var.%s) for $var in $%s ])""" % (repeat_var_name, flag, repeat_name)
             # Gotta be a better way to do this, probably in the param itself?
             if positional:
-                gxrepeat_cli_actual = '%s "$%s"' % (param.option_strings[0], repeat_var_name)
-            else:
                 gxrepeat_cli_actual = '"$%s"' % (repeat_var_name)
+            else:
+                gxrepeat_cli_actual = '%s "$%s"' % (param.option_strings[0], repeat_var_name)
         elif param.nargs == '+':
             # '+'. Just like '*', all command-line args present are gathered
             # into a list. Additionally, an error message will be generated if
@@ -75,7 +75,7 @@ class ArgparseTranslation(object):
             gxrepeat_args = [repeat_name, 'repeat_title']
             gxrepeat_kwargs = {'min': 1}
             gxrepeat_cli_after = ''
-            gxrepeat_cli_before = """\n#set %s = '" "'.join([ str($var) for $var in $%s ])""" % (repeat_var_name, repeat_name)
+            gxrepeat_cli_before = """\n#set %s = '" "'.join([ str($var.%s) for $var in $%s ])""" % (repeat_var_name, flag, repeat_name)
 
             if positional:
                 gxrepeat_cli_actual = '"$%s"' % repeat_var_name
@@ -126,11 +126,17 @@ class ArgparseTranslation(object):
         flag_wo_dashes = flag.lstrip('-')
         num_dashes = len(flag) - len(flag_wo_dashes)
 
+        # Moved because needed in developing repeat CLI
+        if positional:
+            flag_wo_dashes = 'positional_%s' % self.positional_count
+            # SO unclean
+            gxparam_extra_kwargs['positional'] = True
+
 
         # Figure out parameters and overrides from param.nargs, mainly.
         (gxrepeat_args, gxrepeat_kwargs, gxrepeat_cli_after,
                 gxrepeat_cli_before, gxrepeat_cli_actual) = \
-            self.__args_from_nargs(param, repeat_name, repeat_var_name, positional)
+            self.__args_from_nargs(param, repeat_name, repeat_var_name, positional, flag_wo_dashes)
 
 
         # Build the gxrepeat if it's needed
@@ -142,10 +148,6 @@ class ArgparseTranslation(object):
         else:
             gxrepeat = None
 
-        if positional:
-            flag_wo_dashes = 'positional_%s' % self.positional_count
-            # SO unclean
-            gxparam_extra_kwargs['positional'] = True
 
         gxparam = self.__gxtp_param_from_type(param.type, flag_wo_dashes,
                 param.help, num_dashes, gxparam_extra_kwargs)

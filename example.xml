@@ -5,15 +5,15 @@
   </stdio>
   <command interpreter="python"><![CDATA[example.py $positional_1
 
-#set repeat_var_2 = '" "'.join([ str($var) for $var in $repeat_2 ])
+#set repeat_var_2 = '" "'.join([ str($var.positional_2) for $var in $repeat_2 ])
 "$repeat_var_2"
 
 $sum
 --foo $foo
 --file $file
 
-#set repeat_var_5 = '" "'.join([ str($var) for $var in $repeat_5 ])
-"$repeat_var_5"
+#set repeat_var_5 = '" "'.join([ str($var.bar) for $var in $repeat_5 ])
+--bar "$repeat_var_5"
 
 $true
 $false
