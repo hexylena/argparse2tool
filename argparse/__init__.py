@@ -18,16 +18,14 @@ def load_conflicting_package(name, not_name, local_module):
     for path in sys.path:
         try:
             (f, pathname, desc) = imp.find_module(name, [path])
-            if not_name not in pathname and desc[2] == imp.PKG_DIRECTORY:
-                handle.close()
-                break
+            if not_name not in pathname and desc[2] == 1:
+                module = imp.load_module(random_name, f, pathname, desc)
+                f.close()
+                return sys.modules[random_name]
         except:
             # Many sys.paths won't contain the module of interest
             pass
-
-    module = imp.load_module(random_name, f, pathname, desc)
-    f.close()
-    return sys.modules[random_name]
+    return None
 
 ap = load_conflicting_package('argparse', 'gxargparse', sys.modules[load_conflicting_package.__module__])
 import galaxyxml.tool as gxt
