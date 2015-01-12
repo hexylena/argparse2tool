@@ -2,21 +2,21 @@ import galaxyxml.tool.parameters as gxtp
 
 class ArgparseTranslation(object):
 
-    def __gxtp_param_from_type(self, param_type, flag, label, num_dashes, default=0):
+    def __gxtp_param_from_type(self, param_type, flag, label, num_dashes, gxparam_extra_kwargs, default=0):
         """Based on a type, convert to appropriate gxtp class
         """
         if param_type == int:
             gxparam = gxtp.IntegerParam(flag, default, label=label,
-                    num_dashes=num_dashes)
+                    num_dashes=num_dashes, **gxparam_extra_kwargs)
         elif param_type == float:
             gxparam = gxtp.FloatParam(flag, default, label=label,
-                    num_dashes=num_dashes)
+                    num_dashes=num_dashes, **gxparam_extra_kwargs)
         elif param_type == None or param_type == str:
             gxparam = gxtp.TextParam(flag, label=label,
-                    num_dashes=num_dashes)
+                    num_dashes=num_dashes, **gxparam_extra_kwargs)
         elif param_type == file:
             gxparam = gxtp.DataParam(flag, label=label,
-                    num_dashes=num_dashes)
+                    num_dashes=num_dashes, **gxparam_extra_kwargs)
         else:
             gxparam = None
 
@@ -34,13 +34,18 @@ class ArgparseTranslation(object):
         if isinstance(param.nargs, int):
             # N (an integer). N arguments from the command line will be
             # gathered together into a list. For example:
-            gxrepeat_args = [repeat_name, 'repeat_title']
-            gxrepeat_kwargs = {
-                    'min': param.nargs,
-                    'max': param.nargs,
-                    }
-            #gxrepeat_cli_after = ''
-            #gxrepeat_cli_before = """\n#set %s = '" "'.join([ str($var) for $var in $%s ])""" % (repeat_var_name, repeat_name)
+            if param.nargs > 1:
+                gxrepeat_args = [repeat_name, 'repeat_title']
+                gxrepeat_kwargs = {
+                        'min': param.nargs,
+                        'max': param.nargs,
+                        }
+                #gxrepeat_cli_after = ''
+                #gxrepeat_cli_before = """\n#set %s = '" "'.join([ str($var) for $var in $%s ])""" % (repeat_var_name, repeat_name)
+            else:
+                # If we have only one, we don't want a gxrepeat, so we leave well
+                # enough alone
+                gxrepeat_args = None
         elif param.nargs == '?':
             # '?'. One argument will be consumed from the command line if
             # possible, and produced as a single item. If no command-line
@@ -82,6 +87,7 @@ class ArgparseTranslation(object):
 
     def __init__(self):
         self.repeat_count = 0
+        self.positional_count = 0
 
     def _VersionAction(self, param, tool=None):
         # passing tool is TERRIBLE, I know.
@@ -98,6 +104,7 @@ class ArgparseTranslation(object):
         gxparam = None
         gxrepeat = None
         self.repeat_count += 1
+        gxparam_extra_kwargs = {}
 
         # Positional arguments don't have an option strings
         positional = len(param.option_strings) == 0
@@ -106,6 +113,7 @@ class ArgparseTranslation(object):
             flag = param.option_strings[0]  # Pick one of the options strings
         else:
             flag = ''
+            self.positional_count += 1
 
         repeat_name = 'repeat_%s' % self.repeat_count
         repeat_var_name = 'repeat_var_%s' % self.repeat_count
@@ -113,6 +121,7 @@ class ArgparseTranslation(object):
         # TODO: Replace with logic supporting characters other than -
         flag_wo_dashes = flag.lstrip('-')
         num_dashes = len(flag) - len(flag_wo_dashes)
+
 
         # Figure out parameters and overrides from param.nargs, mainly.
         (gxrepeat_args, gxrepeat_kwargs, gxrepeat_cli_after,
@@ -129,8 +138,15 @@ class ArgparseTranslation(object):
         else:
             gxrepeat = None
 
+        if positional:
+            flag_wo_dashes = 'positional_%s' % self.positional_count
+            gxparam_extra_kwargs['positional'] = True
 
-        gxparam = self.__gxtp_param_from_type(param.type, flag_wo_dashes, param.help, num_dashes)
+        gxparam = self.__gxtp_param_from_type(param.type, flag_wo_dashes,
+                param.help, num_dashes, gxparam_extra_kwargs)
+
+        if positional:
+            gxparam.command_line_override = '$%s' % flag_wo_dashes
 
         if gxrepeat is not None and gxparam is not None:
             pass
@@ -156,7 +172,7 @@ class ArgparseTranslation(object):
         flag_wo_dashes = flag.lstrip('-')
         num_dashes = len(flag) - len(flag_wo_dashes)
 
-        gxparam = self.__gxtp_param_from_type(param.type, flag_wo_dashes, param.help, num_dashes)
+        gxparam = self.__gxtp_param_from_type(param.type, flag_wo_dashes, param.help, num_dashes, {})
         gxrepeat = gxtp.Repeat(repeat_name, 'Repeated Variable')
         gxrepeat.command_line_override = '%s $%s.%s' % (param.option_strings[0], 'i', flag_wo_dashes)
         gxrepeat.append(gxparam)

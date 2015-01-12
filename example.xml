@@ -18,7 +18,8 @@ $true
 $false
 #for $i in $repeat_5
 --append $i.append
-#end for]]></command>
+#end for
+default $default]]></command>
   <inputs>
     <repeat min="1" name="repeat_1" title="repeat_title">
       <param label="an integer for the accumulator" name="" type="integer" value="0"/>
@@ -35,7 +36,9 @@ $false
       <param area="false" label="Append a value(--append)" name="append" type="text"/>
     </repeat>
   </inputs>
-  <outputs/>
+  <outputs>
+    <data format="txt" hidden="false" name="default"/>
+  </outputs>
   <help><![CDATA[HI]]></help>
 </tool>
 

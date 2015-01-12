@@ -53,10 +53,17 @@ class ArgumentParser(object):
                     self.parser.prog,
                     self.parser.print_version(),
                     self.parser.description,
-                    self.parser.prog)
+                    self.parser.prog,
+                    interpreter='python')
 
             self.inputs = gxtp.Inputs()
             self.outputs = gxtp.Outputs()
+
+            # TODO: replace with argparse-esque library to do this.
+            stdout = gxtp.OutputParameter('default', 'txt')
+            stdout.command_line_override = '> $default'
+            self.outputs.append(stdout)
+
             self.at = at.ArgparseTranslation()
             # Only build up arguments if the user actually requests it
             for result in self.argument_list:
@@ -70,7 +77,7 @@ class ArgumentParser(object):
 
             self.tool.inputs = self.inputs
             self.tool.outputs = self.outputs
-            self.tool.help = 'HI'
+            self.tool.help = 'TODO: Bug @erasche until he fixes it or make a PR'
             data = self.tool.export()
             print data
             sys.exit()
