@@ -10,9 +10,9 @@ parser.add_argument('--foo', nargs='?', help='foo help')
 parser.add_argument('--file', nargs='?', help='foo help', type=file)
 parser.add_argument('--bar', nargs='*', default=[1, 2, 3], help='BAR!')
 #parser.add_argument('+f', action='store_const', const='43')
-parser.add_argument('--true', action='store_true')
-parser.add_argument('--false', action='store_false')
-parser.add_argument('--append', action='append')
+parser.add_argument('--true', action='store_true', help='Store a true')
+parser.add_argument('--false', action='store_false', help='Store a false')
+parser.add_argument('--append', action='append', help='Append a value')
 
 
 parser.add_argument('--version', action='version', version='2.0')
