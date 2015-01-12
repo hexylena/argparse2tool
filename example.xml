@@ -5,7 +5,7 @@
   </stdio>
   <command><![CDATA[example.py 
 #set repeat_var_1 = '" "'.join([ str($var) for $var in $repeat_1 ])
-$repeat_var_1
+"$repeat_var_1"
 
 $sum
 --foo $foo

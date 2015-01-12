@@ -71,7 +71,7 @@ class ArgparseTranslation(object):
             gxrepeat_cli_before = """\n#set %s = '" "'.join([ str($var) for $var in $%s ])""" % (repeat_var_name, repeat_name)
 
             if positional:
-                gxrepeat_cli_actual = '$%s' % repeat_var_name
+                gxrepeat_cli_actual = '"$%s"' % repeat_var_name
         else:
             raise Exception("TODO: Handle argparse.REMAINDER")
 
