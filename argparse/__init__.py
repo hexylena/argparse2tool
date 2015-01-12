@@ -80,7 +80,7 @@ class ArgumentParser(object):
         return self.parser.parse_known_args(*args, **kwargs)
 
     def convert_arg_line_to_args(self, *args, **kwargs):
-        rreturn eturn self.parser.convert_arg_line_to_args(*args, **kwargs)
+        return self.parser.convert_arg_line_to_args(*args, **kwargs)
 
 
     def parse_args(self, *args, **kwargs):

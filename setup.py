@@ -2,7 +2,7 @@ from setuptools import setup
 
 
 setup(name="gxargparse",
-        version='0.1.1',
+        version='0.1.3',
         description='Galaxy drop-in replacement for argparse',
         author='Eric Rasche',
         author_email='rasche.eric@yandex.ru',
