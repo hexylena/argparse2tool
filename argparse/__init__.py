@@ -1,5 +1,19 @@
 import sys
-import argparse
+
+# Per @jmchilton's suggestion, and this SO question:
+# http://stackoverflow.com/a/6032023
+def import_non_local(name, custom_name=None):
+    import imp, sys
+    custom_name = custom_name or name
+    f, pathname, desc = imp.find_module(name, sys.path[1:])
+    module = imp.load_module(custom_name, f, pathname, desc)
+    f.close()
+    return module
+ap = import_non_local('argparse', 'std_argparse')
+#import argparse
+
+
+
 import galaxyxml.tool as gxt
 import galaxyxml.tool.parameters as gxtp
 import argparse_translation as at
@@ -7,7 +21,7 @@ import argparse_translation as at
 class ArgumentParser(object):
 
     def __init__(self, *args, **kwargs):
-        self.parser = argparse.ArgumentParser(*args, **kwargs)
+        self.parser = ap.ArgumentParser(*args, **kwargs)
         #print dir(self.parser)
         self.argument_list = []
         #print self.parser.prefix_chars
