@@ -46,6 +46,43 @@ class ArgumentParser(object):
         result = self.parser.add_argument(*args, **kwargs)
         self.argument_list.append(result)
 
+    #ArgumentParser.add_subparsers([title][, description][, prog][, parser_class][, action][, option_string][, dest][, help][, metavar])
+    def add_subparsers(self, *args, **kwargs):
+        return self.parser.add_subparsers(*args, **kwargs)
+
+    #ArgumentParser.add_argument_group(title=None, description=None)
+    def add_argument_group(self, *args, **kwargs):
+        return self.parser.add_argument_group(*args, **kwargs)
+
+    #ArgumentParser.add_mutually_exclusive_group(required=False)
+    def add_mutually_exclusive_group(self, *args, **kwargs):
+        return self.parser.add_mutually_exclusive_group(*args, **kwargs)
+
+    def set_defaults(self, *args, **kwargs):
+        self.parser.set_defaults(*args, **kwargs)
+
+    def get_default(self, *args, **kwargs):
+        return self.parser.get_default(*args, **kwargs)
+
+    def print_usage(self, *args, **kwargs):
+        self.parser.print_usage(*args, **kwargs)
+
+    def print_help(self, *args, **kwargs):
+        self.parser.print_help(*args, **kwargs)
+
+    def format_usage(self, *args, **kwargs):
+        return self.parser.format_usage(*args, **kwargs)
+
+    def format_help(self, *args, **kwargs):
+        return self.parser.format_help(*args, **kwargs)
+
+    def parse_known_args(self, *args, **kwargs):
+        return self.parser.parse_known_args(*args, **kwargs)
+
+    def convert_arg_line_to_args(self, *args, **kwargs):
+        rreturn eturn self.parser.convert_arg_line_to_args(*args, **kwargs)
+
+
     def parse_args(self, *args, **kwargs):
         if '--generate_galaxy_xml' in sys.argv:
             self.tool = gxt.Tool(
