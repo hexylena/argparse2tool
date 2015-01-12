@@ -8,8 +8,8 @@ setup(name="gxargparse",
         author='Eric Rasche',
         author_email='rasche.eric@yandex.ru',
         license='GPL3',
-        #install_requires=requirements,
-        # Disabled until moved to pypi
+        install_requires=requirements,
+        url='https://github.com/erasche/gxargparse',
         packages=["argparse"],
         classifiers=[
             'Development Status :: 3 - Alpha',
