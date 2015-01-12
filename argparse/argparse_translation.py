@@ -40,8 +40,6 @@ class ArgparseTranslation(object):
                         'min': param.nargs,
                         'max': param.nargs,
                         }
-                #gxrepeat_cli_after = ''
-                #gxrepeat_cli_before = """\n#set %s = '" "'.join([ str($var) for $var in $%s ])""" % (repeat_var_name, repeat_name)
             else:
                 # If we have only one, we don't want a gxrepeat, so we leave well
                 # enough alone
@@ -64,7 +62,11 @@ class ArgparseTranslation(object):
             #gxrepeat_cli_after = '#end if\n'
             gxrepeat_cli_after = ''
             gxrepeat_cli_before = """\n#set %s = '" "'.join([ str($var) for $var in $%s ])""" % (repeat_var_name, repeat_name)
-            gxrepeat_cli_actual = '%s "$%s"' % (param.option_strings[0], repeat_var_name)
+            # Gotta be a better way to do this, probably in the param itself?
+            if positional:
+                gxrepeat_cli_actual = '%s "$%s"' % (param.option_strings[0], repeat_var_name)
+            else:
+                gxrepeat_cli_actual = '"$%s"' % (repeat_var_name)
         elif param.nargs == '+':
             # '+'. Just like '*', all command-line args present are gathered
             # into a list. Additionally, an error message will be generated if
@@ -77,6 +79,8 @@ class ArgparseTranslation(object):
 
             if positional:
                 gxrepeat_cli_actual = '"$%s"' % repeat_var_name
+            else:
+                gxrepeat_cli_actual = '%s "$%s"' % (param.option_strings[0], repeat_var_name)
         else:
             raise Exception("TODO: Handle argparse.REMAINDER")
 
@@ -140,11 +144,13 @@ class ArgparseTranslation(object):
 
         if positional:
             flag_wo_dashes = 'positional_%s' % self.positional_count
+            # SO unclean
             gxparam_extra_kwargs['positional'] = True
 
         gxparam = self.__gxtp_param_from_type(param.type, flag_wo_dashes,
                 param.help, num_dashes, gxparam_extra_kwargs)
 
+        # if positional argument, wipe out the CLI flag that's usually present
         if positional:
             gxparam.command_line_override = '$%s' % flag_wo_dashes
 

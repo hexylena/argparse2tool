@@ -3,42 +3,44 @@
   <stdio>
     <exit_code level="fatal" range="1:"/>
   </stdio>
-  <command><![CDATA[example.py 
-#set repeat_var_1 = '" "'.join([ str($var) for $var in $repeat_1 ])
-"$repeat_var_1"
+  <command interpreter="python"><![CDATA[example.py $positional_1
+
+#set repeat_var_2 = '" "'.join([ str($var) for $var in $repeat_2 ])
+"$repeat_var_2"
 
 $sum
 --foo $foo
 --file $file
 
-#set repeat_var_4 = '" "'.join([ str($var) for $var in $repeat_4 ])
---bar "$repeat_var_4"
+#set repeat_var_5 = '" "'.join([ str($var) for $var in $repeat_5 ])
+"$repeat_var_5"
 
 $true
 $false
-#for $i in $repeat_5
+#for $i in $repeat_6
 --append $i.append
 #end for
-default $default]]></command>
+> $default]]></command>
   <inputs>
-    <repeat min="1" name="repeat_1" title="repeat_title">
-      <param label="an integer for the accumulator" name="" type="integer" value="0"/>
+    <param area="false" label="action keyword" name="positional_1" positional="true" type="text"/>
+    <repeat min="1" name="repeat_2" title="repeat_title">
+      <param label="an integer for the accumulator" name="positional_2" positional="true" type="integer" value="0"/>
     </repeat>
-    <param checked="false" label="sum the integers (default: find the max)(--sum)" name="sum" type="boolean" truevalue="--sum"/>
-    <param area="false" label="foo help(--foo)" name="foo" type="text"/>
-    <param label="foo help(--file)" name="file" type="data"/>
-    <repeat name="repeat_4" title="repeat_title">
-      <param area="false" label="BAR!(--bar)" name="bar" type="text"/>
+    <param checked="false" label="sum the integers (default: find the max) (--sum)" name="sum" type="boolean" truevalue="--sum"/>
+    <param area="false" label="foo help (--foo)" name="foo" type="text"/>
+    <param label="foo help (--file)" name="file" type="data"/>
+    <repeat name="repeat_5" title="repeat_title">
+      <param area="false" label="BAR! (--bar)" name="bar" type="text"/>
     </repeat>
-    <param checked="false" label="Store a true(--true)" name="true" type="boolean" truevalue="--true"/>
-    <param checked="false" label="Store a false(--false)" name="false" type="boolean" truevalue="--false"/>
-    <repeat name="repeat_5" title="Repeated Variable">
-      <param area="false" label="Append a value(--append)" name="append" type="text"/>
+    <param checked="false" label="Store a true (--true)" name="true" type="boolean" truevalue="--true"/>
+    <param checked="false" label="Store a false (--false)" name="false" type="boolean" truevalue="--false"/>
+    <repeat name="repeat_6" title="Repeated Variable">
+      <param area="false" label="Append a value (--append)" name="append" type="text"/>
     </repeat>
   </inputs>
   <outputs>
     <data format="txt" hidden="false" name="default"/>
   </outputs>
-  <help><![CDATA[HI]]></help>
+  <help><![CDATA[TODO: Bug @erasche until he fixes it or make a PR]]></help>
 </tool>
 

@@ -6,6 +6,7 @@ parser.add_argument('keyword', metavar='Q', type=str, nargs=1,
 
 parser.add_argument('integers', metavar='N', type=int, nargs='+',
         help='an integer for the accumulator')
+
 parser.add_argument('--sum', '-s', dest='accumulate', action='store_const',
         const=sum, default=max, help='sum the integers (default: find the max)')
 
