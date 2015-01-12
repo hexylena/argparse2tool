@@ -15,12 +15,10 @@ def load_conflicting_package(name, not_name, local_module):
         raise RuntimeError("Couldn't manufacture an unused module name.")
     # NB: This code is unlikely to work for nonstdlib overrides.
     # This will hold the correct sys.path for the REAL argparse
-    correct_sys_path = []
     for path in sys.path:
         try:
             (f, pathname, desc) = imp.find_module(name, [path])
             if not_name not in pathname:
-                correct_sys_path = pathname
                 handle.close()
                 break
         except:
