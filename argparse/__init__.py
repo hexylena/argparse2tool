@@ -5,7 +5,6 @@ import sys
 def copy_in_standard_module_symbols(name, not_name, local_module):
     import imp
 
-    print sys.modules
     for i in range(0, 100):
         random_name = 'random_name_%d' % (i,)
         if random_name not in sys.modules:
