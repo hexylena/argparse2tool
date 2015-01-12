@@ -2,7 +2,7 @@ import sys
 
 # Per @jmchilton's suggestion, and this SO question:
 # http://stackoverflow.com/a/6032023
-def copy_in_standard_module_symbols(name, not_name, local_module):
+def load_conflicting_package(name, not_name, local_module):
     import imp
 
     for i in range(0, 100):
@@ -31,7 +31,7 @@ def copy_in_standard_module_symbols(name, not_name, local_module):
     f.close()
     return sys.modules[random_name]
 
-ap = copy_in_standard_module_symbols('argparse', 'gxargparse', sys.modules[copy_in_standard_module_symbols.__module__])
+ap = load_conflicting_package('argparse', 'gxargparse', sys.modules[load_conflicting_package.__module__])
 import galaxyxml.tool as gxt
 import galaxyxml.tool.parameters as gxtp
 import argparse_translation as at
@@ -40,8 +40,8 @@ class ArgumentParser(object):
 
     def __init__(self, *args, **kwargs):
         self.parser = ap.ArgumentParser(*args, **kwargs)
-        #print dir(self.parser)
         self.argument_list = []
+        # TODO: support the prefix_chars option
         #print self.parser.prefix_chars
 
     def add_argument(self, *args, **kwargs):
