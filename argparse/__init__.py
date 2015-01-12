@@ -18,7 +18,7 @@ def load_conflicting_package(name, not_name, local_module):
     for path in sys.path:
         try:
             (f, pathname, desc) = imp.find_module(name, [path])
-            if not_name not in pathname:
+            if not_name not in pathname and desc[2] == imp.PKG_DIRECTORY:
                 handle.close()
                 break
         except:
