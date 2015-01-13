@@ -7,16 +7,16 @@ if sys.argv[-1] == 'publish':
 
 
 setup(name="gxargparse",
-        version='0.1.7',
+        version='0.1.8',
         description='Galaxy drop-in replacement for argparse',
         author='Eric Rasche',
         author_email='rasche.eric@yandex.ru',
         requires=['galaxyxml'],
         url='https://github.com/erasche/gxargparse',
-        packages=["argparse"],
+        packages=["argparse", "gxargparse"],
         entry_points={
             'console_scripts': [
-                    'gxargparse_check_path = argparse.check_path:main',
+                    'gxargparse_check_path = gxargparse.check_path:main',
                 ]
             },
         classifiers=[
