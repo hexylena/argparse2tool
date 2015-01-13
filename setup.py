@@ -10,7 +10,7 @@ if sys.argv[-1] == 'publish':
 
 
 setup(name="gxargparse",
-        version='0.1.6',
+        version='0.1.7',
         description='Galaxy drop-in replacement for argparse',
         author='Eric Rasche',
         author_email='rasche.eric@yandex.ru',
