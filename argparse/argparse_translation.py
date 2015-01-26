@@ -2,9 +2,12 @@ import galaxyxml.tool.parameters as gxtp
 
 class ArgparseTranslation(object):
 
-    def __gxtp_param_from_type(self, param_type, flag, label, num_dashes, gxparam_extra_kwargs, default=0):
+    def __gxtp_param_from_type(self, param_type, flag, label, num_dashes, gxparam_extra_kwargs, default=None):
         """Based on a type, convert to appropriate gxtp class
         """
+        if default is None and (param_type in (int, float)):
+            default = 0
+
         if param_type == int:
             gxparam = gxtp.IntegerParam(flag, default, label=label,
                     num_dashes=num_dashes, **gxparam_extra_kwargs)
@@ -12,7 +15,7 @@ class ArgparseTranslation(object):
             gxparam = gxtp.FloatParam(flag, default, label=label,
                     num_dashes=num_dashes, **gxparam_extra_kwargs)
         elif param_type == None or param_type == str:
-            gxparam = gxtp.TextParam(flag, label=label,
+            gxparam = gxtp.TextParam(flag, default=default, label=label,
                     num_dashes=num_dashes, **gxparam_extra_kwargs)
         elif param_type == file:
             gxparam = gxtp.DataParam(flag, label=label,
@@ -170,7 +173,7 @@ class ArgparseTranslation(object):
 
 
         gxparam = self.__gxtp_param_from_type(param.type, flag_wo_dashes,
-                param.help, num_dashes, gxparam_extra_kwargs)
+                param.help, num_dashes, gxparam_extra_kwargs, default=param.default)
 
         # Not really happy with this way of doing this
         if gxparam_cli_before is not None:
