@@ -86,7 +86,7 @@ class ArgumentParser(object):
             self.tool = gxt.Tool(
                     self.parser.prog,
                     self.parser.prog,
-                    self.parser.print_version(),
+                    self.parser.print_version() or '1.0',
                     self.parser.description,
                     self.parser.prog,
                     interpreter='python',
