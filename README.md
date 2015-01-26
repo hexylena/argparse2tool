@@ -57,7 +57,7 @@ Incorrect ordering, please set
 This can even be used inline:
 
 ```console
-user@host:$ $(gxargparse_check_path -q) python my_script.py --generate_galaxy_xml
+user@host:$ PYTHONPATH=$(gxargparse_check_path -q) python my_script.py --generate_galaxy_xml
 ```
 
 ## TODO
