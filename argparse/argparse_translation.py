@@ -2,22 +2,26 @@ import galaxyxml.tool.parameters as gxtp
 
 class ArgparseTranslation(object):
 
-    def __gxtp_param_from_type(self, param_type, flag, label, num_dashes, gxparam_extra_kwargs, default=None):
+    def __gxtp_param_from_type(self, param, flag, label, num_dashes, gxparam_extra_kwargs, default=None):
         """Based on a type, convert to appropriate gxtp class
         """
-        if default is None and (param_type in (int, float)):
+        if default is None and (param.type in (int, float)):
             default = 0
 
-        if param_type == int:
+        if param.choices is not None:
+            choices = {k: k for k in param.choices}
+            gxparam = gxtp.SelectParam(flag, default=default, label=label,
+                    num_dashes=num_dashes, options=choices, **gxparam_extra_kwargs)
+        elif param.type == int:
             gxparam = gxtp.IntegerParam(flag, default, label=label,
                     num_dashes=num_dashes, **gxparam_extra_kwargs)
-        elif param_type == float:
+        elif param.type == float:
             gxparam = gxtp.FloatParam(flag, default, label=label,
                     num_dashes=num_dashes, **gxparam_extra_kwargs)
-        elif param_type == None or param_type == str:
+        elif param.type == None or param.type == str:
             gxparam = gxtp.TextParam(flag, default=default, label=label,
                     num_dashes=num_dashes, **gxparam_extra_kwargs)
-        elif param_type == file:
+        elif param.type == file:
             gxparam = gxtp.DataParam(flag, label=label,
                     num_dashes=num_dashes, **gxparam_extra_kwargs)
         else:
@@ -172,7 +176,7 @@ class ArgparseTranslation(object):
             gxrepeat = None
 
 
-        gxparam = self.__gxtp_param_from_type(param.type, flag_wo_dashes,
+        gxparam = self.__gxtp_param_from_type(param, flag_wo_dashes,
                 param.help, num_dashes, gxparam_extra_kwargs, default=param.default)
 
         # Not really happy with this way of doing this
@@ -209,7 +213,7 @@ class ArgparseTranslation(object):
         flag_wo_dashes = flag.lstrip('-')
         num_dashes = len(flag) - len(flag_wo_dashes)
 
-        gxparam = self.__gxtp_param_from_type(param.type, flag_wo_dashes, param.help, num_dashes, {})
+        gxparam = self.__gxtp_param_from_type(param, flag_wo_dashes, param.help, num_dashes, {})
         gxrepeat = gxtp.Repeat(repeat_name, 'Repeated Variable')
         gxrepeat.command_line_override = '%s $%s.%s' % (param.option_strings[0], 'i', flag_wo_dashes)
         gxrepeat.append(gxparam)
