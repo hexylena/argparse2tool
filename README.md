@@ -54,6 +54,12 @@ Incorrect ordering, please set
 
 ```
 
+This can even be used inline:
+
+```console
+user@host:$ $(gxargparse_check_path -q) python my_script.py --generate_galaxy_xml
+```
+
 ## TODO
 
 This code doesn't cover the entirety of the `argparse` API yet, and there are some bugs to work out on the XML generation side:

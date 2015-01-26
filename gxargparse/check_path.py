@@ -6,8 +6,19 @@ thus we provide a small check utility to ensure proper ordering and provide
 suggestions if not functional.
 """
 import sys, imp, os
+import argparse
 
-def main(quiet=False):
+def get_args():
+    help_text = """Check the path for the correct setting to be able to take advantage
+of gxargparse.
+"""
+    parser = argparse.ArgumentParser(prog='gxargparse_check_path', description=help_text)
+    parser.add_argument('-q', dest='quiet', action='store_true', help='run quietly')
+    return parser.parse_args()
+
+def main():
+    args = get_args()
+
     good_paths = []
     incorrect_ordering = False
     for path in sys.path:
@@ -22,33 +33,16 @@ def main(quiet=False):
 
     if incorrect_ordering:
         if len(good_paths) == 0:
-            if not quiet:
+            if not args.quiet:
                 print "gxargparse not installed"
         else:
-            if quiet:
+            if args.quiet:
                 print "PYTHONPATH=%s " % os.path.dirname(good_paths[0])
             else:
                 print "Incorrect ordering, please set\n\n\tPYTHONPATH=%s\n" % (os.path.dirname(good_paths[0]))
     else:
-        if not quiet:
+        if not args.quiet:
             print "Ready to go!"
 
 if __name__ == '__main__':
-    if len(sys.argv) == 1:
-        main()
-    else:
-        if sys.argv[1] == '-h':
-            print """Usage: gxargparse_check_path [-q] [-h]
-
-Check the path for the correct setting to be able to take advantage
-of gxargparse. The -q option prints quietly in order to allow for
-things like
-
-    user@host:$ $(gxargparse_check_path -q) python script.py
-"""
-            sys.exit(1)
-        elif sys.argv[1] == '-q':
-            main(quiet=True)
-        else:
-            print "Error, unknown flag. Usage: gxargparse_check_path [-q] [-h]"
-            sys.exit(2)
+    main()
