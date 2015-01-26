@@ -59,11 +59,10 @@ Incorrect ordering, please set
 This code doesn't cover the entirety of the `argparse` API yet, and there are some bugs to work out on the XML generation side:
 
 - argparse
-    - groups not supported
-    - some features like "epilogue" and templating of the version string
+    - groups not supported (in galaxy, everything should still work in argparse)
+    - some features like templating of the version string (please submit bugs)
 - galaxyxml
-    - bugs in conditionals/whens
-    - validation of passed arguments/unique parameter names/proper labelling
+    - bugs in conditionals/whens (probably)
     - bugs, bugs, bugs!
 - gxargparse
     - support help text
