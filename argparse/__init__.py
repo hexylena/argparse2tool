@@ -113,7 +113,7 @@ class ArgumentParser(object):
 
             self.tool.inputs = self.inputs
             self.tool.outputs = self.outputs
-            self.tool.help = 'TODO: Bug @erasche until he fixes it or make a PR'
+            self.tool.help = self.parser.epilog
             data = self.tool.export()
             print data
             sys.exit()
