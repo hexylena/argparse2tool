@@ -89,7 +89,8 @@ class ArgumentParser(object):
                     self.parser.print_version(),
                     self.parser.description,
                     self.parser.prog,
-                    interpreter='python')
+                    interpreter='python',
+                    version_command='python %s --version' % sys.argv[0])
 
             self.inputs = gxtp.Inputs()
             self.outputs = gxtp.Outputs()
