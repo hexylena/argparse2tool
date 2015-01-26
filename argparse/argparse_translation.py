@@ -31,6 +31,9 @@ class ArgparseTranslation(object):
         gxrepeat_cli_before = ''
         gxrepeat_cli_actual = ''
 
+        gxparam_cli_before = None
+        gxparam_cli_after = None
+
         if isinstance(param.nargs, int):
             # N (an integer). N arguments from the command line will be
             # gathered together into a list. For example:
@@ -47,7 +50,24 @@ class ArgparseTranslation(object):
         elif param.nargs == '?':
             # '?'. One argument will be consumed from the command line if
             # possible, and produced as a single item. If no command-line
-            # argument is present, the value from default will be produced
+            # argument is present, the value from default will be produced.
+            # Note that for optional arguments, there is an additional case -
+            # the option string is present but not followed by a command-line
+            # argument. In this case the value from const will be produced
+
+            # This does NOT provide a way to access the value in const, but
+            # that seems like a HORRIBLE idea anyway. Seriously, who does that.
+            gxparam_cli_before = """\n#if $%s and $%s is not None:""" % (flag, flag)
+            gxparam_cli_after = '#end if'
+
+            gxrepeat_args = None
+        elif param.nargs is None:
+            # Very similar to '?' but without the case of "optional + specified
+            # withouth an argument" being OK
+            #
+            # This has changed over time, we're (probably) going overboard here.
+            gxparam_cli_before = """\n#if $%s and $%s is not None:""" % (flag, flag)
+            gxparam_cli_after = '#end if'
             gxrepeat_args = None
         elif param.nargs == '*':
             # '*'. All command-line arguments present are gathered into a list.
@@ -86,7 +106,7 @@ class ArgparseTranslation(object):
 
 
         return (gxrepeat_args, gxrepeat_kwargs, gxrepeat_cli_after,
-                gxrepeat_cli_before, gxrepeat_cli_actual)
+                gxrepeat_cli_before, gxrepeat_cli_actual, gxparam_cli_before, gxparam_cli_after)
 
 
     def __init__(self):
@@ -134,8 +154,10 @@ class ArgparseTranslation(object):
 
 
         # Figure out parameters and overrides from param.nargs, mainly.
+        # This is really unpleasant.
         (gxrepeat_args, gxrepeat_kwargs, gxrepeat_cli_after,
-                gxrepeat_cli_before, gxrepeat_cli_actual) = \
+         gxrepeat_cli_before, gxrepeat_cli_actual, gxparam_cli_before,
+         gxparam_cli_after) = \
             self.__args_from_nargs(param, repeat_name, repeat_var_name, positional, flag_wo_dashes)
 
 
@@ -151,6 +173,13 @@ class ArgparseTranslation(object):
 
         gxparam = self.__gxtp_param_from_type(param.type, flag_wo_dashes,
                 param.help, num_dashes, gxparam_extra_kwargs)
+
+        # Not really happy with this way of doing this
+        if gxparam_cli_before is not None:
+            gxparam.command_line_before_override = gxparam_cli_before
+
+        if gxparam_cli_after is not None:
+            gxparam.command_line_after_override = gxparam_cli_after
 
         # if positional argument, wipe out the CLI flag that's usually present
         if positional:
