@@ -27,12 +27,17 @@ class ArgparseTranslation(object):
         """
         gxrepeat_args = []
         gxrepeat_kwargs = {}
-        gxrepeat_cli_after = ''
-        gxrepeat_cli_before = ''
-        gxrepeat_cli_actual = ''
+        gxrepeat_cli_after = None
+        gxrepeat_cli_before = None
+        gxrepeat_cli_actual = None
 
         gxparam_cli_before = None
         gxparam_cli_after = None
+
+        if positional:
+            gxrepeat_cli_actual = '"$%s"' % (repeat_var_name)
+        else:
+            gxrepeat_cli_actual = '%s "$%s"' % (param.option_strings[0], repeat_var_name)
 
         if isinstance(param.nargs, int):
             # N (an integer). N arguments from the command line will be
@@ -82,11 +87,6 @@ class ArgparseTranslation(object):
             #gxrepeat_cli_after = '#end if\n'
             gxrepeat_cli_after = ''
             gxrepeat_cli_before = """\n#set %s = '" "'.join([ str($var.%s) for $var in $%s ])""" % (repeat_var_name, flag, repeat_name)
-            # Gotta be a better way to do this, probably in the param itself?
-            if positional:
-                gxrepeat_cli_actual = '"$%s"' % (repeat_var_name)
-            else:
-                gxrepeat_cli_actual = '%s "$%s"' % (param.option_strings[0], repeat_var_name)
         elif param.nargs == '+':
             # '+'. Just like '*', all command-line args present are gathered
             # into a list. Additionally, an error message will be generated if
@@ -96,14 +96,8 @@ class ArgparseTranslation(object):
             gxrepeat_kwargs = {'min': 1}
             gxrepeat_cli_after = ''
             gxrepeat_cli_before = """\n#set %s = '" "'.join([ str($var.%s) for $var in $%s ])""" % (repeat_var_name, flag, repeat_name)
-
-            if positional:
-                gxrepeat_cli_actual = '"$%s"' % repeat_var_name
-            else:
-                gxrepeat_cli_actual = '%s "$%s"' % (param.option_strings[0], repeat_var_name)
         else:
             raise Exception("TODO: Handle argparse.REMAINDER")
-
 
         return (gxrepeat_args, gxrepeat_kwargs, gxrepeat_cli_after,
                 gxrepeat_cli_before, gxrepeat_cli_actual, gxparam_cli_before, gxparam_cli_after)
@@ -161,12 +155,16 @@ class ArgparseTranslation(object):
             self.__args_from_nargs(param, repeat_name, repeat_var_name, positional, flag_wo_dashes)
 
 
+
         # Build the gxrepeat if it's needed
         if gxrepeat_args is not None:
             gxrepeat = gxtp.Repeat(*gxrepeat_args, **gxrepeat_kwargs)
-            gxrepeat.cli_before = gxrepeat_cli_before
-            gxrepeat.cli_after = gxrepeat_cli_after
-            gxrepeat.command_line_override = gxrepeat_cli_actual
+            if gxrepeat_cli_before is not None:
+                gxrepeat.command_line_before_override = gxrepeat_cli_before
+            if gxrepeat_cli_after is not None:
+                gxrepeat.command_line_after_override = gxrepeat_cli_after
+            if gxrepeat_cli_actual is not None:
+                gxrepeat.command_line_override = gxrepeat_cli_actual
         else:
             gxrepeat = None
 
@@ -186,7 +184,6 @@ class ArgparseTranslation(object):
             gxparam.command_line_override = '$%s' % flag_wo_dashes
 
         if gxrepeat is not None and gxparam is not None:
-            pass
             gxrepeat.append(gxparam)
             return gxrepeat
         elif gxrepeat is None and gxparam is not None:
