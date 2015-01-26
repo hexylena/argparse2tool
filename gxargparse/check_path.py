@@ -37,7 +37,7 @@ def main():
                 print "gxargparse not installed"
         else:
             if args.quiet:
-                print % os.path.dirname(good_paths[0])
+                print os.path.dirname(good_paths[0])
             else:
                 print "Incorrect ordering, please set\n\n\tPYTHONPATH=%s\n" % (os.path.dirname(good_paths[0]))
     else:
