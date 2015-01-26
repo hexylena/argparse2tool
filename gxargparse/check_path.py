@@ -7,7 +7,7 @@ suggestions if not functional.
 """
 import sys, imp, os
 
-def main():
+def main(quiet=False):
     good_paths = []
     incorrect_ordering = False
     for path in sys.path:
@@ -22,11 +22,33 @@ def main():
 
     if incorrect_ordering:
         if len(good_paths) == 0:
-            print "gxargparse not installed"
+            if not quiet:
+                print "gxargparse not installed"
         else:
-            print "Incorrect ordering, please set\n\n\tPYTHONPATH=%s\n" % (os.path.dirname(good_paths[0]))
+            if quiet:
+                print "PYTHONPATH=%s " % os.path.dirname(good_paths[0])
+            else:
+                print "Incorrect ordering, please set\n\n\tPYTHONPATH=%s\n" % (os.path.dirname(good_paths[0]))
     else:
-        print "Ready to go!"
+        if not quiet:
+            print "Ready to go!"
 
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) == 1:
+        main()
+    else:
+        if sys.argv[1] == '-h':
+            print """Usage: gxargparse_check_path [-q] [-h]
+
+Check the path for the correct setting to be able to take advantage
+of gxargparse. The -q option prints quietly in order to allow for
+things like
+
+    user@host:$ $(gxargparse_check_path -q) python script.py
+"""
+            sys.exit(1)
+        elif sys.argv[1] == '-q':
+            main(quiet=True)
+        else:
+            print "Error, unknown flag. Usage: gxargparse_check_path [-q] [-h]"
+            sys.exit(2)
