@@ -1,6 +1,6 @@
 import argparse
 
-parser = argparse.ArgumentParser(description='Process some integers.', prefix_chars='-+', epilog="here's some epilog text")
+parser = argparse.ArgumentParser(description='Process some integers.', prefix_chars='-+', epilog="here's some epilog text", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('keyword', metavar='Q', type=str, nargs=1,
         help='action keyword')
 
