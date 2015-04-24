@@ -1,8 +1,17 @@
 import sys
 
-# Per @jmchilton's suggestion, and this SO question:
-# http://stackoverflow.com/a/6032023
+
 def load_conflicting_package(name, not_name, local_module):
+    """Load a conflicting package
+
+    Some assumptions are made, namely that your package includes the "official"
+    one as part of the name. E.g. gxargparse/argparse, you would call this with:
+
+        >>> real_argparse = load_conflicting_package('argpargase', 'gxargparse',
+        ...                                          sys.modules[load_conflicting_package.__module__])
+
+     http://stackoverflow.com/a/6032023
+    """
     import imp
 
     for i in range(0, 100):
@@ -32,13 +41,36 @@ import galaxyxml.tool as gxt
 import galaxyxml.tool.parameters as gxtp
 import argparse_translation as at
 
+# This fetches a reference to ourselves
+__selfmodule__ = sys.modules[load_conflicting_package.__module__]
+# Static list of imports
+__argparse_exports__ = ['HelpFormatter', 'RawDescriptionHelpFormatter',
+                        'ArgumentDefaultsHelpFormatter', 'FileType',
+                        'SUPPRESS', 'OPTIONAL', 'ZERO_OR_MORE', 'ONE_OR_MORE',
+                        'PARSER', 'REMAINDER', '_UNRECOGNIZED_ARGS_ATTR']
+
+# Set the attribute on ourselves.
+for x in __argparse_exports__:
+    setattr(__selfmodule__, x, getattr(ap, x))
+
+
 class ArgumentParser(object):
 
     def __init__(self, *args, **kwargs):
+
         self.parser = ap.ArgumentParser(*args, **kwargs)
         self.argument_list = []
+
         # TODO: support the prefix_chars option
         #print self.parser.prefix_chars
+
+        # groups
+        self._action_groups = []
+        self._mutually_exclusive_groups = []
+
+        # action storage
+        self._actions = []
+        self._option_string_actions = {}
 
     def add_argument(self, *args, **kwargs):
         result = self.parser.add_argument(*args, **kwargs)
