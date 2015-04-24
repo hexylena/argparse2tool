@@ -145,7 +145,11 @@ class ArgumentParser(object):
 
             self.tool.inputs = self.inputs
             self.tool.outputs = self.outputs
-            self.tool.help = self.parser.epilog
+            if self.parser.epilog is not None:
+                self.tool.help = self.parser.epilog
+            else:
+                self.tool.help = "TODO: Write help"
+
             data = self.tool.export()
             print data
             sys.exit()
