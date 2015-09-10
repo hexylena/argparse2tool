@@ -3,6 +3,7 @@ import galaxyxml.tool.parameters as gxtp
 class ArgparseTranslation(object):
 
     def __gxtp_param_from_type(self, param, flag, label, num_dashes, gxparam_extra_kwargs, default=None):
+        from argparse import FileType
         """Based on a type, convert to appropriate gxtp class
         """
         if default is None and (param.type in (int, float)):
@@ -21,7 +22,7 @@ class ArgparseTranslation(object):
         elif param.type == None or param.type == str:
             gxparam = gxtp.TextParam(flag, default=default, label=label,
                     num_dashes=num_dashes, **gxparam_extra_kwargs)
-        elif param.type == file:
+        elif param.type == file or isinstance(param.type, FileType):
             gxparam = gxtp.DataParam(flag, label=label,
                     num_dashes=num_dashes, **gxparam_extra_kwargs)
         else:
