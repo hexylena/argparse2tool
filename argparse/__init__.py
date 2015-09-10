@@ -47,80 +47,33 @@ __selfmodule__ = sys.modules[load_conflicting_package.__module__]
 __argparse_exports__ = ['HelpFormatter', 'RawDescriptionHelpFormatter',
                         'ArgumentDefaultsHelpFormatter', 'FileType',
                         'SUPPRESS', 'OPTIONAL', 'ZERO_OR_MORE', 'ONE_OR_MORE',
-                        'PARSER', 'REMAINDER', '_UNRECOGNIZED_ARGS_ATTR']
+                        'PARSER', 'REMAINDER', '_UNRECOGNIZED_ARGS_ATTR',
+                        '_VersionAction']
 
 # Set the attribute on ourselves.
 for x in __argparse_exports__:
     setattr(__selfmodule__, x, getattr(ap, x))
 
 
-class ArgumentParser(object):
+class ArgumentParser(ap.ArgumentParser):
 
-    def __init__(self, *args, **kwargs):
-
-        self.parser = ap.ArgumentParser(*args, **kwargs)
-        self.argument_list = []
-
-        # TODO: support the prefix_chars option
-        #print self.parser.prefix_chars
-
-        # groups
-        self._action_groups = []
-        self._mutually_exclusive_groups = []
-
-        # action storage
-        self._actions = []
-        self._option_string_actions = {}
+    def __new__(cls, *args, **kwargs):
+        newcls = ap.ArgumentParser.__new__(cls, *args, **kwargs)
+        setattr(newcls, "argument_list", [])
+        return newcls
 
     def add_argument(self, *args, **kwargs):
-        result = self.parser.add_argument(*args, **kwargs)
+        result = ap.ArgumentParser.add_argument(self, *args, **kwargs)
         self.argument_list.append(result)
-
-    #ArgumentParser.add_subparsers([title][, description][, prog][, parser_class][, action][, option_string][, dest][, help][, metavar])
-    def add_subparsers(self, *args, **kwargs):
-        return self.parser.add_subparsers(*args, **kwargs)
-
-    #ArgumentParser.add_argument_group(title=None, description=None)
-    def add_argument_group(self, *args, **kwargs):
-        return self.parser.add_argument_group(*args, **kwargs)
-
-    #ArgumentParser.add_mutually_exclusive_group(required=False)
-    def add_mutually_exclusive_group(self, *args, **kwargs):
-        return self.parser.add_mutually_exclusive_group(*args, **kwargs)
-
-    def set_defaults(self, *args, **kwargs):
-        self.parser.set_defaults(*args, **kwargs)
-
-    def get_default(self, *args, **kwargs):
-        return self.parser.get_default(*args, **kwargs)
-
-    def print_usage(self, *args, **kwargs):
-        self.parser.print_usage(*args, **kwargs)
-
-    def print_help(self, *args, **kwargs):
-        self.parser.print_help(*args, **kwargs)
-
-    def format_usage(self, *args, **kwargs):
-        return self.parser.format_usage(*args, **kwargs)
-
-    def format_help(self, *args, **kwargs):
-        return self.parser.format_help(*args, **kwargs)
-
-    def parse_known_args(self, *args, **kwargs):
-        return self.parser.parse_known_args(*args, **kwargs)
-
-    def convert_arg_line_to_args(self, *args, **kwargs):
-        return self.parser.convert_arg_line_to_args(*args, **kwargs)
-
 
     def parse_args(self, *args, **kwargs):
         if '--generate_galaxy_xml' in sys.argv:
             self.tool = gxt.Tool(
-                    self.parser.prog,
-                    self.parser.prog,
-                    self.parser.print_version() or '1.0',
-                    self.parser.description,
-                    self.parser.prog,
+                    self.prog,
+                    self.prog,
+                    self.print_version() or '1.0',
+                    self.description,
+                    self.prog,
                     interpreter='python',
                     version_command='python %s --version' % sys.argv[0])
 
@@ -138,15 +91,16 @@ class ArgumentParser(object):
                 # I am SO thankful they return the argument here. SO useful.
                 argument_type = result.__class__.__name__
                 # http://stackoverflow.com/a/3071
-                methodToCall = getattr(self.at, argument_type)
-                gxt_parameter = methodToCall(result, tool=self.tool)
-                if gxt_parameter is not None:
-                    self.inputs.append(gxt_parameter)
+                if hasattr(self.at, argument_type):
+                    methodToCall = getattr(self.at, argument_type)
+                    gxt_parameter = methodToCall(result, tool=self.tool)
+                    if gxt_parameter is not None:
+                        self.inputs.append(gxt_parameter)
 
             self.tool.inputs = self.inputs
             self.tool.outputs = self.outputs
-            if self.parser.epilog is not None:
-                self.tool.help = self.parser.epilog
+            if self.epilog is not None:
+                self.tool.help = self.epilog
             else:
                 self.tool.help = "TODO: Write help"
 
@@ -154,5 +108,5 @@ class ArgumentParser(object):
             print data
             sys.exit()
         else:
-            return self.parser.parse_args(*args, **kwargs)
+            return ap.ArgumentParser.parse_args(self, *args, **kwargs)
 
