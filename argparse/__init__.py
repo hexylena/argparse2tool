@@ -57,10 +57,7 @@ for x in __argparse_exports__:
 
 class ArgumentParser(ap.ArgumentParser):
 
-    def __new__(cls, *args, **kwargs):
-        newcls = ap.ArgumentParser.__new__(cls, *args, **kwargs)
-        setattr(newcls, "argument_list", [])
-        return newcls
+    argument_list = []
 
     def add_argument(self, *args, **kwargs):
         result = ap.ArgumentParser.add_argument(self, *args, **kwargs)
@@ -80,11 +77,6 @@ class ArgumentParser(ap.ArgumentParser):
             self.inputs = gxtp.Inputs()
             self.outputs = gxtp.Outputs()
 
-            # TODO: replace with argparse-esque library to do this.
-            stdout = gxtp.OutputParameter('default', 'txt')
-            stdout.command_line_override = '> $default'
-            self.outputs.append(stdout)
-
             self.at = at.ArgparseTranslation()
             # Only build up arguments if the user actually requests it
             for result in self.argument_list:
@@ -95,7 +87,15 @@ class ArgumentParser(ap.ArgumentParser):
                     methodToCall = getattr(self.at, argument_type)
                     gxt_parameter = methodToCall(result, tool=self.tool)
                     if gxt_parameter is not None:
-                        self.inputs.append(gxt_parameter)
+                        if isinstance(gxt_parameter, gxtp.InputParameter):
+                            self.inputs.append(gxt_parameter)
+                        else:
+                            self.outputs.append(gxt_parameter)
+
+            # TODO: replace with argparse-esque library to do this.
+            stdout = gxtp.OutputParameter('default', 'txt')
+            stdout.command_line_override = '> $default'
+            self.outputs.append(stdout)
 
             self.tool.inputs = self.inputs
             self.tool.outputs = self.outputs

@@ -22,9 +22,18 @@ class ArgparseTranslation(object):
         elif param.type == None or param.type == str:
             gxparam = gxtp.TextParam(flag, default=default, label=label,
                     num_dashes=num_dashes, **gxparam_extra_kwargs)
-        elif param.type == file or isinstance(param.type, FileType):
+        elif param.type == file:
             gxparam = gxtp.DataParam(flag, label=label,
                     num_dashes=num_dashes, **gxparam_extra_kwargs)
+        elif isinstance(param.type, FileType):
+            if 'w' in param.type._mode:
+                gxparam = gxtp.OutputParameter(
+                    flag, format='data', default=default, label=label,
+                    num_dashes=num_dashes, **gxparam_extra_kwargs)
+            else:
+                gxparam = gxtp.DataParam(
+                    flag, default=default, label=label, num_dashes=num_dashes,
+                    **gxparam_extra_kwargs)
         else:
             gxparam = None
 
@@ -127,16 +136,25 @@ class ArgparseTranslation(object):
 
 
     def _StoreAction(self, param, tool=None):
+        """
+        Parse argparse arguments action type of "store", the default.
+
+        param: argparse.Action
+        """
         gxparam = None
         gxrepeat = None
         self.repeat_count += 1
         gxparam_extra_kwargs = {}
 
+        if not param.required:
+            gxparam_extra_kwargs['optional'] = True
+
         # Positional arguments don't have an option strings
         positional = len(param.option_strings) == 0
 
         if not positional:
-            flag = param.option_strings[0]  # Pick one of the options strings
+            flag = max(param.option_strings, key=len)  # Pick the longest of
+                                                       # the options strings
         else:
             flag = ''
             self.positional_count += 1
@@ -210,7 +228,8 @@ class ArgparseTranslation(object):
         self.repeat_count += 1
         repeat_name = 'repeat_%s' % self.repeat_count
         # TODO: Replace with logic supporting characters other than -
-        flag = param.option_strings[0]  # Pick one of the options strings
+        flag = max(param.option_strings, key=len)  # Pick one of the options
+                                                   # strings
         flag_wo_dashes = flag.lstrip('-')
         num_dashes = len(flag) - len(flag_wo_dashes)
 
@@ -222,7 +241,8 @@ class ArgparseTranslation(object):
 
 
     def _StoreConstAction(self, param, **kwargs):
-        flag = param.option_strings[0]  # Pick one of the options strings
+        flag = max(param.option_strings, key=len)  # Pick one of the options
+                                                   # strings
         flag_wo_dashes = flag.lstrip('-')
         num_dashes = len(flag) - len(flag_wo_dashes)
 
