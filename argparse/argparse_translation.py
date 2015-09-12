@@ -127,10 +127,18 @@ class ArgparseTranslation(object):
 
 
     def _StoreAction(self, param, tool=None):
+        """
+        Parse argparse arguments action type of "store", the default.
+
+        param: argparse.Action
+        """
         gxparam = None
         gxrepeat = None
         self.repeat_count += 1
         gxparam_extra_kwargs = {}
+
+        if not param.required:
+            gxparam_extra_kwargs['optional'] = True
 
         # Positional arguments don't have an option strings
         positional = len(param.option_strings) == 0
