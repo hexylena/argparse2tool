@@ -22,9 +22,18 @@ class ArgparseTranslation(object):
         elif param.type == None or param.type == str:
             gxparam = gxtp.TextParam(flag, default=default, label=label,
                     num_dashes=num_dashes, **gxparam_extra_kwargs)
-        elif param.type == file or isinstance(param.type, FileType):
+        elif param.type == file:
             gxparam = gxtp.DataParam(flag, label=label,
                     num_dashes=num_dashes, **gxparam_extra_kwargs)
+        elif isinstance(param.type, FileType):
+            if 'w' in param.type._mode:
+                gxparam = gxtp.OutputParameter(
+                    flag, format='data', default=default, label=label,
+                    num_dashes=num_dashes, **gxparam_extra_kwargs)
+            else:
+                gxparam = gxtp.DataParam(
+                    flag, default=default, label=label, num_dashes=num_dashes,
+                    **gxparam_extra_kwargs)
         else:
             gxparam = None
 

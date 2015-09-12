@@ -92,7 +92,10 @@ class ArgumentParser(ap.ArgumentParser):
                     methodToCall = getattr(self.at, argument_type)
                     gxt_parameter = methodToCall(result, tool=self.tool)
                     if gxt_parameter is not None:
-                        self.inputs.append(gxt_parameter)
+                        if isinstance(gxt_parameter, gxtp.InputParameter):
+                            self.inputs.append(gxt_parameter)
+                        else:
+                            self.outputs.append(gxt_parameter)
 
             self.tool.inputs = self.inputs
             self.tool.outputs = self.outputs
