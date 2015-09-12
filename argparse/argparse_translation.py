@@ -136,7 +136,8 @@ class ArgparseTranslation(object):
         positional = len(param.option_strings) == 0
 
         if not positional:
-            flag = param.option_strings[0]  # Pick one of the options strings
+            flag = max(param.option_strings, key=len)  # Pick the longest of
+                                                       # the options strings
         else:
             flag = ''
             self.positional_count += 1
@@ -210,7 +211,8 @@ class ArgparseTranslation(object):
         self.repeat_count += 1
         repeat_name = 'repeat_%s' % self.repeat_count
         # TODO: Replace with logic supporting characters other than -
-        flag = param.option_strings[0]  # Pick one of the options strings
+        flag = max(param.option_strings, key=len)  # Pick one of the options
+                                                   # strings
         flag_wo_dashes = flag.lstrip('-')
         num_dashes = len(flag) - len(flag_wo_dashes)
 
@@ -222,7 +224,8 @@ class ArgparseTranslation(object):
 
 
     def _StoreConstAction(self, param, **kwargs):
-        flag = param.option_strings[0]  # Pick one of the options strings
+        flag = max(param.option_strings, key=len)  # Pick one of the options
+                                                   # strings
         flag_wo_dashes = flag.lstrip('-')
         num_dashes = len(flag) - len(flag_wo_dashes)
 

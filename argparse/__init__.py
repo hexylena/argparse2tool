@@ -57,10 +57,7 @@ for x in __argparse_exports__:
 
 class ArgumentParser(ap.ArgumentParser):
 
-    def __new__(cls, *args, **kwargs):
-        newcls = ap.ArgumentParser.__new__(cls, *args, **kwargs)
-        setattr(newcls, "argument_list", [])
-        return newcls
+    argument_list = []
 
     def add_argument(self, *args, **kwargs):
         result = ap.ArgumentParser.add_argument(self, *args, **kwargs)
