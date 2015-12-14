@@ -1,5 +1,6 @@
 import sys
-
+from jinja2 import Environment, PackageLoader
+env = Environment(loader=PackageLoader('gxargparse', 'templates'))
 
 def load_conflicting_package(name, not_name, local_module):
     """Load a conflicting package
@@ -64,6 +65,10 @@ class ArgumentParser(ap.ArgumentParser):
         self.argument_list.append(result)
 
     def parse_args(self, *args, **kwargs):
+        if '--generate_cwl_tool' in sys.argv:
+            template = env.get_template('cwltool.tmpl')
+
+    def parse_args(self, *args, **kwargs):
         if '--generate_galaxy_xml' in sys.argv:
             self.tool = gxt.Tool(
                     self.prog,
@@ -109,4 +114,3 @@ class ArgumentParser(ap.ArgumentParser):
             sys.exit()
         else:
             return ap.ArgumentParser.parse_args(self, *args, **kwargs)
-
