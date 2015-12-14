@@ -1,6 +1,6 @@
 import sys
-from jinja2 import Environment, PackageLoader
-env = Environment(loader=PackageLoader('gxargparse', 'templates'))
+from jinja2 import Environment, FileSystemLoader
+env = Environment(loader=FileSystemLoader('templates'))
 
 def load_conflicting_package(name, not_name, local_module):
     """Load a conflicting package
@@ -66,9 +66,12 @@ class ArgumentParser(ap.ArgumentParser):
 
     def parse_args(self, *args, **kwargs):
         if '--generate_cwl_tool' in sys.argv:
-            template = env.get_template('cwltool.tmpl')
+            template = env.get_template('cwltool.j2')
 
-    def parse_args(self, *args, **kwargs):
+            print template.render(tool_name='Crusoe', basecommand="crusoe",
+                                  input_type='foo', input_binding_position='bar')
+
+    def parse_args_galaxy_nouse(self, *args, **kwargs):
         if '--generate_galaxy_xml' in sys.argv:
             self.tool = gxt.Tool(
                     self.prog,

@@ -25,4 +25,3 @@ parser.add_argument('--mode', choices=['rock', 'paper', 'scissors'], default='sc
 
 parser.add_argument('--version', action='version', version='2.0')
 args = parser.parse_args()
-print vars(args)
