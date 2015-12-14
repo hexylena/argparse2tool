@@ -1,0 +1,8 @@
+{% extends "cwltool.j2" %}
+
+- id: "#input"
+  type:
+    type: {{ input_type }}
+    items: File
+  inputBinding:
+    position: {{ input_binding_position }}
