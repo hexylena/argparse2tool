@@ -1,6 +1,7 @@
 import sys
-from jinja2 import Environment, FileSystemLoader
-env = Environment(loader=FileSystemLoader('templates'))
+
+from argparse.cwl_tool import CWLTool
+
 
 def load_conflicting_package(name, not_name, local_module):
     """Load a conflicting package
@@ -40,7 +41,9 @@ def load_conflicting_package(name, not_name, local_module):
 ap = load_conflicting_package('argparse', 'gxargparse', sys.modules[load_conflicting_package.__module__])
 import galaxyxml.tool as gxt
 import galaxyxml.tool.parameters as gxtp
-import argparse_translation as at
+import argparse_galaxy_translation as agt
+import argparse_cwl_translation as act
+import cwl_tool as cwlt
 
 # This fetches a reference to ourselves
 __selfmodule__ = sys.modules[load_conflicting_package.__module__]
@@ -66,54 +69,75 @@ class ArgumentParser(ap.ArgumentParser):
 
     def parse_args(self, *args, **kwargs):
         if '--generate_cwl_tool' in sys.argv:
-            template = env.get_template('cwltool.j2')
-
-            print template.render(tool_name='Crusoe', basecommand="crusoe",
-                                  input_type='foo', input_binding_position='bar')
-
-    def parse_args_galaxy_nouse(self, *args, **kwargs):
-        if '--generate_galaxy_xml' in sys.argv:
-            self.tool = gxt.Tool(
-                    self.prog,
-                    self.prog,
-                    self.print_version() or '1.0',
-                    self.description,
-                    self.prog,
-                    interpreter='python',
-                    version_command='python %s --version' % sys.argv[0])
-
-            self.inputs = gxtp.Inputs()
-            self.outputs = gxtp.Outputs()
-
-            self.at = at.ArgparseTranslation()
-            # Only build up arguments if the user actually requests it
-            for result in self.argument_list:
-                # I am SO thankful they return the argument here. SO useful.
-                argument_type = result.__class__.__name__
-                # http://stackoverflow.com/a/3071
-                if hasattr(self.at, argument_type):
-                    methodToCall = getattr(self.at, argument_type)
-                    gxt_parameter = methodToCall(result, tool=self.tool)
-                    if gxt_parameter is not None:
-                        if isinstance(gxt_parameter, gxtp.InputParameter):
-                            self.inputs.append(gxt_parameter)
-                        else:
-                            self.outputs.append(gxt_parameter)
-
-            # TODO: replace with argparse-esque library to do this.
-            stdout = gxtp.OutputParameter('default', 'txt')
-            stdout.command_line_override = '> $default'
-            self.outputs.append(stdout)
-
-            self.tool.inputs = self.inputs
-            self.tool.outputs = self.outputs
-            if self.epilog is not None:
-                self.tool.help = self.epilog
-            else:
-                self.tool.help = "TODO: Write help"
-
-            data = self.tool.export()
-            print data
-            sys.exit()
+            self.parse_args_cwl(*args, **kwargs)
+        elif '--generate_galaxy_xml' in sys.argv:
+            self.parse_args_galaxy_nouse(*args, **kwargs)
         else:
             return ap.ArgumentParser.parse_args(self, *args, **kwargs)
+
+    def parse_args_cwl(self, *args, **kwargs):
+        self.tool = cwlt.CWLTool(self.prog, self.description)
+        self.at = act.ArgparseCWLTranslation()
+        # Only build up arguments if the user actually requests it
+        for result in self.argument_list:
+            argument_type = result.__class__.__name__
+            # http://stackoverflow.com/a/3071
+            if hasattr(self.at, argument_type):
+                methodToCall = getattr(self.at, argument_type)
+                cwlt_parameter = methodToCall(result)
+                if cwlt_parameter is not None:
+                    if isinstance(cwlt_parameter, cwlt.Param):
+                        self.tool.inputs.append(cwlt_parameter)
+
+        if self.epilog is not None:
+            self.tool.help = self.epilog
+        else:
+            self.tool.help = "TODO: Write help"
+
+        data = self.tool.export()
+        print data
+        sys.exit()
+
+    def parse_args_galaxy_nouse(self, *args, **kwargs):
+        self.tool = gxt.Tool(
+                self.prog,
+                self.prog,
+                self.print_version() or '1.0',
+                self.description,
+                self.prog,
+                interpreter='python',
+                version_command='python %s --version' % sys.argv[0])
+
+        self.inputs = gxtp.Inputs()
+        self.outputs = gxtp.Outputs()
+
+        self.at = agt.ArgparseGalaxyTranslation()
+        # Only build up arguments if the user actually requests it
+        for result in self.argument_list:
+            # I am SO thankful they return the argument here. SO useful.
+            argument_type = result.__class__.__name__
+            # http://stackoverflow.com/a/3071
+            if hasattr(self.at, argument_type):
+                methodToCall = getattr(self.at, argument_type)
+                gxt_parameter = methodToCall(result, tool=self.tool)
+                if gxt_parameter is not None:
+                    if isinstance(gxt_parameter, gxtp.InputParameter):
+                        self.inputs.append(gxt_parameter)
+                    else:
+                        self.outputs.append(gxt_parameter)
+
+        # TODO: replace with argparse-esque library to do this.
+        stdout = gxtp.OutputParameter('default', 'txt')
+        stdout.command_line_override = '> $default'
+        self.outputs.append(stdout)
+
+        self.tool.inputs = self.inputs
+        self.tool.outputs = self.outputs
+        if self.epilog is not None:
+            self.tool.help = self.epilog
+        else:
+            self.tool.help = "TODO: Write help"
+
+        data = self.tool.export()
+        print data
+        sys.exit()

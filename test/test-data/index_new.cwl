@@ -3,7 +3,7 @@
 cwlVersion: "cwl:draft-3.dev2"
 
 class: CommandLineTool
-baseCommand: ["{{ basecommand }}"]
+baseCommand: ["python"]
 
 requirements:
   - $import: envvar-global.cwl
@@ -11,10 +11,24 @@ requirements:
   - class: InlineJavascriptRequirement
 
 description: |
-  {{ tool.description }}
+  Generate inverted index of word to line
 
 inputs:
-  {% block cwltool_inputs %}{% endblock %}
+
+
+- id: mainfile
+  type: File
+  inputBinding:
+    position: 1
+
+- id: index.py
+  type: File
+  default:
+    class: File
+    path: index.py
+  inputBinding:
+    position: 0
+
 
 outputs:
   []

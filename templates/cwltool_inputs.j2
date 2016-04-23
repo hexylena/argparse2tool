@@ -1,8 +1,17 @@
 {% extends "cwltool.j2" %}
 
-- id: "#input"
-  type:
-    type: {{ input_type }}
-    items: File
+{% block cwltool_inputs %}
+{% for param in tool.inputs %}
+- id: {{ param.id }}
+  type: {{ param.type }}
   inputBinding:
-    position: {{ input_binding_position }}
+    position: {{ param.position }}
+{% endfor %}
+- id: {{ tool.name }}
+  type: File
+  default:
+    class: File
+    path: {{ tool.name }}
+  inputBinding:
+    position: 0
+{% endblock cwltool_inputs %}
