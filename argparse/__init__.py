@@ -41,8 +41,8 @@ def load_conflicting_package(name, not_name, local_module):
     return None
 
 ap = load_conflicting_package('argparse', 'gxargparse', sys.modules[load_conflicting_package.__module__])
-import galaxyxml.tool as gxt
-import galaxyxml.tool.parameters as gxtp
+# import galaxyxml.tool as gxt
+# import galaxyxml.tool.parameters as gxtp
 from . import argparse_galaxy_translation as agt
 from . import argparse_cwl_translation as act
 from . import cwl_tool as cwlt
