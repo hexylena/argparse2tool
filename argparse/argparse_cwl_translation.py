@@ -1,4 +1,6 @@
-import cwl_tool as cwlt
+from __future__ import absolute_import
+from builtins import object
+from . import cwl_tool as cwlt
 
 
 class ArgparseCWLTranslation(object):

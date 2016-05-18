@@ -1,3 +1,4 @@
+from builtins import object
 import os
 
 from jinja2 import Environment, FileSystemLoader

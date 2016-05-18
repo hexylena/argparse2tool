@@ -1,3 +1,6 @@
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import range
 import sys
 
 from argparse.cwl_tool import CWLTool
@@ -5,7 +8,6 @@ from argparse.cwl_tool import CWLTool
 
 def load_conflicting_package(name, not_name, local_module):
     """Load a conflicting package
-
     Some assumptions are made, namely that your package includes the "official"
     one as part of the name. E.g. gxargparse/argparse, you would call this with:
 
@@ -41,9 +43,9 @@ def load_conflicting_package(name, not_name, local_module):
 ap = load_conflicting_package('argparse', 'gxargparse', sys.modules[load_conflicting_package.__module__])
 import galaxyxml.tool as gxt
 import galaxyxml.tool.parameters as gxtp
-import argparse_galaxy_translation as agt
-import argparse_cwl_translation as act
-import cwl_tool as cwlt
+from . import argparse_galaxy_translation as agt
+from . import argparse_cwl_translation as act
+from . import cwl_tool as cwlt
 
 # This fetches a reference to ourselves
 __selfmodule__ = sys.modules[load_conflicting_package.__module__]
@@ -95,7 +97,7 @@ class ArgumentParser(ap.ArgumentParser):
             self.tool.help = "TODO: Write help"
 
         data = self.tool.export()
-        print data
+        print(data)
         sys.exit()
 
     def parse_args_galaxy_nouse(self, *args, **kwargs):
@@ -139,5 +141,5 @@ class ArgumentParser(ap.ArgumentParser):
             self.tool.help = "TODO: Write help"
 
         data = self.tool.export()
-        print data
+        print(data)
         sys.exit()

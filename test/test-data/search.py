@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 import os
 import sys
 
@@ -34,6 +35,6 @@ for a in index:
         for l in main:
             linenum += 1
             if linenum in n:
-                print linenum, l.rstrip()
+                print(linenum, l.rstrip())
         break
 
