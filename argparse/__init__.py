@@ -72,6 +72,7 @@ class ArgumentParser(ap.ArgumentParser):
     def parse_args(self, *args, **kwargs):
         if '--generate_cwl_tool' in sys.argv:
             self.parse_args_cwl(*args, **kwargs)
+        # TODO: discuss prefix option
         elif '--generate_galaxy_xml' in sys.argv:
             self.parse_args_galaxy_nouse(*args, **kwargs)
         else:
@@ -88,8 +89,9 @@ class ArgumentParser(ap.ArgumentParser):
                 methodToCall = getattr(self.at, argument_type)
                 cwlt_parameter = methodToCall(result)
                 if cwlt_parameter is not None:
-                    if isinstance(cwlt_parameter, cwlt.Param):
-                        self.tool.inputs.append(cwlt_parameter)
+                    self.tool.inputs.append(cwlt_parameter)
+                    if isinstance(cwlt_parameter, cwlt.OutputParam):
+                        self.tool.outputs.append(cwlt_parameter)
 
         if self.epilog is not None:
             self.tool.help = self.epilog
@@ -97,6 +99,8 @@ class ArgumentParser(ap.ArgumentParser):
             self.tool.help = "TODO: Write help"
 
         data = self.tool.export()
+        with open('{0}.cwl'.format(sys.argv[0].strip('.py')), 'w') as f:
+            f.write(data)
         print(data)
         sys.exit()
 
