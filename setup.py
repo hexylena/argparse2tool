@@ -13,7 +13,7 @@ setup(name="gxargparse",
         author_email='rasche.eric@yandex.ru',
         install_requires=['galaxyxml'],
         url='https://github.com/erasche/gxargparse',
-        packages=["argparse", "gxargparse"],
+        packages=["argparse", "gxargparse", "test"],
         entry_points={
             'console_scripts': [
                     'gxargparse_check_path = gxargparse.check_path:main',
@@ -26,4 +26,5 @@ setup(name="gxargparse",
             'Environment :: Console',
             'License :: OSI Approved :: Apache Software License',
             ],
+        include_package_data=True,
         )

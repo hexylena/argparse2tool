@@ -1,0 +1,40 @@
+{% extends "cwltool.j2" %}
+
+{% block cwltool_inputs %}
+{% for param in tool.inputs %}
+
+- id: {{ param.id }}
+  type: {% if param.type != "array" %}{{ param.type }}{% else %}
+
+    type: {{ param.type }}
+    items: {{ param.items_type or "string" }}{% endif -%}
+
+  {% if param.default %}
+
+  default: {{ param.default }}{% endif %}
+
+  {% if param.description %}  description: {{ param.description }}{% endif %}
+
+  inputBinding:
+    position: {{ param.position }}
+{% endfor %}
+- id: {{ tool.name }}
+  type: File
+  default:
+    class: File
+    path: {{ tool.name }}
+  inputBinding:
+    position: 0
+{% endblock cwltool_inputs %}
+
+{% block cwltool_outputs %}
+{% for param in tool.outputs %}
+- id: {{ param.id + '_out'}}
+  type: File
+  {% if param.default %}default: {{ param.default }} {% endif %}
+  {% if param.description %}  description: {{ param.description }}{% endif %}
+
+  outputBinding:
+    glob: $(inputs.{{ param.id }}.path)
+{% endfor %}
+{% endblock cwltool_outputs %}

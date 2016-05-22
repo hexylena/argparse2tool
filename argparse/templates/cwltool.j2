@@ -6,8 +6,6 @@ class: CommandLineTool
 baseCommand: ["{{ basecommand }}"]
 
 requirements:
-  - $import: envvar-global.cwl
-  - $import: linux-sort-docker.cwl
   - class: InlineJavascriptRequirement
 
 description: |
@@ -17,4 +15,6 @@ inputs:
   {% block cwltool_inputs %}{% endblock %}
 
 outputs:
-  []
+  {% block cwltool_outputs %}
+    []
+  {% endblock %}
