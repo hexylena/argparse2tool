@@ -3,6 +3,8 @@ from __future__ import absolute_import
 from builtins import range
 import sys
 
+import re
+
 from argparse.cwl_tool import CWLTool
 
 
@@ -60,10 +62,39 @@ __argparse_exports__ = ['HelpFormatter', 'RawDescriptionHelpFormatter',
 for x in __argparse_exports__:
     setattr(__selfmodule__, x, getattr(ap, x))
 
+tools = []
+
 
 class ArgumentParser(ap.ArgumentParser):
 
-    argument_list = []
+    # argument_list = []
+
+    def __init__(self,
+                 prog=None,
+                 usage=None,
+                 description=None,
+                 epilog=None,
+                 parents=[],
+                 formatter_class=HelpFormatter,
+                 prefix_chars='-',
+                 fromfile_prefix_chars=None,
+                 argument_default=None,
+                 conflict_handler='error',
+                 add_help=True):
+
+        self.argument_list = []
+        tools.append(self)
+        super(ArgumentParser, self).__init__(prog=prog,
+                                             usage=usage,
+                                             description=description,
+                                             epilog=epilog,
+                                             parents=parents,
+                                             formatter_class=formatter_class,
+                                             prefix_chars=prefix_chars,
+                                             fromfile_prefix_chars=fromfile_prefix_chars,
+                                             argument_default=argument_default,
+                                             conflict_handler=conflict_handler,
+                                             add_help=add_help)
 
     def add_argument(self, *args, **kwargs):
         result = ap.ArgumentParser.add_argument(self, *args, **kwargs)
@@ -71,37 +102,63 @@ class ArgumentParser(ap.ArgumentParser):
 
     def parse_args(self, *args, **kwargs):
         if '--generate_cwl_tool' in sys.argv:
+            # assuming all passed arguments are either commands or argparse2cwl flags
+            command = ''
+            for arg in sys.argv:
+                if not arg.startswith('--'):
+                    command += '{0} '.format(arg.split('/')[-1])
+                else:
+                    command = command.strip()
+                    kwargs['command'] = command
+                    break
+            if '-f' in sys.argv:
+                kwargs['path'] = sys.argv[sys.argv.index('-f')+1]
+            if '--basecommand' in sys.argv:
+                kwargs['basecommand'] = sys.argv[sys.argv.index('--basecommand')+1]
             self.parse_args_cwl(*args, **kwargs)
-        # TODO: discuss prefix option
+        # TODO: reorganize to a separate CLI
         elif '--generate_galaxy_xml' in sys.argv:
             self.parse_args_galaxy_nouse(*args, **kwargs)
         else:
             return ap.ArgumentParser.parse_args(self, *args, **kwargs)
 
     def parse_args_cwl(self, *args, **kwargs):
-        self.tool = cwlt.CWLTool(self.prog, self.description)
-        self.at = act.ArgparseCWLTranslation()
-        # Only build up arguments if the user actually requests it
-        for result in self.argument_list:
-            argument_type = result.__class__.__name__
-            # http://stackoverflow.com/a/3071
-            if hasattr(self.at, argument_type):
-                methodToCall = getattr(self.at, argument_type)
-                cwlt_parameter = methodToCall(result)
-                if cwlt_parameter is not None:
-                    self.tool.inputs.append(cwlt_parameter)
-                    if isinstance(cwlt_parameter, cwlt.OutputParam):
-                        self.tool.outputs.append(cwlt_parameter)
+        for argp in tools:
+            # make subparser description out of its help message
+            if argp._subparsers:
+                for subparser in argp._subparsers._group_actions:
+                    for choice_action in subparser._choices_actions:
+                        subparser.choices[choice_action.dest].description = choice_action.help
+            # if the command is subparser, we don't need its CWL wrapper
+            else:
+                # build up wrappers if the user actually requests it, otherwise build all wrappers
+                if kwargs.get('command', argp.prog) in argp.prog:
+                    tool = cwlt.CWLTool(argp.prog, argp.description, kwargs.get('basecommand', ''))
+                    at = act.ArgparseCWLTranslation()
+                    for result in argp._actions:
+                        argument_type = result.__class__.__name__
+                        # http://stackoverflow.com/a/3071
+                        if hasattr(at, argument_type):
+                            methodToCall = getattr(at, argument_type)
+                            cwlt_parameter = methodToCall(result)
+                            if cwlt_parameter is not None:
+                                tool.inputs.append(cwlt_parameter)
+                                if isinstance(cwlt_parameter, cwlt.OutputParam):
+                                    tool.outputs.append(cwlt_parameter)
 
-        if self.epilog is not None:
-            self.tool.help = self.epilog
-        else:
-            self.tool.help = "TODO: Write help"
+                    if argp.epilog is not None:
+                        tool.help = argp.epilog
+                    else:
+                        tool.help = "TODO: Write help"
 
-        data = self.tool.export()
-        with open('{0}.cwl'.format(sys.argv[0].strip('.py')), 'w') as f:
-            f.write(data)
-        print(data)
+                    data = tool.export()
+                    filename = '{0}.cwl'.format(tool.name.replace('.py',''))
+                    filename = re.sub('\s+', '-', filename)
+                    with open(kwargs.get('path', '') + filename, 'w') as f:
+                        f.write(data)
+                    print(data)
+                else:
+                    continue
         sys.exit()
 
     def parse_args_galaxy_nouse(self, *args, **kwargs):
