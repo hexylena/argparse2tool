@@ -104,6 +104,7 @@ class ArgumentParser(ap.ArgumentParser):
         if '--generate_cwl_tool' in sys.argv:
             # assuming all passed arguments are either commands or argparse2cwl flags
             command = ''
+            shebang = re.search(r'\./\w*?.py$', sys.argv[0])
             for arg in sys.argv:
                 if not arg.startswith('--'):
                     command += '{0} '.format(arg.split('/')[-1])
@@ -115,6 +116,8 @@ class ArgumentParser(ap.ArgumentParser):
                 kwargs['path'] = sys.argv[sys.argv.index('-f')+1]
             if '--basecommand' in sys.argv:
                 kwargs['basecommand'] = sys.argv[sys.argv.index('--basecommand')+1]
+            elif shebang:
+                kwargs['basecommand'] = shebang.group(0)
             self.parse_args_cwl(*args, **kwargs)
         # TODO: reorganize to a separate CLI
         elif '--generate_galaxy_xml' in sys.argv:
