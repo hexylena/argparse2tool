@@ -21,13 +21,25 @@ class ArgparseCWLTranslation(object):
             default = 0
         elif default == sys.stdout:
             default = None
+        if hasattr(param, 'optional'):
+            optional = param.optional
+        else:
+            optional = False
+        prefix = None
+        if param.option_strings:
+            prefix = param.option_strings[-1]
+            if not param.required:
+                optional = True
         kwargs_positional = {'id': param.dest,
                              'position': position,
                              'description': param.help,
-                             'default': default}
+                             'default': default,
+                             'prefix': prefix,
+                             'optional': optional}
 
         if param.choices is not None:
-            pass
+            kwargs_positional['choices'] = param.choices
+            cwlparam = cwlt.ChoiceParam(**kwargs_positional)
         elif param.type == bool:
             cwlparam = cwlt.BooleanParam(**kwargs_positional)
         elif param.type == list:
@@ -51,7 +63,18 @@ class ArgparseCWLTranslation(object):
         return cwlparam
 
 
-    def _StoreAction(self, param,):
+    def __args_from_nargs(self, param):
+        if param.nargs:
+            if not param.nargs == '?':
+                param.items_type = type
+                param.type = list
+
+            if param.nargs == '?' or param.nargs == '*':
+                param.optional = True
+
+        return param
+
+    def _StoreAction(self, param):
         """
         Parse argparse arguments action type of "store", the default.
 
@@ -59,16 +82,20 @@ class ArgparseCWLTranslation(object):
         """
         cwlparam = None
         self.positional_count += 1
+        param = self.__args_from_nargs(param)
         cwlparam = self.__cwl_param_from_type(param, self.positional_count, default=param.default)
-
         return cwlparam
 
 
-    def _StoreTrueAction(self, param, **kwargs):
-        return self._StoreConstAction(param, **kwargs)
+    def _StoreTrueAction(self, param):
+        param.type = bool
+        param.default = True
+        return self._StoreConstAction(param)
 
-    def _StoreFalseAction(self, param, **kwargs):
-        return self._StoreConstAction(param, **kwargs)
+    def _StoreFalseAction(self, param):
+        param.type = bool
+        param.default = False
+        return self._StoreConstAction(param)
 
     def _AppendAction(self, param, **kwargs):
         cwlparam = None
@@ -80,7 +107,8 @@ class ArgparseCWLTranslation(object):
         return cwlparam
 
 
-    def _StoreConstAction(self, param, **kwargs):
+    def _StoreConstAction(self, param):
         self.positional_count += 1
-        cwlparam = self.__cwl_param_from_type(param, self.positional_count)
+        cwlparam = self.__cwl_param_from_type(param, self.positional_count, param.default)
         return cwlparam
+

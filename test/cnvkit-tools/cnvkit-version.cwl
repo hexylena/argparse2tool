@@ -3,18 +3,15 @@
 cwlVersion: "cwl:draft-3"
 
 class: CommandLineTool
-baseCommand: {{ basecommand }}
+baseCommand: ['cnvkit.py', 'version']
 
 requirements:
   - class: InlineJavascriptRequirement
 
 description: |
-  {{ tool.description }}
+  Display this program's version.
 
 inputs:
-  {% block cwltool_inputs %}{% endblock %}
 
 outputs:
-  {% block cwltool_outputs %}
     []
-  {% endblock %}

@@ -1,23 +1,8 @@
 {% extends "cwltool.j2" %}
 
 {% block cwltool_inputs %}
-{% for param in tool.inputs %}
+{% if 'python' in basecommand %}
 
-- id: {{ param.id }}
-  type: {% if param.type != "array" %}{{ param.type }}{% else %}
-
-    type: {{ param.type }}
-    items: {{ param.items_type or "string" }}{% endif -%}
-
-  {% if param.default %}
-
-  default: {{ param.default }}{% endif %}
-
-  {% if param.description %}  description: {{ param.description }}{% endif %}
-
-  inputBinding:
-    position: {{ param.position }}
-{% endfor %}
 - id: {{ tool.name }}
   type: File
   default:
@@ -25,6 +10,35 @@
     path: {{ tool.name }}
   inputBinding:
     position: 0
+{% endif %}
+{% for param in tool.inputs %}
+
+
+- id: {{ param.id }}
+  {% if param.type == "enum" or param.type == "array"%}
+  type:
+    {% if param.optional %}  - "null"
+  - type: {{ param.type }}{% else %}
+    type: {{ param.type }}{% endif %}
+      {% if param.type == "array" %}
+
+    items: {{ param.items_type or "string" }}
+      {% elif param.type == "enum" %}
+
+    symbols: {{ param.choices }}{% endif %}{% else %}
+  type: {% if param.optional %}["null", {{ param.type }}]{% else %}{{ param.type }}
+  {% endif %}
+  {% endif %}
+
+  {% if param.default %}
+  default: {{ param.default }}
+  {% endif %}
+  {% if param.description %}  description: {{ param.description }}{% endif %}
+
+  inputBinding:
+    position: {{ param.position }}
+{% if param.prefix %}    prefix: {{ param.prefix }} {% endif %}
+{% endfor %}
 {% endblock cwltool_inputs %}
 
 {% block cwltool_outputs %}
@@ -36,5 +50,7 @@
 
   outputBinding:
     glob: $(inputs.{{ param.id }}.path)
+{% else %}
+    []
 {% endfor %}
 {% endblock cwltool_outputs %}
