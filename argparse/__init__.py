@@ -65,9 +65,20 @@ for x in __argparse_exports__:
 tools = []
 
 
+def get_arg2cwl_parser():
+    help_text = """
+    argparse2cwl forms CWL tool description from Python tool
+    """
+    arg2cwl_parser = ap.ArgumentParser(prog=sys.argv[0], description=help_text, add_help=False)
+    arg2cwl_parser.add_argument('tools', nargs='*', help='Your tool run commands without arguments')
+    arg2cwl_parser.add_argument('-f', '--file', help='Destination file for writing CWL tool definition')
+    arg2cwl_parser.add_argument('-b', '--basecommand', help='Command that appears in `basecommand` field in CWL tool definition')
+    arg2cwl_parser.add_argument('-ha', '--help_arg2cwl', help='show this help message and exit', action='help')
+    return arg2cwl_parser
+
+
 class ArgumentParser(ap.ArgumentParser):
 
-    # argument_list = []
 
     def __init__(self,
                  prog=None,
@@ -101,27 +112,30 @@ class ArgumentParser(ap.ArgumentParser):
         self.argument_list.append(result)
 
     def parse_args(self, *args, **kwargs):
+        arg2cwl_parser = get_arg2cwl_parser()
         if '--generate_cwl_tool' in sys.argv:
-            # assuming all passed arguments are either commands or argparse2cwl flags
-            command = ''
-            shebang = re.search(r'\./\w*?.py$', sys.argv[0])
-            for arg in sys.argv:
-                if not arg.startswith('--'):
-                    command += '{0} '.format(arg.split('/')[-1])
-                else:
-                    command = command.strip()
-                    kwargs['command'] = command
-                    break
-            if '-f' in sys.argv:
-                kwargs['path'] = sys.argv[sys.argv.index('-f')+1]
-            if '--basecommand' in sys.argv:
-                kwargs['basecommand'] = sys.argv[sys.argv.index('--basecommand')+1]
+            arg2cwl_parser.add_argument('--generate_cwl_tool', action='store_true')
+            arg2cwl_args = arg2cwl_parser.parse_args(*args, **kwargs)
+            print(arg2cwl_args.tools)
+            shebang = re.search(r'\./\w*?.py$', arg2cwl_parser.prog)
+            commands = [arg2cwl_parser.prog.split('/')[-1]]
+            if arg2cwl_args.tools:
+                commands.extend(arg2cwl_args.tools)
+            command = ' '.join(commands)
+            kwargs['command'] = command.strip()
+            if arg2cwl_args.file:
+                kwargs['path'] = arg2cwl_args.file
+            if arg2cwl_args.basecommand:
+                kwargs['basecommand'] = arg2cwl_args.basecommand
             elif shebang:
                 kwargs['basecommand'] = shebang.group(0)
             self.parse_args_cwl(*args, **kwargs)
-        # TODO: reorganize to a separate CLI
         elif '--generate_galaxy_xml' in sys.argv:
             self.parse_args_galaxy_nouse(*args, **kwargs)
+        elif '--help_arg2cwl' in sys.argv:
+            arg2cwl_parser.print_help()
+            sys.exit()
+        # TODO: discuss standalone CLI, i.e. $ argparse2cwl <tool command> <options>
         else:
             return ap.ArgumentParser.parse_args(self, *args, **kwargs)
 
