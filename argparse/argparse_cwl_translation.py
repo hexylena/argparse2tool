@@ -13,7 +13,7 @@ class ArgparseCWLTranslation(object):
     def __init__(self):
         self.positional_count = 0
 
-    def __cwl_param_from_type(self, param, position, default=None):
+    def __cwl_param_from_type(self, param, default=None):
         from argparse import FileType
         """Based on a type, convert to appropriate cwlt class
         """
@@ -30,6 +30,11 @@ class ArgparseCWLTranslation(object):
             prefix = param.option_strings[-1]
             if not param.required:
                 optional = True
+        if optional:
+            position = None
+        else:
+            self.positional_count += 1
+            position = self.positional_count
         kwargs_positional = {'id': param.dest,
                              'position': position,
                              'description': param.help,
@@ -81,9 +86,8 @@ class ArgparseCWLTranslation(object):
         param: argparse.Action
         """
         cwlparam = None
-        self.positional_count += 1
         param = self.__args_from_nargs(param)
-        cwlparam = self.__cwl_param_from_type(param, self.positional_count, default=param.default)
+        cwlparam = self.__cwl_param_from_type(param, default=param.default)
         return cwlparam
 
 
@@ -95,18 +99,16 @@ class ArgparseCWLTranslation(object):
 
     def _AppendAction(self, param, **kwargs):
         cwlparam = None
-        self.positional_count += 1
         param.items_type = param.type
         param.type = list
-        cwlparam = self.__cwl_param_from_type(param, self.positional_count, default=param.default)
+        cwlparam = self.__cwl_param_from_type(param, default=param.default)
         cwlparam.items_type = param.items_type
         return cwlparam
 
 
     def _StoreConstAction(self, param):
-        self.positional_count += 1
         param.type = bool
         param.default = 'null'
-        cwlparam = self.__cwl_param_from_type(param, self.positional_count, param.default)
+        cwlparam = self.__cwl_param_from_type(param, param.default)
         return cwlparam
 

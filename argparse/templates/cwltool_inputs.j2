@@ -31,8 +31,10 @@
   default: {{ param.default }}
   {% endif %}
   {% if param.description %}  description: {{ param.description }}{% endif %}
+  {% if param.position or param.prefix %}
 
   inputBinding:
-    position: {{ param.position }}
+{% if param.position %}    position: {{ param.position }}{% endif %}
 {% if param.prefix %}    prefix: {{ param.prefix }} {% endif %}
+    {% endif %}
 {% endfor %}
