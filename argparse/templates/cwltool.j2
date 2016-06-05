@@ -12,9 +12,6 @@ description: |
   {{ tool.description }}
 
 inputs:
-  {% block cwltool_inputs %}{% endblock %}
+  {{ inputs }}
 
-outputs:
-  {% block cwltool_outputs %}
-    []
-  {% endblock %}
+{{ outputs }}
