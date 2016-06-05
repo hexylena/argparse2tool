@@ -192,7 +192,7 @@ class ArgumentParser(ap.ArgumentParser):
                     print(data)
                 else:
                     continue
-        sys.exit()
+        sys.exit(0)
 
     def parse_args_galaxy_nouse(self, *args, **kwargs):
         self.tool = gxt.Tool(
