@@ -17,6 +17,7 @@ setup(name="gxargparse",
         entry_points={
             'console_scripts': [
                     'gxargparse_check_path = gxargparse.check_path:main',
+                    # 'arg2cwl = gxargparse.arg2cwl:main'
                 ]
             },
         classifiers=[

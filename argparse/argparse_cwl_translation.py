@@ -88,13 +88,9 @@ class ArgparseCWLTranslation(object):
 
 
     def _StoreTrueAction(self, param):
-        param.type = bool
-        param.default = True
         return self._StoreConstAction(param)
 
     def _StoreFalseAction(self, param):
-        param.type = bool
-        param.default = False
         return self._StoreConstAction(param)
 
     def _AppendAction(self, param, **kwargs):
@@ -109,6 +105,8 @@ class ArgparseCWLTranslation(object):
 
     def _StoreConstAction(self, param):
         self.positional_count += 1
+        param.type = bool
+        param.default = 'null'
         cwlparam = self.__cwl_param_from_type(param, self.positional_count, param.default)
         return cwlparam
 
