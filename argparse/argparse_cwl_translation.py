@@ -7,6 +7,13 @@ import sys
 
 from . import cwl_tool as cwlt
 
+PY_TO_CWL_TYPES = {
+    'str': 'string',
+    'bool': 'boolean',
+    'int': 'int',
+    'float': 'float',
+    'list': 'array'
+}
 
 class ArgparseCWLTranslation(object):
 
@@ -17,20 +24,20 @@ class ArgparseCWLTranslation(object):
         from argparse import FileType
         """Based on a type, convert to appropriate cwlt class
         """
-        if default is None and (param.type in (int, float)):
-            default = 0
-        elif default == sys.stdout:
+        if default == sys.stdout:
             default = None
         if hasattr(param, 'optional'):
             optional = param.optional
         else:
             optional = False
+        if not hasattr(param, 'items_type'):
+            param.items_type = None
         prefix = None
         if param.option_strings:
             prefix = param.option_strings[-1]
             if not param.required:
                 optional = True
-        if optional:
+        if param.option_strings:
             position = None
         else:
             self.positional_count += 1
@@ -40,7 +47,8 @@ class ArgparseCWLTranslation(object):
                              'description': param.help,
                              'default': default,
                              'prefix': prefix,
-                             'optional': optional}
+                             'optional': optional,
+                             'items_type': param.items_type}
 
         if param.choices is not None:
             kwargs_positional['choices'] = param.choices
@@ -55,6 +63,8 @@ class ArgparseCWLTranslation(object):
             cwlparam = cwlt.FloatParam(**kwargs_positional)
         elif param.type == None or param.type == str:
             cwlparam = cwlt.TextParam(**kwargs_positional)
+        elif param.type == open:
+            pass
         elif isinstance(param.type, IOBase):
             pass
         elif isinstance(param.type, FileType):
@@ -71,11 +81,12 @@ class ArgparseCWLTranslation(object):
     def __args_from_nargs(self, param):
         if param.nargs:
             if not param.nargs == '?':
-                param.items_type = type
+                param.items_type = self.get_cwl_type(param.type)
                 param.type = list
 
             if param.nargs == '?' or param.nargs == '*':
                 param.optional = True
+                param.required = False
 
         return param
 
@@ -99,7 +110,7 @@ class ArgparseCWLTranslation(object):
 
     def _AppendAction(self, param, **kwargs):
         cwlparam = None
-        param.items_type = param.type
+        param.items_type = self.get_cwl_type(param.type)
         param.type = list
         cwlparam = self.__cwl_param_from_type(param, default=param.default)
         cwlparam.items_type = param.items_type
@@ -112,3 +123,8 @@ class ArgparseCWLTranslation(object):
         cwlparam = self.__cwl_param_from_type(param, param.default)
         return cwlparam
 
+    @staticmethod
+    def get_cwl_type(py_type):
+        if py_type is None:
+            return None
+        return PY_TO_CWL_TYPES[py_type.__name__]
