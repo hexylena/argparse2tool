@@ -1,6 +1,7 @@
+from builtins import object
 import galaxyxml.tool.parameters as gxtp
 
-class ArgparseTranslation(object):
+class ArgparseGalaxyTranslation(object):
 
     def __gxtp_param_from_type(self, param, flag, label, num_dashes, gxparam_extra_kwargs, default=None):
         from argparse import FileType

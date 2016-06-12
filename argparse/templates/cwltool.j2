@@ -1,0 +1,17 @@
+#!/usr/bin/env cwl-runner
+
+cwlVersion: "cwl:draft-3"
+
+class: CommandLineTool
+baseCommand: {{ basecommand }}
+
+requirements:
+  - class: InlineJavascriptRequirement
+
+description: |
+  {{ tool.description }}
+
+inputs:
+  {{ inputs }}
+
+{{ outputs }}
