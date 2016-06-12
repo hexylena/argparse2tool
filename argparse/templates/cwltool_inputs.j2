@@ -1,6 +1,3 @@
-{% extends "cwltool.j2" %}
-
-{% block cwltool_inputs %}
 {% if 'python' in basecommand %}
 
 - id: {{ tool.name }}
@@ -34,23 +31,10 @@
   default: {{ param.default }}
   {% endif %}
   {% if param.description %}  description: {{ param.description }}{% endif %}
+  {% if param.position or param.prefix %}
 
   inputBinding:
-    position: {{ param.position }}
+{% if param.position %}    position: {{ param.position }}{% endif %}
 {% if param.prefix %}    prefix: {{ param.prefix }} {% endif %}
+    {% endif %}
 {% endfor %}
-{% endblock cwltool_inputs %}
-
-{% block cwltool_outputs %}
-{% for param in tool.outputs %}
-- id: {{ param.id + '_out'}}
-  type: File
-  {% if param.default %}default: {{ param.default }} {% endif %}
-  {% if param.description %}  description: {{ param.description }}{% endif %}
-
-  outputBinding:
-    glob: $(inputs.{{ param.id }}.path)
-{% else %}
-    []
-{% endfor %}
-{% endblock cwltool_outputs %}

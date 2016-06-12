@@ -1,3 +1,4 @@
+import io
 import argparse
 
 parser = argparse.ArgumentParser(description='Process some integers.', prefix_chars='-+', epilog="here's some epilog text", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -11,7 +12,7 @@ parser.add_argument('--sum', '-s', dest='accumulate', action='store_const',
         const=sum, default=max, help='sum the integers (default: find the max)')
 
 parser.add_argument('--foo', nargs='?', help='foo help')
-parser.add_argument('--file', nargs='?', help='foo help', type=file)
+parser.add_argument('--file', nargs='?', help='foo help', type=io.IOBase)
 parser.add_argument('--bar', nargs='*', default=[1, 2, 3], help='BAR!')
 #parser.add_argument('+f', action='store_const', const='43')
 parser.add_argument('--true', action='store_true', help='Store a true')

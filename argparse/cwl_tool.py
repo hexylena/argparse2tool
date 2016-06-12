@@ -63,17 +63,17 @@ class DataParam(InputParam):
 
 class CWLTool(object):
 
-    def __init__(self, name, description, basecommand=None):
+    def __init__(self, name, description, basecommand=None, output_file=None):
         self.name = name
+        self.output_file = output_file
         if description:
             self.description = description.replace('\n', '\n  ')
         else:
             self.description = None
-        env = Environment(
+        self.env = Environment(
             loader=FileSystemLoader(os.path.abspath(os.path.join(os.path.dirname(__file__), 'templates'))),
             trim_blocks=True,
             lstrip_blocks=True)
-        self.template = env.get_template('cwltool_inputs.j2')
         if basecommand:
             self.basecommands = [basecommand]
         else:
@@ -82,5 +82,16 @@ class CWLTool(object):
         self.outputs = []
 
     def export(self):
-        return self.template.render(tool=self,
-                                    basecommand=self.basecommands)
+        inputs_template = self.env.get_template('cwltool_inputs.j2')
+        outputs_template = self.env.get_template('cwltool_outputs.j2')
+        main_template = self.env.get_template('cwltool.j2')
+        inputs = inputs_template.render(tool=self, basecommand=self.basecommands)
+        if self.output_file:
+            with open(self.output_file) as f:
+                outputs = f.read()
+        else:
+            outputs = outputs_template.render(tool=self)
+        return main_template.render(tool=self,
+                                    basecommand=self.basecommands,
+                                    inputs=inputs,
+                                    outputs=outputs)
