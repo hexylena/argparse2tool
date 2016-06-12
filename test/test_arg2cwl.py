@@ -41,6 +41,7 @@ class GeneralTestCase(unittest.TestCase):
         parser.add_argument('--true_p', action='store_true', help='Store a true')
         parser.add_argument('--false_p', action='store_false', help='Store a false')
         parser.add_argument('--append', action='append', help='Append a value')
+        parser.add_argument('--output-file', help='Output file')
 
         parser.add_argument('--nargs2', nargs=2, help='nargs2')
 
@@ -208,10 +209,14 @@ class CWLTestCase(unittest.TestCase):
         self.assertEqual(output_section['outputs'][0]['outputBinding']['glob'],
                          tool.outputs[output_0_name].output_binding.glob)
 
-
-
     def test_outputs(self):
-        pass
+        parser_name = 'test-outputs.py'
+        testargs = [parser_name, "--generate_cwl_tool", "-d", self.test_dir, "-go"]
+        parser, tool = self.get_simple_tool(parser_name, testargs)
+        for action in self._strip_help_version_actions(parser._actions):
+            if 'output' in action.dest:
+                k = tool.outputs[action.dest+'_out'].id
+                self.assertTrue(tool.outputs[action.dest+'_out'].id)
 
 
 if __name__ == '__main__':

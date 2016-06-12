@@ -17,8 +17,9 @@ PY_TO_CWL_TYPES = {
 
 class ArgparseCWLTranslation(object):
 
-    def __init__(self):
+    def __init__(self, generate_outputs=False):
         self.positional_count = 0
+        self.generate_outputs = generate_outputs
 
     def __cwl_param_from_type(self, param, default=None):
         from argparse import FileType
@@ -62,7 +63,10 @@ class ArgparseCWLTranslation(object):
         elif param.type == float:
             cwlparam = cwlt.FloatParam(**kwargs_positional)
         elif param.type == None or param.type == str:
-            cwlparam = cwlt.TextParam(**kwargs_positional)
+            if self.generate_outputs and 'output' in param.dest:
+                cwlparam = cwlt.OutputParam(**kwargs_positional)
+            else:
+                cwlparam = cwlt.TextParam(**kwargs_positional)
         elif param.type == open:
             pass
         elif isinstance(param.type, IOBase):

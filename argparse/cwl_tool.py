@@ -1,3 +1,4 @@
+import re
 from builtins import object
 import os
 
@@ -15,6 +16,7 @@ class Param(object):
         if description:
             self.description = description.replace(':', ' -') \
                 .replace('\n', ' ')  # `:` is a special character and must be replaced with smth
+            self.description = re.sub('\s{2,}', ' ', self.description)
         else:
             self.description = None
 

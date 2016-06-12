@@ -79,6 +79,8 @@ def get_arg2cwl_parser():
                                 help='Command that appears in `basecommand` field in CWL tool')
     arg2cwl_parser.add_argument('-o', '--output_section', metavar='FILENAME',
                                 help='File with output section which will be put to a formed CWL tool')
+    arg2cwl_parser.add_argument('-go', '--generate_outputs', action='store_true',
+                                help='Form output section from args than contain `output` keyword in their names')
     arg2cwl_parser.add_argument('-ha', '--help_arg2cwl',
                                 help='Show this help message and exit', action='help')
     return arg2cwl_parser
@@ -139,7 +141,7 @@ class ArgumentParser(ap.ArgumentParser):
             if shebang:
                 kwargs['basecommand'] = shebang.group(0)
 
-            attrs = ['directory', 'output_section', 'basecommand']
+            attrs = ['directory', 'output_section', 'basecommand', 'generate_outputs']
             for arg in attrs:
                 if getattr(arg2cwl_args, arg):
                     kwargs[arg] = getattr(arg2cwl_args, arg)
@@ -174,7 +176,7 @@ class ArgumentParser(ap.ArgumentParser):
                                         argp.description,
                                         kwargs.get('basecommand', ''),
                                         kwargs.get('output_section', ''))
-                    at = act.ArgparseCWLTranslation()
+                    at = act.ArgparseCWLTranslation(kwargs.get('generate_outputs', False))
                     for result in argp._actions:
                         argument_type = result.__class__.__name__
                         # http://stackoverflow.com/a/3071
