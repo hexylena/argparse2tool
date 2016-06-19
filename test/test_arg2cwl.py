@@ -2,6 +2,7 @@ import sys
 import os
 import shutil
 import unittest
+from itertools import chain
 from unittest import mock
 from io import StringIO
 
@@ -17,13 +18,14 @@ class GeneralTestCase(unittest.TestCase):
     maxDiff = None
 
     @staticmethod
-    def prepare_argument_parser(name=None):
-        parser = argparse.ArgumentParser(prog=name, description='test program')
+    def prepare_argument_parser(name=None, add_help=True):
+        parser = argparse.ArgumentParser(prog=name, description='test program', add_help=add_help)
         parser.add_argument('keyword', metavar='Q', type=str, nargs=1,
                             help='action keyword')
         parser.add_argument('integers', metavar='N', type=int, nargs='+',
                             help='an integer for \n'
                                  'the accumulator')
+        parser.add_argument('choices', type=int, choices=range(5, 10))
         parser.add_argument('foo', type=str,
                             help='positional argument with the same dest as optional argument')
         parser.add_argument('positional_nargs_asteriks', nargs='*',
@@ -31,16 +33,16 @@ class GeneralTestCase(unittest.TestCase):
         parser.add_argument('positional_nargs_question_mark', nargs='?',
                             help='positional argument with nargs = ?')
         parser.add_argument('positional_with_choices', choices=['rock', 'paper', 'scissors'])
-        parser.add_argument('--sum', '-s', dest='accumulate', action='store_const',
-                            const=sum, default=max, help='sum the integers (default: find the max)')
         parser.add_argument('--req', required=True, help='required optional')
         parser.add_argument('--foo', nargs='?', help='foo help')
-        # parser.add_argument('--open', type=open, help='argument with type `open`')
+        parser.add_argument('--open', type=open, help='argument with type `open`')
         parser.add_argument('--file', nargs='?', help='foo help', type=argparse.FileType('w'))
         parser.add_argument('--bar', nargs='*', default=[1, 2, 3], help='BAR!')
         parser.add_argument('--true_p', action='store_true', help='Store a true')
         parser.add_argument('--false_p', action='store_false', help='Store a false')
         parser.add_argument('--append', action='append', help='Append a value')
+        parser.add_argument('--str', dest='types', action='append_const', const=str, help='Append a value')
+        parser.add_argument('--int', dest='types', action='append_const', const=int, help='Append a value')
         parser.add_argument('--output-file', help='Output file')
 
         parser.add_argument('--nargs2', nargs=2, help='nargs2')
@@ -48,6 +50,7 @@ class GeneralTestCase(unittest.TestCase):
         parser.add_argument('--mode', choices=['rock', 'paper', 'scissors'], default='scissors')
 
         parser.add_argument('--version', action='version', version='2.0')
+        parser.set_defaults(foo='Lorem Ipsum')
         return parser
 
     def test_general(self):
@@ -109,8 +112,8 @@ class CWLTestCase(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.test_dir)
 
-    def get_simple_tool(self, parser_name, testargs=None):
-        parser = GeneralTestCase.prepare_argument_parser(name=parser_name)
+    def get_simple_tool(self, parser_name, testargs=None, add_help=True):
+        parser = GeneralTestCase.prepare_argument_parser(parser_name, add_help)
         if not testargs:
             testargs = [parser_name, "--generate_cwl_tool", "-d", self.test_dir]
         with mock.patch.object(sys, 'argv', testargs):
@@ -171,7 +174,10 @@ class CWLTestCase(unittest.TestCase):
                 arg_type = arg_type[1]  # the second is the actual type
             # choices
             if action.choices:
-                self.assertEqual(action.choices, arg_type['symbols'])
+                if type(action.choices) is range:
+                    self.assertEqual(list(action.choices), arg_type['symbols'])
+                else:
+                    self.assertEqual(action.choices, arg_type['symbols'])
                 self.assertEqual('enum', arg_type['type'])
             if action.type:
                 if isinstance(action.type, argparse.FileType):
@@ -179,9 +185,11 @@ class CWLTestCase(unittest.TestCase):
                 else:
                     action_type = ac.get_cwl_type(action.type)
                 if (action.nargs and action.nargs != '?') \
-                        or type(action).__name__ == "_AppendAction":
+                        or type(action).__name__.startswith("_Append"):
                     self.assertEqual('array', arg_type['type'])
                     self.assertEqual(action.items_type or 'string', arg_type['items'])
+                elif action.choices:
+                    self.assertTrue(all(isinstance(x, action.type) for x in arg_type['symbols']))
                 else:
                     self.assertEqual(action_type, arg_type)
 
@@ -217,6 +225,56 @@ class CWLTestCase(unittest.TestCase):
             if 'output' in action.dest:
                 k = tool.outputs[action.dest+'_out'].id
                 self.assertTrue(tool.outputs[action.dest+'_out'].id)
+
+    def test_parents(self):
+        mum, mum_tool = self.get_simple_tool('mum.py', add_help=False)
+        dad = argparse.ArgumentParser(prog='daddy.py', description='test program', add_help=False)
+        dad.add_argument('pos_arg', type=int)
+        dad.add_argument('--opt_arg', action='store_true')
+        kid_name = 'kid.py'
+        kid = argparse.ArgumentParser(prog=kid_name, parents=[mum, dad])
+        kid.add_argument('--kids_argument', nargs='*')
+        testargs = [kid_name, "--generate_cwl_tool", "-d", self.test_dir]
+        with mock.patch.object(sys, 'argv', testargs):
+            with self.assertRaises(SystemExit) as result:
+                kid.parse_args()
+                self.assertEqual(result.exception.code, 0)
+        tool = Tool(self.test_dir + kid_name.replace('.py', '.cwl').strip('./'))
+        actions = list(chain(self._strip_help_version_actions(mum._actions),
+                           self._strip_help_version_actions(dad._actions)))
+        arguments = [arg.dest for arg in actions]
+        arguments.append('kids_argument')
+        for arg in arguments:
+            self.assertIn(arg, tool.inputs.keys())
+
+
+
+    def test_prefixes(self):
+        parser_name = 'test-prefix-chars.py'
+        parser = argparse.ArgumentParser(prog=parser_name,
+                                         prefix_chars='-+',
+                                         description='test prefix chars progrma')
+        parser.add_argument('keyword', type=str, nargs=1,
+                            help='action keyword')
+        parser.add_argument('integers', metavar='N', type=int, nargs='+',
+                            help='an integer for \n'
+                                 'the accumulator')
+        parser.add_argument('choices', type=int, choices=range(5, 10))
+        parser.add_argument('foo', type=str,
+                            help='positional argument with the same dest as optional argument')
+        parser.add_argument('--req', required=True, help='required optional')
+        parser.add_argument('++foo', nargs='?', help='foo help')
+        parser.add_argument('+open', type=open, help='argument with type `open`')
+        parser.add_argument('-file', nargs='?', help='foo help', type=argparse.FileType('w'))
+        parser.add_argument('--bar', nargs='*', default=[1, 2, 3], help='BAR!')
+        testargs = [parser_name, "--generate_cwl_tool", "-d", self.test_dir]
+        with mock.patch.object(sys, 'argv', testargs):
+            with self.assertRaises(SystemExit) as result:
+                parser.parse_args()
+                self.assertEqual(result.exception.code, 0)
+        tool = Tool(self.test_dir + parser_name.replace('.py', '.cwl').strip('./'))
+        for optional in self._strip_help_version_actions(parser._optionals._group_actions):
+            self.assertEqual(tool.inputs[optional.dest].input_binding.prefix, optional.option_strings[0])
 
 
 if __name__ == '__main__':
