@@ -1,13 +1,12 @@
 from setuptools import setup, find_packages
 import sys, os
-
+import argparse
 if sys.argv[-1] == 'publish':
     os.system("python setup.py sdist bdist_wheel upload; git push")
     sys.exit()
 
-
 setup(name="gxargparse",
-        version='0.2.5',
+        version=argparse.__version__,
         description='Galaxy drop-in replacement for argparse',
         author='Eric Rasche',
         author_email='rasche.eric@yandex.ru',

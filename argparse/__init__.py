@@ -2,11 +2,15 @@ from __future__ import print_function
 from __future__ import absolute_import
 from builtins import range
 import sys
+import logging
 
 import re
 
 from argparse.cwl_tool import CWLTool
 
+__version__ = '0.2.5'
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def load_conflicting_package(name, not_name, local_module):
     """Load a conflicting package
@@ -67,21 +71,23 @@ tools = []
 
 def get_arg2cwl_parser():
     help_text = """
-    argparse2cwl forms CWL command line tool from Python tool \n
-    Example: $ python program.py -b Python
+    argparse2cwl forms CWL command line tool from Python tool
+    Example: $ python program.py --generate_cwl_tool -b python
     """
-    arg2cwl_parser = ap.ArgumentParser(prog=sys.argv[0], description=help_text, add_help=False)
+    arg2cwl_parser = ap.ArgumentParser(prog=sys.argv[0], description=help_text,
+                                       formatter_class=RawDescriptionHelpFormatter, add_help=False)
     arg2cwl_parser.add_argument('tools', nargs='*',
                                 help='Command for running your tool(s), without arguments')
     arg2cwl_parser.add_argument('-d', '--directory',
                                 help='Directory to store CWL tool descriptions')
     arg2cwl_parser.add_argument('-b', '--basecommand',
-                                help='Command that appears in `basecommand` field in CWL tool')
+                                help='Command that appears in `basecommand` field in CWL tool '
+                                     'instead of the default one')
     arg2cwl_parser.add_argument('-o', '--output_section', metavar='FILENAME',
                                 help='File with output section which will be put to a formed CWL tool')
     arg2cwl_parser.add_argument('-go', '--generate_outputs', action='store_true',
                                 help='Form output section from args than contain `output` keyword in their names')
-    arg2cwl_parser.add_argument('-ha', '--help_arg2cwl',
+    arg2cwl_parser.add_argument('--help_arg2cwl',
                                 help='Show this help message and exit', action='help')
     return arg2cwl_parser
 
@@ -103,6 +109,7 @@ class ArgumentParser(ap.ArgumentParser):
                  add_help=True):
 
         self.argument_list = []
+        self.argument_names = []
         tools.append(self)
         super(ArgumentParser, self).__init__(prog=prog,
                                              usage=usage,
@@ -118,11 +125,14 @@ class ArgumentParser(ap.ArgumentParser):
 
     def add_argument(self, *args, **kwargs):
         result = ap.ArgumentParser.add_argument(self, *args, **kwargs)
-        # to avoid dublicate ids when there's a positional and an optional param with the same dest
-        argument_names = [arg.dest for arg in self.argument_list]
-        if result.dest in argument_names:
-            result.dest = '_' + result.dest
+        # to avoid duplicate ids when there's a positional and an optional param with the same dest
+        if result.dest in self.argument_names:
+            if result.__class__.__name__ == '_AppendConstAction':
+                return
+            else:
+                result.dest = '_' + result.dest
         self.argument_list.append(result)
+        self.argument_names.append(result.dest)
 
     def parse_args(self, *args, **kwargs):
 
@@ -130,7 +140,7 @@ class ArgumentParser(ap.ArgumentParser):
         if '--generate_cwl_tool' in sys.argv:
             arg2cwl_parser.add_argument('--generate_cwl_tool', action='store_true')
             arg2cwl_args = arg2cwl_parser.parse_args(*args, **kwargs)
-            print('sys argv: ', sys.argv)
+            logger.debug('sys argv: ', sys.argv)
             commands = [arg2cwl_parser.prog.split('/')[-1]]
             if arg2cwl_args.tools:
                 commands.extend(arg2cwl_args.tools)
@@ -189,9 +199,7 @@ class ArgumentParser(ap.ArgumentParser):
                                     tool.outputs.append(cwlt_parameter)
 
                     if argp.epilog is not None:
-                        tool.help = argp.epilog
-                    else:
-                        tool.help = "TODO: Write help"
+                        tool.description += argp.epilog
 
                     data = tool.export()
                     filename = '{0}.cwl'.format(tool.name.replace('.py',''))

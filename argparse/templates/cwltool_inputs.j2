@@ -27,7 +27,7 @@
   {% endif %}
   {% endif %}
 
-  {% if param.default %}
+  {% if param.default != None %}
   default: {{ param.default }}
   {% endif %}
   {% if param.description %}  description: {{ param.description }}{% endif %}
