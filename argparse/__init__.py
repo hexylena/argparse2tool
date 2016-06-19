@@ -128,6 +128,7 @@ class ArgumentParser(ap.ArgumentParser):
         # to avoid duplicate ids when there's a positional and an optional param with the same dest
         if result.dest in self.argument_names:
             if result.__class__.__name__ == '_AppendConstAction':
+                # append_const params with the same dest are populated in job.json
                 return
             else:
                 result.dest = '_' + result.dest
@@ -164,7 +165,6 @@ class ArgumentParser(ap.ArgumentParser):
         elif '--help_arg2cwl' in sys.argv:
             arg2cwl_parser.print_help()
             sys.exit()
-        # TODO: discuss standalone CLI, i.e. $ argparse2cwl <tool command> <options>
         else:
             return ap.ArgumentParser.parse_args(self, *args, **kwargs)
 
@@ -178,9 +178,11 @@ class ArgumentParser(ap.ArgumentParser):
                                         argp._subparsers._group_actions):
                     for choice_action in subparser._choices_actions:
                         subparser.choices[choice_action.dest].description = choice_action.help
-            # if the command is subparser, we don't need its CWL wrapper
+            # if the command is subparser itself, we don't need its CWL wrapper
             else:
-                # build up wrappers if the user actually requests it, otherwise build all wrappers
+                # if user provides a generic command like `cnvkit.py` - all possible descriptions are generated
+                # if a specific command like `cnvkit.py batch` is given and
+                # there are no subparsers - only this description is built
                 if kwargs.get('command', argp.prog) in argp.prog:
                     tool = cwlt.CWLTool(argp.prog,
                                         argp.description,
@@ -189,7 +191,6 @@ class ArgumentParser(ap.ArgumentParser):
                     at = act.ArgparseCWLTranslation(kwargs.get('generate_outputs', False))
                     for result in argp._actions:
                         argument_type = result.__class__.__name__
-                        # http://stackoverflow.com/a/3071
                         if hasattr(at, argument_type):
                             methodToCall = getattr(at, argument_type)
                             cwlt_parameter = methodToCall(result)

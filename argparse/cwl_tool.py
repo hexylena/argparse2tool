@@ -69,7 +69,7 @@ class CWLTool(object):
 
     def __init__(self, name, description, basecommand=None, output_file=None):
         self.name = name
-        self.output_file = output_file
+        self.output_file = output_file  # file with manually filled output section
         if description:
             self.description = description.replace('\n', '\n  ')
         else:

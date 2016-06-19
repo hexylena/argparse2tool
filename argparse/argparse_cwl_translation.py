@@ -1,5 +1,4 @@
 from __future__ import absolute_import
-from builtins import object
 
 import sys
 
@@ -13,13 +12,18 @@ PY_TO_CWL_TYPES = {
     'list': 'array',
     'TextIOWrapper': 'File',
     'open': 'File'
-
 }
 
-class ArgparseCWLTranslation(object):
+class ArgparseCWLTranslation:
 
     def __init__(self, generate_outputs=False):
         self.positional_count = 0
+        # generate_outputs option allows to form output arguments in CWL tool description from arguments
+        # which merely contain keyword `output` in their name
+        # Example: parser.add_argument('--output-file', help='some file for output') will be placed into
+        # output section (normally only files with FileType('w') are placed into output section
+        # However, such behaviour is tricky as '--output-directory' argument will also be treated like File
+        # so check generated tools carefully if you choose this option
         self.generate_outputs = generate_outputs
 
     def __cwl_param_from_type(self, param):
@@ -68,7 +72,9 @@ class ArgparseCWLTranslation(object):
                 cwlparam = cwlt.OutputParam(**kwargs_positional)
             else:
                 cwlparam = cwlt.TextParam(**kwargs_positional)
-        elif  type(param.type).__name__ =='builtin_function_or_method' or (isinstance(param.type, FileType) and 'r' in param.type._mode):
+        # if type == open or type == Filetype('r')
+        elif type(param.type).__name__ =='builtin_function_or_method' \
+                or (isinstance(param.type, FileType) and 'r' in param.type._mode):
             cwlparam = cwlt.FileParam(**kwargs_positional)
         elif isinstance(param.type, FileType) and 'w' in param.type._mode:
             cwlparam = cwlt.OutputParam(**kwargs_positional)
@@ -90,12 +96,6 @@ class ArgparseCWLTranslation(object):
         return param
 
     def _StoreAction(self, param):
-        """
-        Parse argparse arguments action type of "store", the default.
-
-        param: argparse.Action
-        """
-        cwlparam = None
         param = self.__args_from_nargs(param)
         cwlparam = self.__cwl_param_from_type(param)
         return cwlparam
@@ -108,7 +108,6 @@ class ArgparseCWLTranslation(object):
         return self.__StoreBoolAction(param)
 
     def _AppendAction(self, param, **kwargs):
-        cwlparam = None
         param.items_type = self.get_cwl_type(param.type)
         param.type = list
         cwlparam = self.__cwl_param_from_type(param)
@@ -116,6 +115,10 @@ class ArgparseCWLTranslation(object):
         return cwlparam
 
     def _AppendConstAction(self, param):
+        """
+        AppendConst argument is formed once from `dest` field. `Const` option is ignored
+        and must be provided again in job.json
+        """
         param.type = list
         param.optional = True
         cwlparam = self.__cwl_param_from_type(param)
