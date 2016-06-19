@@ -61,7 +61,7 @@ class ChoiceParam(InputParam):
         super(ChoiceParam, self).__init__(**kwargs)
 
 
-class DataParam(InputParam):
+class FileParam(InputParam):
     type = 'File'
 
 
@@ -95,7 +95,10 @@ class CWLTool(object):
                 outputs = f.read()
         else:
             outputs = outputs_template.render(tool=self)
+        import argparse
         return main_template.render(tool=self,
+                                    version=argparse.__version__,
+                                    formcommand=' '.join(self.basecommands),
                                     basecommand=self.basecommands,
                                     inputs=inputs,
                                     outputs=outputs)

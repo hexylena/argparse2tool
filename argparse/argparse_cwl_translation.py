@@ -1,8 +1,6 @@
 from __future__ import absolute_import
 from builtins import object
 
-from io import IOBase
-
 import sys
 
 from . import cwl_tool as cwlt
@@ -12,7 +10,10 @@ PY_TO_CWL_TYPES = {
     'bool': 'boolean',
     'int': 'int',
     'float': 'float',
-    'list': 'array'
+    'list': 'array',
+    'TextIOWrapper': 'File',
+    'open': 'File'
+
 }
 
 class ArgparseCWLTranslation(object):
@@ -21,12 +22,12 @@ class ArgparseCWLTranslation(object):
         self.positional_count = 0
         self.generate_outputs = generate_outputs
 
-    def __cwl_param_from_type(self, param, default=None):
+    def __cwl_param_from_type(self, param):
         from argparse import FileType
         """Based on a type, convert to appropriate cwlt class
         """
-        if default == sys.stdout:
-            default = None
+        if param.default == sys.stdout:
+            param.default = None
         if hasattr(param, 'optional'):
             optional = param.optional
         else:
@@ -46,7 +47,7 @@ class ArgparseCWLTranslation(object):
         kwargs_positional = {'id': param.dest,
                              'position': position,
                              'description': param.help,
-                             'default': default,
+                             'default': param.default,
                              'prefix': prefix,
                              'optional': optional,
                              'items_type': param.items_type}
@@ -67,16 +68,10 @@ class ArgparseCWLTranslation(object):
                 cwlparam = cwlt.OutputParam(**kwargs_positional)
             else:
                 cwlparam = cwlt.TextParam(**kwargs_positional)
-        elif param.type == open:
-            pass
-        elif isinstance(param.type, IOBase):
-            pass
-        elif isinstance(param.type, FileType):
-            if 'w' in param.type._mode:
-                cwlparam = cwlt.OutputParam(**kwargs_positional)
-            else:
-                # don't know what other types except frofm `file` can be in DataParam, but let it be for now
-                cwlparam = cwlt.DataParam(**kwargs_positional)
+        elif  type(param.type).__name__ =='builtin_function_or_method' or (isinstance(param.type, FileType) and 'r' in param.type._mode):
+            cwlparam = cwlt.FileParam(**kwargs_positional)
+        elif isinstance(param.type, FileType) and 'w' in param.type._mode:
+            cwlparam = cwlt.OutputParam(**kwargs_positional)
         else:
             cwlparam = None
         return cwlparam
@@ -102,29 +97,33 @@ class ArgparseCWLTranslation(object):
         """
         cwlparam = None
         param = self.__args_from_nargs(param)
-        cwlparam = self.__cwl_param_from_type(param, default=param.default)
+        cwlparam = self.__cwl_param_from_type(param)
         return cwlparam
 
 
     def _StoreTrueAction(self, param):
-        return self._StoreConstAction(param)
+        return self.__StoreBoolAction(param)
 
     def _StoreFalseAction(self, param):
-        return self._StoreConstAction(param)
+        return self.__StoreBoolAction(param)
 
     def _AppendAction(self, param, **kwargs):
         cwlparam = None
         param.items_type = self.get_cwl_type(param.type)
         param.type = list
-        cwlparam = self.__cwl_param_from_type(param, default=param.default)
+        cwlparam = self.__cwl_param_from_type(param)
         cwlparam.items_type = param.items_type
         return cwlparam
 
+    def _AppendConstAction(self, param):
+        param.type = list
+        param.optional = True
+        cwlparam = self.__cwl_param_from_type(param)
+        return cwlparam
 
-    def _StoreConstAction(self, param):
+    def __StoreBoolAction(self, param):
         param.type = bool
-        param.default = 'null'
-        cwlparam = self.__cwl_param_from_type(param, param.default)
+        cwlparam = self.__cwl_param_from_type(param)
         return cwlparam
 
     @staticmethod
