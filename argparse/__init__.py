@@ -60,7 +60,7 @@ __argparse_exports__ = ['HelpFormatter', 'RawDescriptionHelpFormatter',
                         'ArgumentDefaultsHelpFormatter', 'FileType',
                         'SUPPRESS', 'OPTIONAL', 'ZERO_OR_MORE', 'ONE_OR_MORE',
                         'PARSER', 'REMAINDER', '_UNRECOGNIZED_ARGS_ATTR',
-                        '_VersionAction', '_SubParsersAction']
+                        '_VersionAction', '_SubParsersAction', 'Action']
 
 # Set the attribute on ourselves.
 for x in __argparse_exports__:
@@ -152,10 +152,24 @@ class ArgumentParser(ap.ArgumentParser):
             if shebang:
                 kwargs['basecommand'] = shebang.group(0)
 
+            formcommand = ''
+            if kwargs.get('basecommand', ''):
+                formcommand += kwargs['basecommand']
+            else:
+                formcommand += kwargs['command']
+
             attrs = ['directory', 'output_section', 'basecommand', 'generate_outputs']
             for arg in attrs:
                 if getattr(arg2cwl_args, arg):
                     kwargs[arg] = getattr(arg2cwl_args, arg)
+
+            if kwargs.get('output_section', ''):
+                formcommand += ' -o FILENAME'
+            if kwargs.get('basecommand', ''):
+                formcommand += ' -b {0}'.format(kwargs['basecommand'])
+            if kwargs.get('generate_outputs', ''):
+                formcommand += ' -go'
+            kwargs['formcommand'] = formcommand
 
             self.parse_args_cwl(*args, **kwargs)
 
@@ -186,6 +200,7 @@ class ArgumentParser(ap.ArgumentParser):
                 if kwargs.get('command', argp.prog) in argp.prog:
                     tool = cwlt.CWLTool(argp.prog,
                                         argp.description,
+                                        kwargs['formcommand'],
                                         kwargs.get('basecommand', ''),
                                         kwargs.get('output_section', ''))
                     at = act.ArgparseCWLTranslation(kwargs.get('generate_outputs', False))

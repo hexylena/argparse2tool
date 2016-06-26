@@ -67,7 +67,7 @@ class FileParam(InputParam):
 
 class CWLTool(object):
 
-    def __init__(self, name, description, basecommand=None, output_file=None):
+    def __init__(self, name, description, formcommand, basecommand=None, output_file=None):
         self.name = name
         self.output_file = output_file  # file with manually filled output section
         if description:
@@ -82,6 +82,7 @@ class CWLTool(object):
             self.basecommands = [basecommand]
         else:
             self.basecommands = self.name.split()
+        self.formcommand = formcommand
         self.inputs = []
         self.outputs = []
 
@@ -98,7 +99,8 @@ class CWLTool(object):
         import argparse
         return main_template.render(tool=self,
                                     version=argparse.__version__,
-                                    formcommand=' '.join(self.basecommands),
+                                    formcommand=self.formcommand,
+                                    stripped_options_command=re.sub('-.*', '', self.formcommand),
                                     basecommand=self.basecommands,
                                     inputs=inputs,
                                     outputs=outputs)
