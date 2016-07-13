@@ -1,4 +1,4 @@
-{% if 'python' in basecommand %}
+{% if 'python' in basecommand[0] %}
 
 - id: {{ tool.name }}
   type: File
@@ -27,7 +27,7 @@
   {% endif %}
   {% endif %}
 
-  {% if param.default %}
+  {% if param.default != None %}
   default: {{ param.default }}
   {% endif %}
   {% if param.description %}  description: {{ param.description }}{% endif %}

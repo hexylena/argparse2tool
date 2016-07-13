@@ -1,3 +1,4 @@
+import re
 from builtins import object
 import os
 
@@ -5,14 +6,17 @@ from jinja2 import Environment, FileSystemLoader
 
 
 class Param(object):
-    def __init__(self, id, position=None, description=None, default=None, prefix=None, optional=False):
+    def __init__(self, id, position=None, description=None, default=None, prefix=None, optional=False, items_type=None):
         self.id = id
         self.position = position
         self.default = default
         self.prefix = prefix
         self.optional = optional
+        self.items_type = items_type
         if description:
-            self.description = description.replace(':', ' -')  # `:` is a special character and must be replaced with smth
+            self.description = description.replace(':', ' -') \
+                .replace('\n', ' ')  # `:` is a special character and must be replaced with smth
+            self.description = re.sub('\s{2,}', ' ', self.description)
         else:
             self.description = None
 
@@ -57,15 +61,15 @@ class ChoiceParam(InputParam):
         super(ChoiceParam, self).__init__(**kwargs)
 
 
-class DataParam(InputParam):
+class FileParam(InputParam):
     type = 'File'
 
 
 class CWLTool(object):
 
-    def __init__(self, name, description, basecommand=None, output_file=None):
+    def __init__(self, name, description, formcommand, basecommand=None, output_file=None):
         self.name = name
-        self.output_file = output_file
+        self.output_file = output_file  # file with manually filled output section
         if description:
             self.description = description.replace('\n', '\n  ')
         else:
@@ -78,6 +82,7 @@ class CWLTool(object):
             self.basecommands = [basecommand]
         else:
             self.basecommands = self.name.split()
+        self.formcommand = formcommand
         self.inputs = []
         self.outputs = []
 
@@ -91,7 +96,11 @@ class CWLTool(object):
                 outputs = f.read()
         else:
             outputs = outputs_template.render(tool=self)
+        import argparse
         return main_template.render(tool=self,
+                                    version=argparse.__version__,
+                                    formcommand=self.formcommand,
+                                    stripped_options_command=re.sub('-.*', '', self.formcommand),
                                     basecommand=self.basecommands,
                                     inputs=inputs,
                                     outputs=outputs)
