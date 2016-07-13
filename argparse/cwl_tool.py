@@ -1,11 +1,10 @@
 import re
-from builtins import object
 import os
 
 from jinja2 import Environment, FileSystemLoader
 
 
-class Param(object):
+class Param:
     def __init__(self, id, position=None, description=None, default=None, prefix=None, optional=False, items_type=None):
         self.id = id
         self.position = position

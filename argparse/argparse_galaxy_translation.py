@@ -1,4 +1,3 @@
-from builtins import object
 import galaxyxml.tool.parameters as gxtp
 
 class ArgparseGalaxyTranslation(object):

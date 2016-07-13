@@ -8,7 +8,7 @@ import re
 
 from argparse.cwl_tool import CWLTool
 
-__version__ = '0.2.5'
+__version__ = '0.2.7'
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -56,12 +56,7 @@ from . import cwl_tool as cwlt
 # This fetches a reference to ourselves
 __selfmodule__ = sys.modules[load_conflicting_package.__module__]
 # Static list of imports
-__argparse_exports__ = ['HelpFormatter', 'RawDescriptionHelpFormatter',
-                        'ArgumentDefaultsHelpFormatter', 'FileType',
-                        'SUPPRESS', 'OPTIONAL', 'ZERO_OR_MORE', 'ONE_OR_MORE',
-                        'PARSER', 'REMAINDER', '_UNRECOGNIZED_ARGS_ATTR',
-                        '_VersionAction', '_SubParsersAction', 'Action']
-
+__argparse_exports__ = list(filter(lambda x: not x.startswith('__'), dir(ap)))
 # Set the attribute on ourselves.
 for x in __argparse_exports__:
     setattr(__selfmodule__, x, getattr(ap, x))
