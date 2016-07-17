@@ -1,14 +1,21 @@
 outputs:
 {% for param in tool.outputs %}
 
-- id: {{ param.id + '_out'}}
+{% set param_attrs %}
   type: File
   {% if param.default %}  default: {{ param.default }} {% endif %}
-
 {% if param.description %}  description: {{ param.description }}{% endif %}
 
   outputBinding:
     glob: $(inputs.{{ param.id }}.path)
+{% endset %}
+{% if map_ids %}
+  {{ param.id + '_out'}}:
+  {{ param_attrs|indent(2) }}
+{% else %}
+- id: {{ param.id + '_out'}}
+  {{ param_attrs }}
+{% endif %}
 {% else %}
     []
 {% endfor %}
