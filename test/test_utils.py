@@ -1,3 +1,6 @@
+from __future__ import print_function
+from builtins import str
+from builtins import range
 import sys
 import itertools
 import hashlib
@@ -94,7 +97,7 @@ class GeneralTests(TestCase):
         parser = argparse.ArgumentParser(**setup)
 
         for arg in self.arg_gen():
-            print arg
+            print(arg)
             parser.add_argument(arg['args'], **arg['kwargs'])
         return parser.parse_args(args)
 
