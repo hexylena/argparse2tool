@@ -66,7 +66,7 @@ class FileParam(InputParam):
 
 class CWLTool(object):
 
-    def __init__(self, name, description, formcommand, basecommand=None, output_file=None, map_ids=True):
+    def __init__(self, name, description, formcommand, basecommand=None, output_file=None):
         self.name = name
         self.output_file = output_file  # file with manually filled output section
         if description:
@@ -82,7 +82,6 @@ class CWLTool(object):
         else:
             self.basecommands = self.name.split()
         self.formcommand = formcommand
-        self.map_ids = map_ids
         self.inputs = []
         self.outputs = []
 
@@ -90,12 +89,12 @@ class CWLTool(object):
         inputs_template = self.env.get_template('cwltool_inputs.j2')
         outputs_template = self.env.get_template('cwltool_outputs.j2')
         main_template = self.env.get_template('cwltool.j2')
-        inputs = inputs_template.render(tool=self, basecommand=self.basecommands, map_ids=self.map_ids)
+        inputs = inputs_template.render(tool=self, basecommand=self.basecommands)
         if self.output_file:
             with open(self.output_file) as f:
                 outputs = f.read()
         else:
-            outputs = outputs_template.render(tool=self, map_ids=self.map_ids)
+            outputs = outputs_template.render(tool=self)
         import argparse
         return main_template.render(tool=self,
                                     version=argparse.__version__,

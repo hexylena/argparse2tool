@@ -9,13 +9,8 @@ outputs:
   outputBinding:
     glob: $(inputs.{{ param.id }}.path)
 {% endset %}
-{% if map_ids %}
   {{ param.id + '_out'}}:
   {{ param_attrs|indent(2) }}
-{% else %}
-- id: {{ param.id + '_out'}}
-{{ param_attrs }}
-{% endif %}
 {% else %}
     []
 {% endfor %}

@@ -274,11 +274,6 @@ class CWLTestCase(unittest.TestCase):
         for optional in self._strip_help_version_actions(parser._optionals._group_actions):
             self.assertEqual(tool.inputs[optional.dest].input_binding.prefix, optional.option_strings[0])
 
-    def test_map_ids(self):
-        parser_name = 'test_map_ids.py'
-        testargs = [parser_name, "--generate_cwl_tool", "-d", self.test_dir, "-b", "python", "--no_map"]
-        parser, tool = self.get_simple_tool(parser_name, testargs)
-
 
 if __name__ == '__main__':
     unittest.main()

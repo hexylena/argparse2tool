@@ -82,8 +82,6 @@ def get_arg2cwl_parser():
                                 help='File with output section which will be put to a formed CWL tool')
     arg2cwl_parser.add_argument('-go', '--generate_outputs', action='store_true',
                                 help='Form output section from args than contain `output` keyword in their names')
-    arg2cwl_parser.add_argument('--no_map', action='store_true',
-                                help='Do not map identifier to the corresponding CommandInputParameter')
     arg2cwl_parser.add_argument('--help_arg2cwl',
                                 help='Show this help message and exit', action='help')
     return arg2cwl_parser
@@ -155,7 +153,7 @@ class ArgumentParser(ap.ArgumentParser):
             else:
                 formcommand += kwargs['command']
 
-            attrs = ['directory', 'output_section', 'basecommand', 'generate_outputs', 'no_map']
+            attrs = ['directory', 'output_section', 'basecommand', 'generate_outputs']
             for arg in attrs:
                 if getattr(arg2cwl_args, arg):
                     kwargs[arg] = getattr(arg2cwl_args, arg)
@@ -166,8 +164,6 @@ class ArgumentParser(ap.ArgumentParser):
                 formcommand += ' -b {0}'.format(kwargs['basecommand'])
             if kwargs.get('generate_outputs', ''):
                 formcommand += ' -go'
-            if kwargs.get('no_map', ''):
-                formcommand += ' --no_map'
             kwargs['formcommand'] = formcommand
 
             self.parse_args_cwl(*args, **kwargs)
@@ -201,8 +197,7 @@ class ArgumentParser(ap.ArgumentParser):
                                         argp.description,
                                         kwargs['formcommand'],
                                         kwargs.get('basecommand', ''),
-                                        kwargs.get('output_section', ''),
-                                        not kwargs.get('no_map', ''))
+                                        kwargs.get('output_section', ''))
                     at = act.ArgparseCWLTranslation(kwargs.get('generate_outputs', False))
                     for result in argp._actions:
                         argument_type = result.__class__.__name__
