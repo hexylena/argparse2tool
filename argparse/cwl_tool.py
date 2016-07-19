@@ -66,7 +66,7 @@ class FileParam(InputParam):
 
 class CWLTool(object):
 
-    def __init__(self, name, description, formcommand, basecommand=None, output_file=None, map_ids=False):
+    def __init__(self, name, description, formcommand, basecommand=None, output_file=None, map_ids=True):
         self.name = name
         self.output_file = output_file  # file with manually filled output section
         if description:

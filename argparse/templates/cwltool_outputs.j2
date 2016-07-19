@@ -14,7 +14,7 @@ outputs:
   {{ param_attrs|indent(2) }}
 {% else %}
 - id: {{ param.id + '_out'}}
-  {{ param_attrs }}
+{{ param_attrs }}
 {% endif %}
 {% else %}
     []
