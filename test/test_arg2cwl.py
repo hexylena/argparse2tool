@@ -84,7 +84,6 @@ class GeneralTestCase(unittest.TestCase):
                 parser.parse_args()
         self.assertEqual(result.exception.code, 0)
 
-
     def test_output_directory_storage_for_CWL_tool(self):
         parser = self.prepare_argument_parser(name="test-directory.py")
         directory = os.path.dirname(__file__)
@@ -193,7 +192,6 @@ class CWLTestCase(unittest.TestCase):
                 else:
                     self.assertEqual(action_type, arg_type)
 
-
     def test_output_replacement(self):
         """
         `--output_section FILENAME` option
@@ -249,13 +247,11 @@ class CWLTestCase(unittest.TestCase):
         for arg in arguments:
             self.assertIn(arg, tool.inputs.keys())
 
-
-
     def test_prefixes(self):
         parser_name = 'test-prefix-chars.py'
         parser = argparse.ArgumentParser(prog=parser_name,
                                          prefix_chars='-+',
-                                         description='test prefix chars progrma')
+                                         description='test prefix chars program')
         parser.add_argument('keyword', type=str, nargs=1,
                             help='action keyword')
         parser.add_argument('integers', metavar='N', type=int, nargs='+',

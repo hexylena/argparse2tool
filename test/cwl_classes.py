@@ -51,14 +51,26 @@ class Tool:
             raise ValueError('Wrong tool class')
         self.basecommand = tool['baseCommand']
         self.inputs = OrderedDict()
-        for param_dict in tool['inputs']:
-            param = InputParam(param_dict)
-            self.inputs[param.id] = param
+        if type(tool['inputs']) is list:  # ids not mapped
+            for param_dict in tool['inputs']:
+                param = InputParam(param_dict)
+                self.inputs[param.id] = param
+        elif type(tool['inputs']) is dict:  # ids mapped
+            for id, param_dict in tool['inputs'].items():
+                param_dict['id'] = id
+                param = InputParam(param_dict)
+                self.inputs[id] = param
         self.outputs = OrderedDict()
         if tool['outputs']:
-            for param in tool['outputs']:
-                param = OutputParam(param)
-                self.outputs[param.id] = param
+            if type(tool['outputs']) is list:  # ids not mapped
+                for param_dict in tool['outputs']:
+                    param = OutputParam(param_dict)
+                    self.outputs[param.id] = param
+            elif type(tool['outputs']) is dict:  # ids mapped
+                for id, param_dict in tool['outputs'].items():
+                    param_dict['id'] = id
+                    param = OutputParam(param_dict)
+                    self.outputs[id] = param
         self.description = tool.get('description', '')
         self.cwl_version = tool.get('cwlVersion', '')
 

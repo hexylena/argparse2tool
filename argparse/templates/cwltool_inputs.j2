@@ -1,18 +1,15 @@
 {% if 'python' in basecommand[0] %}
-
-- id: {{ tool.name }}
-  type: File
-  default:
-    class: File
-    path: {{ tool.name }}
-  inputBinding:
-    position: 0
+{{ tool.name }}:
+    type: File
+    default:
+      class: File
+      path: {{ tool.name }}
+    inputBinding:
+      position: 0
 {% endif %}
 {% for param in tool.inputs %}
-
-
-- id: {{ param.id }}
-  {% if param.type == "enum" or param.type == "array"%}
+{% set param_attrs %}
+{% if param.type == "enum" or param.type == "array"%}
   type:
     {% if param.optional %}  - "null"
   - type: {{ param.type }}{% else %}
@@ -37,4 +34,9 @@
 {% if param.position %}    position: {{ param.position }}{% endif %}
 {% if param.prefix %}    prefix: {{ param.prefix }} {% endif %}
     {% endif %}
+    {% endset %}
+
+  {{ param.id }}:
+  {{ param_attrs|indent(2) }}
 {% endfor %}
+

@@ -1,7 +1,7 @@
 outputs:
 {% for param in tool.outputs %}
 
-- id: {{ param.id + '_out'}}
+{% set param_attrs %}
   type: File
   {% if param.default %}  default: {{ param.default }} {% endif %}
 
@@ -9,6 +9,9 @@ outputs:
 
   outputBinding:
     glob: $(inputs.{{ param.id }}.path)
+{% endset %}
+  {{ param.id + '_out'}}:
+  {{ param_attrs|indent(2) }}
 {% else %}
     []
 {% endfor %}
