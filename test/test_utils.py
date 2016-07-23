@@ -58,7 +58,7 @@ class GeneralTests(TestCase):
         ]
 
         results = list(self.dict_product(a, 'b', [None, 1]))
-        self.assertItemsEqual(correct, results)
+        self.assertCountEqual(correct, results)
 
     def __blacklist(self, item_list):
         for i in item_list:
@@ -102,6 +102,5 @@ class GeneralTests(TestCase):
         return parser.parse_args(args)
 
 
-    def test_add_argument(self):
-        parser = self.parse_args(['-a', ])
-
+class SimpleTests(TestCase):
+    pass

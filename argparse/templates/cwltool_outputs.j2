@@ -4,6 +4,7 @@ outputs:
 {% set param_attrs %}
   type: File
   {% if param.default %}  default: {{ param.default }} {% endif %}
+
 {% if param.description %}  description: {{ param.description }}{% endif %}
 
   outputBinding:
