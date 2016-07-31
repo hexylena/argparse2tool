@@ -9,7 +9,7 @@ from io import StringIO
 import yaml
 
 import argparse
-from argparse import get_arg2cwl_parser
+from cmdline2cwl import Arg2CWLParser
 from argparse.argparse_cwl_translation import ArgparseCWLTranslation as ac
 from test.cwl_classes import Tool
 
@@ -58,7 +58,7 @@ class GeneralTestCase(unittest.TestCase):
         tool_parser = self.prepare_argument_parser(name='test_help_message')
         testargs = ["test.py", "--help_arg2cwl"]
         with mock.patch('sys.stdout', new=StringIO()) as fakeOutput, mock.patch.object(sys, 'argv', testargs):
-            arg2cwl_parser = get_arg2cwl_parser()
+            arg2cwl_parser = Arg2CWLParser().parser
             with self.assertRaises(SystemExit) as result:
                 tool_parser.parse_args()
                 self.assertEqual(result.exception.code, 0)
@@ -273,6 +273,12 @@ class CWLTestCase(unittest.TestCase):
         tool = Tool(self.test_dir + parser_name.replace('.py', '.cwl').strip('./'))
         for optional in self._strip_help_version_actions(parser._optionals._group_actions):
             self.assertEqual(tool.inputs[optional.dest].input_binding.prefix, optional.option_strings[0])
+
+    def test_type_conversions(self):
+        self.assertEqual(ac.get_cwl_type(open), 'File')
+        self.assertEqual(ac.get_cwl_type(argparse.FileType('r')), 'File')
+        self.assertEqual(ac.get_cwl_type(str), 'string')
+        self.assertEqual(ac.get_cwl_type('str'), 'string')
 
 
 if __name__ == '__main__':

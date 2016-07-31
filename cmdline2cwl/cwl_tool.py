@@ -5,9 +5,10 @@ from jinja2 import Environment, FileSystemLoader
 
 
 class Param:
-    def __init__(self, id, position=None, description=None, default=None, prefix=None, optional=False, items_type=None):
+    def __init__(self, id, type, position=None, description=None, default=None, prefix=None, optional=False, items_type=None, **kwargs):
         self.id = id
         self.position = position
+        self.type = type
         self.default = default
         self.prefix = prefix
         self.optional = optional
@@ -18,51 +19,12 @@ class Param:
             self.description = re.sub('\s{2,}', ' ', self.description)
         else:
             self.description = None
+        if self.type == 'enum':
+            self.choices = list(kwargs.pop('choices', []))
 
 
 class OutputParam(Param):
-    type = "File"
-
-
-class InputParam(Param):
     pass
-
-
-class TextParam(InputParam):
-    type = 'string'
-
-
-class _NumericParam(InputParam):
-    pass
-
-
-class IntegerParam(_NumericParam):
-    type = 'int'
-
-
-class FloatParam(_NumericParam):
-    type = 'float'
-
-
-class BooleanParam(InputParam):
-    type = 'boolean'
-
-
-class ArrayParam(InputParam):
-    type = 'array'
-
-
-class ChoiceParam(InputParam):
-    type = 'enum'
-
-    def __init__(self, **kwargs):
-        self.choices = list(kwargs.pop('choices', []))
-        super(ChoiceParam, self).__init__(**kwargs)
-
-
-class FileParam(InputParam):
-    type = 'File'
-
 
 class CWLTool(object):
 
