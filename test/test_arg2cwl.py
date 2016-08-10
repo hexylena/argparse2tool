@@ -103,6 +103,8 @@ class CWLTestCase(unittest.TestCase):
     test_dir = "test_dir/"
 
     def setUp(self):
+        if os.path.exists(self.test_dir):
+            shutil.rmtree(self.test_dir)
         os.mkdir(self.test_dir)
 
     def tearDown(self):

@@ -5,7 +5,7 @@ outputs:
   type: File
   {% if param.default %}  default: {{ param.default }} {% endif %}
 
-{% if param.description %}  description: {{ param.description }}{% endif %}
+{% if param.description %}  doc: {{ param.description }}{% endif %}
 
   outputBinding:
     glob: $(inputs.{{ param.id }}.path)

@@ -27,7 +27,7 @@
   {% if param.default != None %}
   default: {{ param.default }}
   {% endif %}
-  {% if param.description %}  description: {{ param.description }}{% endif %}
+  {% if param.description %}  doc: {{ param.description }}{% endif %}
   {% if param.position or param.prefix %}
 
   inputBinding:
