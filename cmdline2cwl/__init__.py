@@ -17,7 +17,7 @@ def load_conflicting_package(name, not_name, module_number):
     Some assumptions are made, namely that your package includes the "official"
     one as part of the name. E.g. gxargparse/argparse, you would call this with:
 
-        >>> real_argparse = load_conflicting_package('argpargase', 'gxargparse', 1)
+        >>> real_argparse = load_conflicting_package('argparse', 'gxargparse', 1)
 
      http://stackoverflow.com/a/6032023
     """
