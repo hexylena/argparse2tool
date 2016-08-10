@@ -59,12 +59,11 @@ class Arg2CWLMixin:
                 if isinstance(cwl_param, cwlt.OutputParam):
                     tool.outputs.append(cwl_param)
         data = tool.export()
-        self._write_tool(tool, data)
+        self._write_tool(tool, data, arg2cwl_options.get('directory', ''))
 
-    def _write_tool(self, tool, data):
+    def _write_tool(self, tool, data, directory):
         filename = '{0}.cwl'.format(tool.name.replace('.py', ''))
         filename = re.sub('\s+', '-', filename)
-        directory = getattr(self, "directory", '')
         if directory and directory[-1] != '/':
             directory += '/'
         filename = directory + filename

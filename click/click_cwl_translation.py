@@ -72,7 +72,7 @@ class ClickCWLTranslation:
                              'items_type': param.items_type,
                              'type': param_type}
 
-        if param.type is click.types.Choice:
+        if type(param.type) is click.Choice:
             kwargs_positional['choices'] = param.type.choices
         if (isinstance(param.type, click.types.File) and 'w' in param.type.mode) \
           or (self.generate_outputs and 'output' in param.dest):
@@ -96,8 +96,10 @@ class ClickCWLTranslation:
     def get_cwl_type(py_type):
         if py_type is None:
             return None
-        elif isinstance(py_type, click.types.ParamType):  # TODO: isinstance or issubclass ?
-            cwl_type = CLICK_TO_CWL_TYPES[py_type.name]  # TODO: KeyError, AttributeError
+        elif isinstance(py_type, click.types.ParamType):
+            if isinstance(py_type, click.types.Tuple):
+                return str(list(map(lambda click_type: CLICK_TO_CWL_TYPES[click_type.name], py_type.types))).strip('[]')
+            cwl_type = CLICK_TO_CWL_TYPES[py_type.name]
             return cwl_type
         else:
             return PY_TO_CWL_TYPES[py_type.__name__]
