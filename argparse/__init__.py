@@ -1,60 +1,21 @@
-from __future__ import print_function
 from __future__ import absolute_import
-from builtins import range
-import sys
-import logging
+from __future__ import print_function
 
 import re
+import sys
+from cmdline2cwl import Arg2CWLParser, load_argparse
 
-from argparse.cwl_tool import CWLTool
+__version__ = '0.3.0'
 
-__version__ = '0.2.7'
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-def load_conflicting_package(name, not_name, local_module):
-    """Load a conflicting package
-    Some assumptions are made, namely that your package includes the "official"
-    one as part of the name. E.g. gxargparse/argparse, you would call this with:
-
-        >>> real_argparse = load_conflicting_package('argpargase', 'gxargparse',
-        ...                                          sys.modules[load_conflicting_package.__module__])
-
-     http://stackoverflow.com/a/6032023
-    """
-    import imp
-
-    for i in range(0, 100):
-        random_name = 'random_name_%d' % (i,)
-        if random_name not in sys.modules:
-            break
-        else:
-            random_name = None
-    if random_name is None:
-        raise RuntimeError("Couldn't manufacture an unused module name.")
-    # NB: This code is unlikely to work for nonstdlib overrides.
-    # This will hold the correct sys.path for the REAL argparse
-    for path in sys.path:
-        try:
-            (f, pathname, desc) = imp.find_module(name, [path])
-            if not_name not in pathname and desc[2] == 1:
-                module = imp.load_module(random_name, f, pathname, desc)
-                f.close()
-                return sys.modules[random_name]
-        except:
-            # Many sys.paths won't contain the module of interest
-            pass
-    return None
-
-ap = load_conflicting_package('argparse', 'gxargparse', sys.modules[load_conflicting_package.__module__])
+ap = load_argparse()
 import galaxyxml.tool as gxt
 import galaxyxml.tool.parameters as gxtp
 from . import argparse_galaxy_translation as agt
 from . import argparse_cwl_translation as act
-from . import cwl_tool as cwlt
+from cmdline2cwl import cwl_tool as cwlt
 
 # This fetches a reference to ourselves
-__selfmodule__ = sys.modules[load_conflicting_package.__module__]
+__selfmodule__ = sys.modules[__name__]
 # Static list of imports
 __argparse_exports__ = list(filter(lambda x: not x.startswith('__'), dir(ap)))
 # Set the attribute on ourselves.
@@ -64,27 +25,6 @@ for x in __argparse_exports__:
 tools = []
 
 
-def get_arg2cwl_parser():
-    help_text = """
-    argparse2cwl forms CWL command line tool from Python tool
-    Example: $ python program.py --generate_cwl_tool -b python
-    """
-    arg2cwl_parser = ap.ArgumentParser(prog=sys.argv[0], description=help_text,
-                                       formatter_class=RawDescriptionHelpFormatter, add_help=False)
-    arg2cwl_parser.add_argument('tools', nargs='*',
-                                help='Command for running your tool(s), without arguments')
-    arg2cwl_parser.add_argument('-d', '--directory',
-                                help='Directory to store CWL tool descriptions')
-    arg2cwl_parser.add_argument('-b', '--basecommand',
-                                help='Command that appears in `basecommand` field in CWL tool '
-                                     'instead of the default one')
-    arg2cwl_parser.add_argument('-o', '--output_section', metavar='FILENAME',
-                                help='File with output section which will be put to a formed CWL tool')
-    arg2cwl_parser.add_argument('-go', '--generate_outputs', action='store_true',
-                                help='Form output section from args than contain `output` keyword in their names')
-    arg2cwl_parser.add_argument('--help_arg2cwl',
-                                help='Show this help message and exit', action='help')
-    return arg2cwl_parser
 
 
 class ArgumentParser(ap.ArgumentParser):
@@ -132,47 +72,16 @@ class ArgumentParser(ap.ArgumentParser):
 
     def parse_args(self, *args, **kwargs):
 
-        arg2cwl_parser = get_arg2cwl_parser()
+        arg2cwl_parser = Arg2CWLParser()
         if '--generate_cwl_tool' in sys.argv:
-            arg2cwl_parser.add_argument('--generate_cwl_tool', action='store_true')
-            arg2cwl_args = arg2cwl_parser.parse_args(*args, **kwargs)
-            logger.debug('sys argv: ', sys.argv)
-            commands = [arg2cwl_parser.prog.split('/')[-1]]
-            if arg2cwl_args.tools:
-                commands.extend(arg2cwl_args.tools)
-            command = ' '.join(commands)
-            kwargs['command'] = command.strip()
-
-            shebang = re.search(r'\./[\w-]*?.py$', arg2cwl_parser.prog)
-            if shebang:
-                kwargs['basecommand'] = shebang.group(0)
-
-            formcommand = ''
-            if kwargs.get('basecommand', ''):
-                formcommand += kwargs['basecommand']
-            else:
-                formcommand += kwargs['command']
-
-            attrs = ['directory', 'output_section', 'basecommand', 'generate_outputs']
-            for arg in attrs:
-                if getattr(arg2cwl_args, arg):
-                    kwargs[arg] = getattr(arg2cwl_args, arg)
-
-            if kwargs.get('output_section', ''):
-                formcommand += ' -o FILENAME'
-            if kwargs.get('basecommand', ''):
-                formcommand += ' -b {0}'.format(kwargs['basecommand'])
-            if kwargs.get('generate_outputs', ''):
-                formcommand += ' -go'
-            kwargs['formcommand'] = formcommand
-
+            kwargs = arg2cwl_parser.process_arguments()
             self.parse_args_cwl(*args, **kwargs)
 
         elif '--generate_galaxy_xml' in sys.argv:
             self.parse_args_galaxy_nouse(*args, **kwargs)
 
         elif '--help_arg2cwl' in sys.argv:
-            arg2cwl_parser.print_help()
+            arg2cwl_parser.parser.print_help()
             sys.exit()
         else:
             return ap.ArgumentParser.parse_args(self, *args, **kwargs)
