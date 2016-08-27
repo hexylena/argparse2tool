@@ -1,0 +1,7 @@
+outputs:
+- id: outfile
+  type: File
+  source: "#main/search/result"
+- id: indexedfile
+  type: File
+  source: "#main/index/result"

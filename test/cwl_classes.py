@@ -13,28 +13,32 @@ class OutputBinding:
         self.glob = ob.get('glob', None)
 
 
-class InputParam:
+class Param:
 
     def __init__(self, param):
         self.id = param['id']
         self.type = param.get('type', None)
+        self.description = param.get('doc', param.get('description', None))
+
+
+class InputParam(Param):
+
+    def __init__(self, param):
+        super(InputParam, self).__init__(param)
         if type(self.type) is list and self.type[0] == 'null':
             self.optional = True
         else:
             self.optional = False
-        self.description = param.get('description', None)
         self.default = param.get('default', None)
         input_binding = param.get('inputBinding', None)
         if input_binding:
             self.input_binding = InputBinding(input_binding)
 
 
-class OutputParam:
+class OutputParam(Param):
 
     def __init__(self, param):
-        self.id = param['id']
-        self.type = param.get('type', None)
-        self.description = param.get('description', None)
+        super(OutputParam, self).__init__(param)
         output_binding = param.get('outputBinding', None)
         if output_binding:
             self.output_binding = OutputBinding(output_binding)
@@ -71,6 +75,6 @@ class Tool:
                     param_dict['id'] = id
                     param = OutputParam(param_dict)
                     self.outputs[id] = param
-        self.description = tool.get('description', '')
+        self.description = tool.get('doc', tool.get('description', ''))
         self.cwl_version = tool.get('cwlVersion', '')
 

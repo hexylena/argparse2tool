@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 import sys
 
-from . import cwl_tool as cwlt
+from cmdline2cwl import cwl_tool as cwlt
 
 PY_TO_CWL_TYPES = {
     'str': 'string',
@@ -27,9 +27,9 @@ class ArgparseCWLTranslation:
         self.generate_outputs = generate_outputs
 
     def __cwl_param_from_type(self, param):
-        from argparse import FileType
         """Based on a type, convert to appropriate cwlt class
         """
+        from argparse import FileType
         if param.default == sys.stdout:
             param.default = None
         if hasattr(param, 'optional'):
@@ -54,32 +54,17 @@ class ArgparseCWLTranslation:
                              'default': param.default,
                              'prefix': prefix,
                              'optional': optional,
-                             'items_type': param.items_type}
+                             'items_type': param.items_type,
+                             'type': self.get_cwl_type(param.type) or 'str'}
 
         if param.choices is not None:
             kwargs_positional['choices'] = param.choices
-            cwlparam = cwlt.ChoiceParam(**kwargs_positional)
-        elif param.type == bool:
-            cwlparam = cwlt.BooleanParam(**kwargs_positional)
-        elif param.type == list:
-            cwlparam = cwlt.ArrayParam(**kwargs_positional)
-        elif param.type == int:
-            cwlparam = cwlt.IntegerParam(**kwargs_positional)
-        elif param.type == float:
-            cwlparam = cwlt.FloatParam(**kwargs_positional)
-        elif param.type == None or param.type == str:
-            if self.generate_outputs and 'output' in param.dest:
-                cwlparam = cwlt.OutputParam(**kwargs_positional)
-            else:
-                cwlparam = cwlt.TextParam(**kwargs_positional)
-        # if type == open or type == Filetype('r')
-        elif type(param.type).__name__ =='builtin_function_or_method' \
-                or (isinstance(param.type, FileType) and 'r' in param.type._mode):
-            cwlparam = cwlt.FileParam(**kwargs_positional)
-        elif isinstance(param.type, FileType) and 'w' in param.type._mode:
+            kwargs_positional['type'] = 'enum'
+        if (isinstance(param.type, FileType) and 'w' in param.type._mode)\
+          or (self.generate_outputs and 'output' in param.dest):
             cwlparam = cwlt.OutputParam(**kwargs_positional)
         else:
-            cwlparam = None
+            cwlparam = cwlt.Param(**kwargs_positional)
         return cwlparam
 
 
@@ -131,6 +116,16 @@ class ArgparseCWLTranslation:
 
     @staticmethod
     def get_cwl_type(py_type):
+        """
+        converts given Python type to a CWL type
+        >>> ArgparseCWLTranslation.get_cwl_type(list)
+        'array'
+        """
         if py_type is None:
             return None
-        return PY_TO_CWL_TYPES[py_type.__name__]
+        if type(py_type) is type:
+            return PY_TO_CWL_TYPES[py_type.__name__]
+        elif type(py_type).__name__ == 'builtin_function_or_method' or type(py_type).__name__ == 'FileType':
+            return 'File'
+        else:  # type given as a string: 'str', 'int' etc.
+            return PY_TO_CWL_TYPES[py_type]
