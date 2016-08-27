@@ -1,0 +1,17 @@
+#!/usr/bin/env cwl-runner
+# This tool description was generated automatically by argparse2cwl ver. {{ version }}
+# To generate again: $ {{ formcommand }} --generate_cwl_tool
+# Help: $ {{ stripped_options_command }} --help_arg2cwl
+
+cwlVersion: "cwl:v1.0"
+
+class: CommandLineTool
+baseCommand: {{ basecommand }}
+
+description: |
+  {{ tool.description }}
+
+inputs:
+  {{ inputs }}
+
+{{ outputs }}

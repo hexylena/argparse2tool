@@ -5,6 +5,7 @@ If gxargparse appears after python stdlib's argparse, it won't behave properly,
 thus we provide a small check utility to ensure proper ordering and provide
 suggestions if not functional.
 """
+from __future__ import print_function
 import sys, imp, os
 import argparse
 
@@ -34,15 +35,15 @@ def main():
     if incorrect_ordering:
         if len(good_paths) == 0:
             if not args.quiet:
-                print "gxargparse not installed"
+                print("gxargparse not installed")
         else:
             if args.quiet:
-                print os.path.dirname(good_paths[0])
+                print(os.path.dirname(good_paths[0]))
             else:
-                print "Incorrect ordering, please set\n\n\tPYTHONPATH=%s\n" % (os.path.dirname(good_paths[0]))
+                print("Incorrect ordering, please set\n\n\tPYTHONPATH=%s\n" % (os.path.dirname(good_paths[0])))
     else:
         if not args.quiet:
-            print "Ready to go!"
+            print("Ready to go!")
 
 if __name__ == '__main__':
     main()
