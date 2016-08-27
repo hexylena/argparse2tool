@@ -74,6 +74,19 @@ This code doesn't cover the entirety of the `argparse` API yet, and there are so
     - support help text
     - support declaring output files in an `argparse`-esque manner
 
+# CWL argparse
+
+CWL tool wrapper is under development! See branch `cwl-refactor`. It uses pretty much the same logic as galaxy xml generator, just pass `--generate_cwl_tool` along with other arguments to build CWL tool definition. 
+
+### Example
+
+Change directory to test/test-data and run
+```console
+$ python index.py inp.txt --generate_cwl_tool
+$ python search.py inp.txt term --generate_cwl_tool
+```
+
+
 # License
 
 - Apache License, v2
