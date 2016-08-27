@@ -74,6 +74,7 @@ This code doesn't cover the entirety of the `argparse` API yet, and there are so
     - support help text
     - support declaring output files in an `argparse`-esque manner
 
+
 # argparse2cwl
 
 `argparse2cwl` forms CWL tool descriptions from programs which use `argparse` as their argument parser. 
@@ -157,7 +158,6 @@ Some of argparse features can not be ported to CWL.
 3. Custom types and custom actions are not supported.
 4. Argument groups don't work in CWL as arguments are sorted with a [special algorithm](http://www.commonwl.org/draft-3/CommandLineTool.html#Input_binding)
 5. Mutual exclusion is not supported.
-
 
 
 # License
