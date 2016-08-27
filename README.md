@@ -93,11 +93,7 @@ Installation process:
 	
 		$ git clone https://github.com/common-workflow-language/gxargparse.git
 
-2. Change directory to the root folder of the project and switch to `cwl-refactor` branch:
-
-		$ git checkout origin/cwl-refactor
-
-3. Run 
+2. Run 
 
 		$ python setup.py install
 
@@ -159,6 +155,9 @@ Some of argparse features can not be ported to CWL.
 4. Argument groups don't work in CWL as arguments are sorted with a [special algorithm](http://www.commonwl.org/draft-3/CommandLineTool.html#Input_binding)
 5. Mutual exclusion is not supported.
 
+#	 click2cwl
+
+*click2cwl* shares absolutely the same logic as argparse2cwl, the only difference is it is adjusted to work with [click](http://click.pocoo.org/) argument parser. Whenever click is imported, gxargparse grabs its commands, arguments, options and forms CWL parameters out of them. 
 
 # License
 
