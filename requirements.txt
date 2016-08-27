@@ -1,1 +1,3 @@
 galaxyxml
+jinja2>=2.8
+future
