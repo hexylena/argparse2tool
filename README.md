@@ -94,7 +94,7 @@ Installation process:
 		$ git clone https://github.com/common-workflow-language/gxargparse.git
 
 2. Run 
-
+		$ cd gxargparse
 		$ python setup.py install
 
 You can ensure it's working when you pass `--help_arg2cwl` flag to any command-line program inside your environment. If the option is not recognized, try
