@@ -5,8 +5,6 @@ import re
 import sys
 from cmdline2cwl import Arg2CWLParser, load_argparse
 
-__version__ = '0.3.0'
-
 ap = load_argparse()
 import galaxyxml.tool as gxt
 import galaxyxml.tool.parameters as gxtp

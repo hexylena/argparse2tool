@@ -3,14 +3,15 @@ import sys
 
 from setuptools import setup
 
-import argparse
+__version__ = '0.3.1'
+
 
 if sys.argv[-1] == 'publish':
     os.system("python setup.py sdist bdist_wheel upload; git push")
     sys.exit()
 
 setup(name="gxargparse",
-        version=argparse.__version__,
+        version=__version__,
         description='Instrument for forming Galaxy XML and CWL tool descriptions from argparse arguments',
         author='Eric Rasche, Anton Khodak',
         author_email='rasche.eric@yandex.ru, anton.khodak@ukr.net',
