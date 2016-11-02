@@ -3,8 +3,7 @@ import sys
 
 from setuptools import setup
 
-__version__ = '0.3.1'
-
+from cmdline2cwl import __version__
 
 if sys.argv[-1] == 'publish':
     os.system("python setup.py sdist bdist_wheel upload; git push")

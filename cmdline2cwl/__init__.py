@@ -6,6 +6,8 @@ from builtins import range
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+__version__ = '0.3.1'
+
 
 def load_argparse():
     ARGPARSE_NUMBER = 1

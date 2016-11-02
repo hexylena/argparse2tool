@@ -3,6 +3,7 @@ import os
 
 from jinja2 import Environment, FileSystemLoader
 
+from cmdline2cwl import __version__
 
 class Param:
     def __init__(self, id, type, position=None, description=None, default=None, prefix=None, optional=False, items_type=None, **kwargs):
@@ -59,7 +60,7 @@ class CWLTool(object):
             outputs = outputs_template.render(tool=self)
         import argparse
         return main_template.render(tool=self,
-                                    version=argparse.__version__,
+                                    version=__version__,
                                     formcommand=self.formcommand,
                                     stripped_options_command=re.sub('-.*', '', self.formcommand),
                                     basecommand=self.basecommands,
