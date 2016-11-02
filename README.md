@@ -1,3 +1,6 @@
+`gxargparse` was originally designed to generate Galaxy XML from Python tools which use argparse, but then it was extended to support [Common Workflow Language] (http://www.commonwl.org/v1.0/CommandLineTool.html) command-line tools generation, and not only for argparse, but also for [click](click.pocoo.org/6/) argument parser. For more info about CWL generation jump straight to [argparse2cwl](#argparse2cwl).
+
+
 # `gxargparse`
 
 Galaxy argparse aims to be a drop-in replacement for argparse, quite literally.
@@ -75,7 +78,7 @@ This code doesn't cover the entirety of the `argparse` API yet, and there are so
     - support declaring output files in an `argparse`-esque manner
 
 
-# argparse2cwl
+# argparse2cwl<a name="argparse2cwl"></a>
 
 `argparse2cwl` forms CWL tool descriptions from programs which use `argparse` as their argument parser. 
 No code changes are required, just use the normal import:
