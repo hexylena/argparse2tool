@@ -1,5 +1,4 @@
 import logging
-import re
 import sys
 from argparse2tool import load_argparse
 
