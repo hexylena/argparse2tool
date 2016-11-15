@@ -10,7 +10,7 @@ script:
   - python setup.py install
   - export PYTHONPATH=$(gxargparse_check_path -q)
   - python example.py --generate_galaxy_xml > tmp.xml
-  - diff tmp.xml example.xml
+  - diff tmp.xml test/example.xml
   - planemo lint --report_level all --fail_level error --xsd tmp.xml
   - python example.py --generate_cwl_tool > tmp.cwl
-  - diff tmp.cwl example.cwl
+  - diff tmp.cwl test/example.cwl

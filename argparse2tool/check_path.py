@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-"""gxargparse_check_path checks for proper ordering of the system path
+"""argparse2tool_check_path checks for proper ordering of the system path
 
-If gxargparse appears after python stdlib's argparse, it won't behave properly,
+If argparse2tool appears after python stdlib's argparse, it won't behave properly,
 thus we provide a small check utility to ensure proper ordering and provide
 suggestions if not functional.
 """
@@ -11,9 +11,9 @@ import argparse
 
 def get_args():
     help_text = """Check the path for the correct setting to be able to take advantage
-of gxargparse.
+of argparse2tool.
 """
-    parser = argparse.ArgumentParser(prog='gxargparse_check_path', description=help_text)
+    parser = argparse.ArgumentParser(prog='argparse2tool_check_path', description=help_text)
     parser.add_argument('-q', dest='quiet', action='store_true', help='run quietly')
     return parser.parse_args()
 
@@ -35,7 +35,7 @@ def main():
     if incorrect_ordering:
         if len(good_paths) == 0:
             if not args.quiet:
-                print("gxargparse not installed")
+                print("argparse2tool not installed")
         else:
             if args.quiet:
                 print(os.path.dirname(good_paths[0]))

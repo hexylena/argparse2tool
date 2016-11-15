@@ -3,7 +3,7 @@ import os
 
 from jinja2 import Environment, FileSystemLoader
 
-from cmdline2cwl import __version__
+from argparse2tool import __version__
 
 class Param:
     def __init__(self, id, type, position=None, description=None, default=None, prefix=None, optional=False, items_type=None, **kwargs):

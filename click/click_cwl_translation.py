@@ -3,7 +3,7 @@ from __future__ import absolute_import
 import sys
 
 import click
-from cmdline2cwl import cwl_tool as cwlt
+from argparse2tool.cmdline2cwl import cwl_tool as cwlt
 
 PY_TO_CWL_TYPES = {
     'str': 'string',

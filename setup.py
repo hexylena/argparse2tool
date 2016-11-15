@@ -3,23 +3,23 @@ import sys
 
 from setuptools import setup
 
-from cmdline2cwl import __version__
+from argparse2tool import __version__
 
 if sys.argv[-1] == 'publish':
     os.system("python setup.py sdist bdist_wheel upload; git push")
     sys.exit()
 
-setup(name="gxargparse",
+setup(name="argparse2tool",
         version=__version__,
         description='Instrument for forming Galaxy XML and CWL tool descriptions from argparse arguments',
         author='Eric Rasche, Anton Khodak',
-        author_email='rasche.eric@yandex.ru, anton.khodak@ukr.net',
+        author_email='esr@tamu.edu, anton.khodak@ukr.net',
         install_requires=['galaxyxml>=0.2.3', 'jinja2', 'future'],
-        url='https://github.com/common-workflow-language/gxargparse',
-        packages=["argparse", "gxargparse", "click", "cmdline2cwl"],
+        url='https://github.com/erasche/argparse2tool',
+        packages=["argparse", "argparse2tool", "click", "cmdline2cwl"],
         entry_points={
             'console_scripts': [
-                    'gxargparse_check_path = gxargparse.check_path:main',
+                    'argparse2tool_check_path = argparse2tool.check_path:main',
                 ]
             },
         classifiers=[

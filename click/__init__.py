@@ -6,11 +6,12 @@ import re
 import sys
 
 from click import click_cwl_translation as cct
-from cmdline2cwl import cwl_tool as cwlt
-from cmdline2cwl import load_conflicting_package, Arg2CWLParser
+from argparse2tool.cmdline2cwl import cwl_tool as cwlt
+from argparse2tool import load_conflicting_package
+from argparse2tool.cmdline2cwl import Arg2CWLParser
 
 CLICK_NUMBER = 5
-click = load_conflicting_package('click', 'gxargparse', CLICK_NUMBER)
+click = load_conflicting_package('click', 'argparse2tool', CLICK_NUMBER)
 __selfmodule__ = sys.modules[__name__]
 # This fetches a reference to ourselves
 
