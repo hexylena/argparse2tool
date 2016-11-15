@@ -15,20 +15,16 @@ $sum
 --foo $foo
 #end if
 
-#if $file and $file is not None:
---file $file
-#end if
-
-#set repeat_var_5 = '" "'.join([ str($var.bar) for $var in $repeat_5 ])
---bar "$repeat_var_5"
+#set repeat_var_4 = '" "'.join([ str($var.bar) for $var in $repeat_4 ])
+--bar "$repeat_var_4"
 
 $true
 $false
-#for $i in $repeat_6:
+#for $i in $repeat_5:
 --append $i.append
 #end for
-#for $i in $repeat_7:
---nargs2 "$repeat_var_7"
+#for $i in $repeat_6:
+--nargs2 "$repeat_var_6"
 #end for
 
 #if $mode and $mode is not None:
@@ -36,28 +32,27 @@ $false
 #end if
 > $default]]></command>
   <inputs>
-    <param area="false" label="action keyword (positional_1)" name="positional_1" type="text"/>
+    <param area="false" label="action keyword" name="positional_1" type="text"/>
     <repeat min="1" name="repeat_2" title="repeat_title">
-      <param label="an integer for the accumulator (positional_2)" name="positional_2" type="integer" value="0"/>
+      <param label="an integer for the accumulator" name="positional_2" type="integer" value="0"/>
     </repeat>
-    <param checked="false" label="sum the integers (default: find the max) (--sum)" name="sum" type="boolean" truevalue="--sum" falsevalue=""/>
-    <param area="false" label="foo help (--foo)" name="foo" type="text"/>
-    <param label="foo help (--file)" name="file" type="data"/>
-    <repeat name="repeat_5" title="repeat_title">
-      <param area="false" default="1" label="BAR! (--bar)" name="bar" type="text"/>
+    <param checked="false" help="(--sum)" label="sum the integers (default: find the max)" name="sum" type="boolean" truevalue="--sum" falsevalue=""/>
+    <param area="false" help="(--foo)" label="foo help" name="foo" optional="true" type="text"/>
+    <repeat name="repeat_4" title="repeat_title">
+      <param area="false" help="(--bar)" label="BAR!" name="bar" optional="true" type="text" value="1"/>
     </repeat>
-    <param checked="false" label="Store a true (--true)" name="true" type="boolean" truevalue="--true" falsevalue=""/>
-    <param checked="false" label="Store a false (--false)" name="false" type="boolean" truevalue="--false" falsevalue=""/>
-    <repeat name="repeat_6" title="Repeated Variable">
-      <param area="false" label="Append a value (--append)" name="append" type="text"/>
+    <param checked="false" help="(--true)" label="Store a true" name="true" type="boolean" truevalue="--true" falsevalue=""/>
+    <param checked="false" help="(--false)" label="Store a false" name="false" type="boolean" truevalue="--false" falsevalue=""/>
+    <repeat name="repeat_5" title="Repeated Variable">
+      <param area="false" help="(--append)" label="Append a value" name="append" type="text"/>
     </repeat>
-    <repeat max="2" min="2" name="repeat_7" title="repeat_title">
-      <param area="false" label="nargs2 (--nargs2)" name="nargs2" type="text"/>
+    <repeat max="2" min="2" name="repeat_6" title="repeat_title">
+      <param area="false" help="(--nargs2)" label="nargs2" name="nargs2" optional="true" type="text"/>
     </repeat>
-    <param label="Author did not provide help for this parameter...  (--mode)" name="mode">
-      <option checked="" name="scissors">scissors</option>
-      <option name="paper">paper</option>
-      <option name="rock">rock</option>
+    <param help="(--mode)" label="Author did not provide help for this parameter... " name="mode" optional="true" type="select">
+      <option selected="true" value="scissors">scissors</option>
+      <option value="paper">paper</option>
+      <option value="rock">rock</option>
     </param>
   </inputs>
   <outputs>
