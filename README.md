@@ -13,6 +13,9 @@ way. This information captured is used to produce [Galaxy Tool XML](https://gith
 requested with the `--generate_galaxy_xml` flag, or [CWL Tools](http://www.commonwl.org/v1.0/CommandLineTool.html) when requested
 with the `--generate_cwl_tool` flag.
 
+For our [example python script](./example.py) you can see the generated [Galaxy
+XML](./test/example.xml) and [CWL Tools](./test/example.cwl).
+
 ## Running
 
 To generate XML or CWL, run your tool with the appropriate command line flag
