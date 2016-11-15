@@ -1,5 +1,5 @@
 #!/usr/bin/env cwl-runner
-# This tool description was generated automatically by argparse2cwl ver. 0.3.0
+# This tool description was generated automatically by argparse2tool ver. 0.3.0
 # To generate again: $ genmod --generate_cwl_tool
 # Help: $ genmod --help_arg2cwl
 

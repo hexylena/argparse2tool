@@ -1,5 +1,5 @@
 #!/usr/bin/env cwl-runner
-# This tool description was generated automatically by argparse2cwl ver. 0.3.0
+# This tool description was generated automatically by argparse2tool ver. 0.3.0
 # To generate again: $ cnvkit.py batch -go --generate_cwl_tool
 # Help: $ cnvkit.py batch  --help_arg2cwl
 

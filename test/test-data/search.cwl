@@ -1,5 +1,5 @@
 #!/usr/bin/env cwl-runner
-# This tool description was formed automatically by argparse2cwl ver. 0.2.5
+# This tool description was formed automatically by argparse2tool ver. 0.2.5
 # To form again: $ python --generate_cwl_tool
 # Help: $ python --help_arg2cwl
 

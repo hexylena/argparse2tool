@@ -11,7 +11,7 @@ class Arg2CWLParser:
     def __init__(self):
         ap = load_argparse()  # avoid circular imports
         help_text = """
-        argparse2cwl forms CWL command line tool from Python tool
+        argparse2tool forms CWL command line tools from Python tools
         Example: $ python program.py --generate_cwl_tool -b python
         """
         arg2cwl_parser = ap.ArgumentParser(prog=sys.argv[0], description=help_text,
