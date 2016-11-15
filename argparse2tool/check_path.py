@@ -6,16 +6,18 @@ thus we provide a small check utility to ensure proper ordering and provide
 suggestions if not functional.
 """
 from __future__ import print_function
-import sys, imp, os
+import sys
+import imp
+import os
 import argparse
 
+
 def get_args():
-    help_text = """Check the path for the correct setting to be able to take advantage
-of argparse2tool.
-"""
+    help_text = """Check the path for the correct setting to be able to take advantage of argparse2tool. """
     parser = argparse.ArgumentParser(prog='argparse2tool_check_path', description=help_text)
     parser.add_argument('-q', dest='quiet', action='store_true', help='run quietly')
     return parser.parse_args()
+
 
 def main():
     args = get_args()
@@ -23,14 +25,14 @@ def main():
     good_paths = []
     incorrect_ordering = False
     for path in sys.path:
-      try:
-        (handle, pathname, desc) = imp.find_module('argparse', [path])
-        if desc[2] == 5:
-            good_paths.append(pathname)
-        elif len(good_paths) == 0:
-            incorrect_ordering = True
-      except:
-          pass
+        try:
+            (handle, pathname, desc) = imp.find_module('argparse', [path])
+            if desc[2] == 5:
+                good_paths.append(pathname)
+            elif len(good_paths) == 0:
+                incorrect_ordering = True
+        except:
+            pass
 
     if incorrect_ordering:
         if len(good_paths) == 0:
@@ -44,6 +46,7 @@ def main():
     else:
         if not args.quiet:
             print("Ready to go!")
+
 
 if __name__ == '__main__':
     main()

@@ -6,12 +6,13 @@ import sys
 from argparse2tool import load_argparse
 from argparse2tool.cmdline2cwl import Arg2CWLParser
 
-ap = load_argparse()
 import galaxyxml.tool as gxt
 import galaxyxml.tool.parameters as gxtp
 from . import argparse_galaxy_translation as agt
 from . import argparse_cwl_translation as act
 from argparse2tool.cmdline2cwl import cwl_tool as cwlt
+
+ap = load_argparse()
 
 # This fetches a reference to ourselves
 __selfmodule__ = sys.modules[__name__]
@@ -24,10 +25,7 @@ for x in __argparse_exports__:
 tools = []
 
 
-
-
 class ArgumentParser(ap.ArgumentParser):
-
 
     def __init__(self,
                  prog=None,
@@ -35,7 +33,7 @@ class ArgumentParser(ap.ArgumentParser):
                  description=None,
                  epilog=None,
                  parents=[],
-                 formatter_class=HelpFormatter,
+                 formatter_class=ap.ArgumentDefaultsHelpFormatter,
                  prefix_chars='-',
                  fromfile_prefix_chars=None,
                  argument_default=None,
@@ -91,7 +89,7 @@ class ArgumentParser(ap.ArgumentParser):
             if argp._subparsers:
                 # there were cases during testing, when instances other than _SubParsesAction type
                 # got into ._subparsers._group_actions
-                for subparser in filter(lambda action: isinstance(action, _SubParsersAction),
+                for subparser in filter(lambda action: isinstance(action, ap._SubParsersAction),
                                         argp._subparsers._group_actions):
                     for choice_action in subparser._choices_actions:
                         subparser.choices[choice_action.dest].description = choice_action.help
@@ -121,7 +119,7 @@ class ArgumentParser(ap.ArgumentParser):
                         tool.description += argp.epilog
 
                     data = tool.export()
-                    filename = '{0}.cwl'.format(tool.name.replace('.py',''))
+                    filename = '{0}.cwl'.format(tool.name.replace('.py', ''))
                     filename = re.sub('\s+', '-', filename)
                     directory = kwargs.get('directory', '')
                     if directory and directory[-1] != '/':

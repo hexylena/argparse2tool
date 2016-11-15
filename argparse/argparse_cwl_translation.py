@@ -1,7 +1,5 @@
 from __future__ import absolute_import
-
 import sys
-
 from argparse2tool.cmdline2cwl import cwl_tool as cwlt
 
 PY_TO_CWL_TYPES = {
@@ -13,6 +11,7 @@ PY_TO_CWL_TYPES = {
     'TextIOWrapper': 'File',
     'open': 'File'
 }
+
 
 class ArgparseCWLTranslation:
 
@@ -60,13 +59,12 @@ class ArgparseCWLTranslation:
         if param.choices is not None:
             kwargs_positional['choices'] = param.choices
             kwargs_positional['type'] = 'enum'
-        if (isinstance(param.type, FileType) and 'w' in param.type._mode)\
-          or (self.generate_outputs and 'output' in param.dest):
+        if (isinstance(param.type, FileType) and 'w' in param.type._mode) \
+                or (self.generate_outputs and 'output' in param.dest):
             cwlparam = cwlt.OutputParam(**kwargs_positional)
         else:
             cwlparam = cwlt.Param(**kwargs_positional)
         return cwlparam
-
 
     def __args_from_nargs(self, param):
         if param.nargs:
@@ -84,7 +82,6 @@ class ArgparseCWLTranslation:
         param = self.__args_from_nargs(param)
         cwlparam = self.__cwl_param_from_type(param)
         return cwlparam
-
 
     def _StoreTrueAction(self, param):
         return self.__StoreBoolAction(param)

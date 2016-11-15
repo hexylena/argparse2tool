@@ -1,4 +1,6 @@
 import galaxyxml.tool.parameters as gxtp
+from pydoc import locate
+
 
 class ArgparseGalaxyTranslation(object):
 
@@ -11,29 +13,26 @@ class ArgparseGalaxyTranslation(object):
 
         if param.choices is not None:
             choices = {k: k for k in param.choices}
-            gxparam = gxtp.SelectParam(flag, default=default, label=label,
-                    num_dashes=num_dashes, options=choices, **gxparam_extra_kwargs)
+            gxparam = gxtp.SelectParam(flag, default=default, label=label, num_dashes=num_dashes, options=choices, **gxparam_extra_kwargs)
         elif param.type == int:
-            gxparam = gxtp.IntegerParam(flag, default, label=label,
-                    num_dashes=num_dashes, **gxparam_extra_kwargs)
+            gxparam = gxtp.IntegerParam(flag, default, label=label, num_dashes=num_dashes, **gxparam_extra_kwargs)
         elif param.type == float:
-            gxparam = gxtp.FloatParam(flag, default, label=label,
-                    num_dashes=num_dashes, **gxparam_extra_kwargs)
-        elif param.type == None or param.type == str:
-            gxparam = gxtp.TextParam(flag, default=default, label=label,
-                    num_dashes=num_dashes, **gxparam_extra_kwargs)
-        elif param.type == file:
-            gxparam = gxtp.DataParam(flag, label=label,
-                    num_dashes=num_dashes, **gxparam_extra_kwargs)
+            gxparam = gxtp.FloatParam(flag, default, label=label, num_dashes=num_dashes, **gxparam_extra_kwargs)
+        elif param.type is None or param.type == str:
+            gxparam = gxtp.TextParam(flag, default=default, label=label, num_dashes=num_dashes, **gxparam_extra_kwargs)
+        elif param.type == locate('file'):
+            gxparam = gxtp.DataParam(flag, label=label, num_dashes=num_dashes, **gxparam_extra_kwargs)
         elif isinstance(param.type, FileType):
             if 'w' in param.type._mode:
                 gxparam = gxtp.OutputParameter(
                     flag, format='data', default=default, label=label,
-                    num_dashes=num_dashes, **gxparam_extra_kwargs)
+                    num_dashes=num_dashes, **gxparam_extra_kwargs
+                )
             else:
                 gxparam = gxtp.DataParam(
                     flag, default=default, label=label, num_dashes=num_dashes,
-                    **gxparam_extra_kwargs)
+                    **gxparam_extra_kwargs
+                )
         else:
             gxparam = None
 
@@ -98,10 +97,10 @@ class ArgparseGalaxyTranslation(object):
             # arguments with nargs='*' is possible. For example:
 
             # This needs to be handled with a
-            #set files = '" "'.join( [ str( $file ) for $file in $inputB ] )
+            # set files = '" "'.join( [ str( $file ) for $file in $inputB ] )
 
             gxrepeat_args = [repeat_name, 'repeat_title']
-            #gxrepeat_cli_after = '#end if\n'
+            # gxrepeat_cli_after = '#end if\n'
             gxrepeat_cli_after = ''
             gxrepeat_cli_before = """\n#set %s = '" "'.join([ str($var.%s) for $var in $%s ])""" % (repeat_var_name, flag, repeat_name)
         elif param.nargs == '+':
@@ -119,7 +118,6 @@ class ArgparseGalaxyTranslation(object):
         return (gxrepeat_args, gxrepeat_kwargs, gxrepeat_cli_after,
                 gxrepeat_cli_before, gxrepeat_cli_actual, gxparam_cli_before, gxparam_cli_after)
 
-
     def __init__(self):
         self.repeat_count = 0
         self.positional_count = 0
@@ -133,7 +131,6 @@ class ArgparseGalaxyTranslation(object):
 
         # Count the repeats for unique names
         # TODO improve
-
 
     def _StoreAction(self, param, tool=None):
         """
@@ -153,8 +150,7 @@ class ArgparseGalaxyTranslation(object):
         positional = len(param.option_strings) == 0
 
         if not positional:
-            flag = max(param.option_strings, key=len)  # Pick the longest of
-                                                       # the options strings
+            flag = max(param.option_strings, key=len)  # Pick the longest of the options strings
         else:
             flag = ''
             self.positional_count += 1
@@ -172,15 +168,12 @@ class ArgparseGalaxyTranslation(object):
             # SO unclean
             gxparam_extra_kwargs['positional'] = True
 
-
         # Figure out parameters and overrides from param.nargs, mainly.
         # This is really unpleasant.
         (gxrepeat_args, gxrepeat_kwargs, gxrepeat_cli_after,
          gxrepeat_cli_before, gxrepeat_cli_actual, gxparam_cli_before,
          gxparam_cli_after) = \
             self.__args_from_nargs(param, repeat_name, repeat_var_name, positional, flag_wo_dashes)
-
-
 
         # Build the gxrepeat if it's needed
         if gxrepeat_args is not None:
@@ -194,9 +187,10 @@ class ArgparseGalaxyTranslation(object):
         else:
             gxrepeat = None
 
-
-        gxparam = self.__gxtp_param_from_type(param, flag_wo_dashes,
-                param.help, num_dashes, gxparam_extra_kwargs, default=param.default)
+        gxparam = self.__gxtp_param_from_type(
+            param, flag_wo_dashes, param.help, num_dashes,
+            gxparam_extra_kwargs, default=param.default
+        )
 
         # Not really happy with this way of doing this
         if gxparam_cli_before is not None:
@@ -228,8 +222,7 @@ class ArgparseGalaxyTranslation(object):
         self.repeat_count += 1
         repeat_name = 'repeat_%s' % self.repeat_count
         # TODO: Replace with logic supporting characters other than -
-        flag = max(param.option_strings, key=len)  # Pick one of the options
-                                                   # strings
+        flag = max(param.option_strings, key=len)  # Pick one of the options strings
         flag_wo_dashes = flag.lstrip('-')
         num_dashes = len(flag) - len(flag_wo_dashes)
 
@@ -239,14 +232,11 @@ class ArgparseGalaxyTranslation(object):
         gxrepeat.append(gxparam)
         return gxrepeat
 
-
     def _StoreConstAction(self, param, **kwargs):
-        flag = max(param.option_strings, key=len)  # Pick one of the options
-                                                   # strings
+        flag = max(param.option_strings, key=len)  # Pick one of the options strings
         flag_wo_dashes = flag.lstrip('-')
         num_dashes = len(flag) - len(flag_wo_dashes)
 
-        gxparam = gxtp.BooleanParam(flag_wo_dashes, label=param.help,
-                num_dashes=num_dashes)
+        gxparam = gxtp.BooleanParam(flag_wo_dashes, label=param.help, num_dashes=num_dashes)
 
         return gxparam

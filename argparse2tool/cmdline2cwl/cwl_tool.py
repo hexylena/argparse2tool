@@ -2,8 +2,8 @@ import re
 import os
 
 from jinja2 import Environment, FileSystemLoader
-
 from argparse2tool import __version__
+
 
 class Param:
     def __init__(self, id, type, position=None, description=None, default=None, prefix=None, optional=False, items_type=None, **kwargs):
@@ -26,6 +26,7 @@ class Param:
 
 class OutputParam(Param):
     pass
+
 
 class CWLTool(object):
 
@@ -58,7 +59,6 @@ class CWLTool(object):
                 outputs = f.read()
         else:
             outputs = outputs_template.render(tool=self)
-        import argparse
         return main_template.render(tool=self,
                                     version=__version__,
                                     formcommand=self.formcommand,
