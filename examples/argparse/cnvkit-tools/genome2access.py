@@ -16,7 +16,6 @@ import logging
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 
 
-
 AP = argparse.ArgumentParser(description=__doc__)
 AP.add_argument("fa_fname",
                 help="Genome FASTA file name")
@@ -32,9 +31,8 @@ AP.add_argument("-o", "--output",
                 help="Output file name")
 args = AP.parse_args()
 
+
 # Closes over args.output
 def write_row(chrom, run_start, run_end):
     args.output.write("%s\t%s\t%s\n" % (chrom, run_start, run_end))
     args.output.flush()
-
-
