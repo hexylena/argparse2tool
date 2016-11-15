@@ -12,3 +12,5 @@ script:
 	- python example.py --generate_galaxy_xml > tmp.xml
 	- diff tmp.xml example.xml
 	- planemo lint --report_level all --fail_level error --xsd tmp.xml
+	- python example.py --generate_cwl_tool > tmp.cwl
+	- diff tmp.cwl example.cwl
