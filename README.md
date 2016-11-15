@@ -130,5 +130,6 @@ This code doesn't cover the entirety of the `argparse` API yet, and there are so
 		4. Argument groups don't work in CWL as arguments are sorted with a [special algorithm](http://www.commonwl.org/draft-3/CommandLineTool.html#Input_binding)
 		5. Mutual exclusion is not supported.
 
+## License
 
-- Apache License, v2
+Apache License, v2
