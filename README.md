@@ -1,15 +1,17 @@
-# `argparse2tool`
+# argparse2tool
 
-Galaxy argparse aims to be a drop-in replacement for argparse, quite literally.
-You can write use your normal import
+This project aims to be a drop-in replacement for argparse which allows generating Galaxy XML and CWL Tools.
+
+It is quite literally a drop-in replacement. You (or the upstream tool author) can use argparse completely as normal
 
 ```python
 import argparse
 ```
 
-and continue writing code. All functions are passed straight through to
-argparse, but `argparse2tool` captures them and copies some information along the
-way. This information captured is used to produce [Galaxy Tool XML](https://github.com/erasche/galaxyxml) when it's
+When this package is installed, with its argparse module ahead of the system
+argparse,  `argparse2tool` will capture all argparse function calls, and process them specially.
+
+This information captured in this process is used to produce [Galaxy Tool XML](https://github.com/erasche/galaxyxml) when it's
 requested with the `--generate_galaxy_xml` flag, or [CWL Tools](http://www.commonwl.org/v1.0/CommandLineTool.html) when requested
 with the `--generate_cwl_tool` flag.
 
@@ -73,8 +75,8 @@ import the **real** argparse. It then stores a reference to the code module for
 the system argparse, and presents the user with all of the functions that
 stdlib's argparse provides. Every function call is passed through the system
 argparse. However, argparse2tool captures the details of those calls and when Tool
-XML is requested, it builds up the tool definition according to IUC tool
-standards.
+XML or CWL is requested, it builds up the tool definition and prints it out to
+standard output.
 
 ## Examples
 
@@ -85,9 +87,10 @@ arguments and options that you might see in real tools. Accordingly there is an 
 
 If you are not able to use the `--generate_galaxy_xml`/`--generate_cwl_tool`
 flags after installing, it is probably because of module load order. `argparse2tool`
-must precede `argparse` in the path. Certain cases seem to work correctly
-(`python setup.py install` in a virtualenv) while other cases do not (`pip
-install argparse2tool`).
+must precede `argparse` in the path.
+
+**NB**: Please do not install this system-wide. It may have bugs which could
+break your python installation. Please only install this in a virtualenv.
 
 To easily correct this, run the tool `argparse2tool_check_path` which is installed
 as part of this package. Correctly functioning paths will produce the
