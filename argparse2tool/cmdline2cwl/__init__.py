@@ -6,8 +6,6 @@ from argparse2tool import load_argparse
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-__version__ = '0.3.1'
-
 
 class Arg2CWLParser:
     def __init__(self):

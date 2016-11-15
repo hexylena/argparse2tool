@@ -8,7 +8,7 @@ from io import StringIO
 import yaml
 
 import argparse
-from cmdline2cwl import Arg2CWLParser
+from argparse2tool.cmdline2cwl import Arg2CWLParser
 from argparse.argparse_cwl_translation import ArgparseCWLTranslation as ac
 from test.cwl_classes import Tool
 

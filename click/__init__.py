@@ -6,9 +6,9 @@ import re
 import sys
 
 from click import click_cwl_translation as cct
-from cmdline2cwl import cwl_tool as cwlt
+from argparse2tool.cmdline2cwl import cwl_tool as cwlt
 from argparse2tool import load_conflicting_package
-from cmdline2cwl import Arg2CWLParser
+from argparse2tool.cmdline2cwl import Arg2CWLParser
 
 CLICK_NUMBER = 5
 click = load_conflicting_package('click', 'argparse2tool', CLICK_NUMBER)

@@ -3,14 +3,15 @@ from __future__ import print_function
 
 import re
 import sys
-from cmdline2cwl import Arg2CWLParser, load_argparse
+from argparse2tool import load_argparse
+from argparse2tool.cmdline2cwl import Arg2CWLParser
 
 ap = load_argparse()
 import galaxyxml.tool as gxt
 import galaxyxml.tool.parameters as gxtp
 from . import argparse_galaxy_translation as agt
 from . import argparse_cwl_translation as act
-from cmdline2cwl import cwl_tool as cwlt
+from argparse2tool.cmdline2cwl import cwl_tool as cwlt
 
 # This fetches a reference to ourselves
 __selfmodule__ = sys.modules[__name__]

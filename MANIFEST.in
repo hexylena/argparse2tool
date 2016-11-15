@@ -1,2 +1,2 @@
 include README.md
-include cmdline2cwl/templates/*.j2
+include argparse2tool/cmdline2cwl/templates/*.j2
