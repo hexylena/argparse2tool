@@ -1,5 +1,7 @@
 # argparse2tool
 
+[![Build Status](https://travis-ci.org/erasche/argparse2tool.svg?branch=master)](https://travis-ci.org/erasche/argparse2tool)
+
 This project aims to be a drop-in replacement for argparse which allows generating Galaxy XML and CWL Tools.
 
 It is quite literally a drop-in replacement. You (or the upstream tool author) can use argparse completely as normal
