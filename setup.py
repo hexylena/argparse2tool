@@ -14,7 +14,7 @@ setup(name="gxargparse",
         description='Instrument for forming Galaxy XML and CWL tool descriptions from argparse arguments',
         author='Eric Rasche, Anton Khodak',
         author_email='rasche.eric@yandex.ru, anton.khodak@ukr.net',
-        install_requires=['galaxyxml', 'jinja2', 'future'],
+        install_requires=['galaxyxml>=0.2.3', 'jinja2', 'future'],
         url='https://github.com/common-workflow-language/gxargparse',
         packages=["argparse", "gxargparse", "click", "cmdline2cwl"],
         entry_points={
