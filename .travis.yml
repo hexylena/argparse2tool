@@ -8,10 +8,9 @@ script:
   - pip install -U planemo flake8
   - pip install -r requirements.txt
   - python setup.py install
-  - export PYTHONPATH=$(gxargparse_check_path -q)
   - flake8 argparse argparse2tool click
-  - python examples/example.py --generate_galaxy_xml > tmp.xml
+  - PYTHONPATH=$(argparse2tool_check_path -q) python examples/example.py --generate_galaxy_xml > tmp.xml
   - diff tmp.xml examples/example.xml
   - planemo lint --report_level all --fail_level error --xsd tmp.xml
-  - python examples/example.py --generate_cwl_tool > tmp.cwl
+  - PYTHONPATH=$(argparse2tool_check_path -q) python examples/example.py --generate_cwl_tool > tmp.cwl
   - diff tmp.cwl examples/example.cwl
