@@ -3,7 +3,7 @@
   <stdio>
     <exit_code level="fatal" range="1:"/>
   </stdio>
-  <version_command>python example.py --version</version_command>
+  <version_command>python examples/example.py --version</version_command>
   <command interpreter="python"><![CDATA[example.py $positional_1
 
 #set repeat_var_2 = '" "'.join([ str($var.positional_2) for $var in $repeat_2 ])

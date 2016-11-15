@@ -1,6 +1,9 @@
 """Stub for argparse2tool"""
 import sys
-from builtins import range
+try:
+    from builtins import range
+except:
+    pass
 
 
 __version__ = '0.4.0'
