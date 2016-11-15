@@ -1,50 +1,12 @@
 import logging
 import re
 import sys
-from builtins import range
+from gxargparse import load_argparse
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 __version__ = '0.3.1'
-
-
-def load_argparse():
-    ARGPARSE_NUMBER = 1
-    return load_conflicting_package('argparse', 'gxargparse', ARGPARSE_NUMBER)
-
-
-def load_conflicting_package(name, not_name, module_number):
-    """Load a conflicting package
-    Some assumptions are made, namely that your package includes the "official"
-    one as part of the name. E.g. gxargparse/argparse, you would call this with:
-
-        >>> real_argparse = load_conflicting_package('argparse', 'gxargparse', 1)
-
-     http://stackoverflow.com/a/6032023
-    """
-    import imp
-    for i in range(0, 100):
-        random_name = 'random_name_%d' % (i,)
-        if random_name not in sys.modules:
-            break
-        else:
-            random_name = None
-    if random_name is None:
-        raise RuntimeError("Couldn't manufacture an unused module name.")
-    # NB: This code is unlikely to work for nonstdlib overrides.
-    # This will hold the correct sys.path for the REAL argparse
-    for path in sys.path:
-        try:
-            (f, pathname, desc) = imp.find_module(name, [path])
-            if not_name not in pathname and desc[2] == module_number:
-                module = imp.load_module(random_name, f, pathname, desc)
-                # f.close()
-                return sys.modules[random_name]
-        except:
-            # Many sys.paths won't contain the module of interest
-            pass
-    return None
 
 
 class Arg2CWLParser:

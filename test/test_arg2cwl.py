@@ -3,7 +3,6 @@ import os
 import shutil
 import unittest
 from itertools import chain
-from unittest import mock
 from io import StringIO
 
 import yaml
@@ -57,18 +56,22 @@ class GeneralTestCase(unittest.TestCase):
     def test_help_message(self):
         tool_parser = self.prepare_argument_parser(name='test_help_message')
         testargs = ["test.py", "--help_arg2cwl"]
-        with mock.patch('sys.stdout', new=StringIO()) as fakeOutput, mock.patch.object(sys, 'argv', testargs):
-            arg2cwl_parser = Arg2CWLParser().parser
-            with self.assertRaises(SystemExit) as result:
-                tool_parser.parse_args()
-                self.assertEqual(result.exception.code, 0)
-            help_message_actual = fakeOutput.getvalue().strip()
-            # flushing stdout
-            fakeOutput.truncate(0)
-            fakeOutput.seek(0)
-            arg2cwl_parser.print_help()
-            help_message_desired = fakeOutput.getvalue().strip()
-            self.assertEqual(help_message_actual, help_message_desired)
+
+        sys.stdout = StringIO()
+        fakeOutput = sys.stdout
+        sys.argv = testargs
+
+        arg2cwl_parser = Arg2CWLParser().parser
+        with self.assertRaises(SystemExit) as result:
+            tool_parser.parse_args(testargs)
+            self.assertEqual(result.exception.code, 0)
+        help_message_actual = fakeOutput.getvalue().strip()
+        # flushing stdout
+        fakeOutput.truncate(0)
+        fakeOutput.seek(0)
+        arg2cwl_parser.print_help()
+        help_message_desired = fakeOutput.getvalue().strip()
+        self.assertEqual(help_message_actual, help_message_desired)
 
     def test_subparser(self):
         """
@@ -80,8 +83,7 @@ class GeneralTestCase(unittest.TestCase):
         subparser.add_argument('keyword', type=str)
         testargs = ["test.py", "sub", "--generate_cwl_tool"]
         with self.assertRaises(SystemExit) as result:
-            with unittest.mock.patch.object(sys, 'argv', testargs):
-                parser.parse_args()
+            parser.parse_args(testargs)
         self.assertEqual(result.exception.code, 0)
 
     def test_output_directory_storage_for_CWL_tool(self):
@@ -90,13 +92,12 @@ class GeneralTestCase(unittest.TestCase):
         new_dir = 'test/'
         os.mkdir(new_dir)
         testargs = ["test-directory.py", "--generate_cwl_tool", "-d", new_dir]
-        with mock.patch.object(sys, 'argv', testargs):
-            with self.assertRaises(SystemExit) as result:
-                parser.parse_args()
-                self.assertEqual(result.exception.code, 0)
-            filepath = os.path.join(directory, new_dir, 'test-directory.cwl')
-            self.assertTrue(os.path.isfile(filepath))
-            shutil.rmtree(new_dir)
+        with self.assertRaises(SystemExit) as result:
+            parser.parse_args(testargs)
+            self.assertEqual(result.exception.code, 0)
+        filepath = os.path.join(directory, new_dir, 'test-directory.cwl')
+        self.assertTrue(os.path.isfile(filepath))
+        shutil.rmtree(new_dir)
 
 
 class CWLTestCase(unittest.TestCase):
@@ -114,10 +115,9 @@ class CWLTestCase(unittest.TestCase):
         parser = GeneralTestCase.prepare_argument_parser(parser_name, add_help)
         if not testargs:
             testargs = [parser_name, "--generate_cwl_tool", "-d", self.test_dir]
-        with mock.patch.object(sys, 'argv', testargs):
-            with self.assertRaises(SystemExit) as result:
-                parser.parse_args()
-                self.assertEqual(result.exception.code, 0)
+        with self.assertRaises(SystemExit) as result:
+            parser.parse_args(testargs)
+            self.assertEqual(result.exception.code, 0)
         return parser, Tool(self.test_dir + parser_name.replace('.py', '.cwl').strip('./'))
 
     @staticmethod
@@ -237,10 +237,9 @@ class CWLTestCase(unittest.TestCase):
         kid = argparse.ArgumentParser(prog=kid_name, parents=[mum, dad])
         kid.add_argument('--kids_argument', nargs='*')
         testargs = [kid_name, "--generate_cwl_tool", "-d", self.test_dir]
-        with mock.patch.object(sys, 'argv', testargs):
-            with self.assertRaises(SystemExit) as result:
-                kid.parse_args()
-                self.assertEqual(result.exception.code, 0)
+        with self.assertRaises(SystemExit) as result:
+            kid.parse_args(testargs)
+            self.assertEqual(result.exception.code, 0)
         tool = Tool(self.test_dir + kid_name.replace('.py', '.cwl').strip('./'))
         actions = list(chain(self._strip_help_version_actions(mum._actions),
                            self._strip_help_version_actions(dad._actions)))
@@ -268,10 +267,9 @@ class CWLTestCase(unittest.TestCase):
         parser.add_argument('-file', nargs='?', help='foo help', type=argparse.FileType('w'))
         parser.add_argument('--bar', nargs='*', default=[1, 2, 3], help='BAR!')
         testargs = [parser_name, "--generate_cwl_tool", "-d", self.test_dir]
-        with mock.patch.object(sys, 'argv', testargs):
-            with self.assertRaises(SystemExit) as result:
-                parser.parse_args()
-                self.assertEqual(result.exception.code, 0)
+        with self.assertRaises(SystemExit) as result:
+            parser.parse_args(testargs)
+            self.assertEqual(result.exception.code, 0)
         tool = Tool(self.test_dir + parser_name.replace('.py', '.cwl').strip('./'))
         for optional in self._strip_help_version_actions(parser._optionals._group_actions):
             self.assertEqual(tool.inputs[optional.dest].input_binding.prefix, optional.option_strings[0])

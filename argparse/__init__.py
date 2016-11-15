@@ -76,7 +76,7 @@ class ArgumentParser(ap.ArgumentParser):
             self.parse_args_cwl(*args, **kwargs)
 
         elif '--generate_galaxy_xml' in sys.argv:
-            self.parse_args_galaxy_nouse(*args, **kwargs)
+            self.parse_args_galaxy(*args, **kwargs)
 
         elif '--help_arg2cwl' in sys.argv:
             arg2cwl_parser.parser.print_help()
@@ -133,7 +133,7 @@ class ArgumentParser(ap.ArgumentParser):
                     continue
         sys.exit(0)
 
-    def parse_args_galaxy_nouse(self, *args, **kwargs):
+    def parse_args_galaxy(self, *args, **kwargs):
         self.tool = gxt.Tool(
                 self.prog,
                 self.prog,
