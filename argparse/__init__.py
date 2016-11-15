@@ -4,6 +4,7 @@ from __future__ import print_function
 import re
 import sys
 from argparse2tool import load_argparse
+from argparse2tool.cmdline2gxml import Arg2GxmlParser
 from argparse2tool.cmdline2cwl import Arg2CWLParser
 
 import galaxyxml.tool as gxt
@@ -69,17 +70,15 @@ class ArgumentParser(ap.ArgumentParser):
 
     def parse_args(self, *args, **kwargs):
 
+        arg2gxml_parser = Arg2GxmlParser()
         arg2cwl_parser = Arg2CWLParser()
-        if '--generate_cwl_tool' in sys.argv:
+
+        if '--generate_galaxy_xml' in sys.argv:
+            kwargs = arg2gxml_parser.process_arguments()
+            self.parse_args_galaxy(*args, **kwargs)
+        elif '--generate_cwl_tool' in sys.argv:
             kwargs = arg2cwl_parser.process_arguments()
             self.parse_args_cwl(*args, **kwargs)
-
-        elif '--generate_galaxy_xml' in sys.argv:
-            self.parse_args_galaxy(*args, **kwargs)
-
-        elif '--help_arg2cwl' in sys.argv:
-            arg2cwl_parser.parser.print_help()
-            sys.exit()
         else:
             return ap.ArgumentParser.parse_args(self, *args, **kwargs)
 

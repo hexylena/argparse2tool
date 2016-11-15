@@ -16,7 +16,7 @@ setup(name="argparse2tool",
         author_email='esr@tamu.edu, anton.khodak@ukr.net',
         install_requires=['galaxyxml>=0.2.3', 'jinja2', 'future'],
         url='https://github.com/erasche/argparse2tool',
-        packages=["argparse", "argparse2tool", "click", "cmdline2cwl"],
+        packages=["argparse", "argparse2tool", "click", "argparse2tool.cmdline2gxml", "argparse2tool.cmdline2cwl"],
         entry_points={
             'console_scripts': [
                     'argparse2tool_check_path = argparse2tool.check_path:main',
