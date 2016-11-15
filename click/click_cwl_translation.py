@@ -75,7 +75,7 @@ class ClickCWLTranslation:
         if type(param.type) is click.Choice:
             kwargs_positional['choices'] = param.type.choices
         if (isinstance(param.type, click.types.File) and 'w' in param.type.mode) \
-          or (self.generate_outputs and 'output' in param.dest):
+                or (self.generate_outputs and 'output' in param.dest):
             cwlparam = cwlt.OutputParam(**kwargs_positional)
         else:
             cwlparam = cwlt.Param(**kwargs_positional)
