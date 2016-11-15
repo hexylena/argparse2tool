@@ -5,10 +5,11 @@ python:
 install: "pip install -r requirements.txt"
 # command to run tests
 script:
-  - pip install -U planemo
+  - pip install -U planemo flake8
   - pip install -r requirements.txt
   - python setup.py install
   - export PYTHONPATH=$(gxargparse_check_path -q)
+  - python flake8 argparse argparse2tool click
   - python examples/example.py --generate_galaxy_xml > tmp.xml
   - diff tmp.xml examples/example.xml
   - planemo lint --report_level all --fail_level error --xsd tmp.xml
