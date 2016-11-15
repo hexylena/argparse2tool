@@ -2,7 +2,6 @@ from __future__ import print_function
 from builtins import str
 from builtins import range
 import sys
-import itertools
 import hashlib
 import copy
 
@@ -15,11 +14,11 @@ else:
 class GeneralTests(TestCase):
 
     def test_load(self):
-        gxap = sys.modules['gxargparse']
+        gxap = sys.modules['argparse2tool']
         ap = sys.modules['argparse']
         # Ensure we've loaded the correct argparse ;)
-        self.assertTrue('gxargparse/argparse' in str(ap))
-        self.assertTrue('gxargparse/gxargparse' in str(gxap))
+        self.assertTrue('argparse2tool/argparse' in str(ap))
+        self.assertTrue('argparse2tool/argparse2tool' in str(gxap))
 
         import argparse as fake_ap
         # Do we have a ref to the real ap

@@ -1,4 +1,4 @@
-"""Stub for gxargparse"""
+"""Stub for argparse2tool"""
 import sys
 from builtins import range
 
@@ -8,15 +8,15 @@ __version__ = '0.3.1'
 
 def load_argparse():
     ARGPARSE_NUMBER = 1
-    return load_conflicting_package('argparse', 'gxargparse', ARGPARSE_NUMBER)
+    return load_conflicting_package('argparse', 'argparse2tool', ARGPARSE_NUMBER)
 
 
 def load_conflicting_package(name, not_name, module_number):
     """Load a conflicting package
     Some assumptions are made, namely that your package includes the "official"
-    one as part of the name. E.g. gxargparse/argparse, you would call this with:
+    one as part of the name. E.g. argparse2tool/argparse, you would call this with:
 
-        >>> real_argparse = load_conflicting_package('argparse', 'gxargparse', 1)
+        >>> real_argparse = load_conflicting_package('argparse', 'argparse2tool', 1)
 
      http://stackoverflow.com/a/6032023
     """

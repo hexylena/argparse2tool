@@ -1,7 +1,7 @@
 import logging
 import re
 import sys
-from gxargparse import load_argparse
+from argparse2tool import load_argparse
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
