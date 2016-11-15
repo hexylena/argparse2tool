@@ -1,0 +1,2 @@
+include README.md
+include cmdline2cwl/templates/*.j2
