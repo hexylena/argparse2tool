@@ -14,6 +14,8 @@ script:
 - PYTHONPATH=$(argparse2tool_check_path -q) python examples/example.py --generate_cwl_tool
   > tmp.cwl
 - diff tmp.cwl examples/example.cwl
+before_deploy:
+- sed -i "s/__version__.*/__version__= '${TRAVIS_TAG}'/g" argparse2tool/__init__.py # Ensure the version is set correctly (in case anyone forgot)
 deploy:
   provider: pypi
   user: erasche
