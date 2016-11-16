@@ -1,16 +1,25 @@
 language: python
 python:
-  - "2.7"
-# command to install dependencies
-install: "pip install -r requirements.txt"
-# command to run tests
+- '2.7'
+install: pip install -r requirements.txt
 script:
-  - pip install -U planemo flake8
-  - pip install -r requirements.txt
-  - python setup.py install
-  - flake8 argparse argparse2tool click
-  - PYTHONPATH=$(argparse2tool_check_path -q) python examples/example.py --generate_galaxy_xml > tmp.xml
-  - diff tmp.xml examples/example.xml
-  - planemo lint --report_level all --fail_level error --xsd tmp.xml
-  - PYTHONPATH=$(argparse2tool_check_path -q) python examples/example.py --generate_cwl_tool > tmp.cwl
-  - diff tmp.cwl examples/example.cwl
+- pip install -U planemo flake8
+- pip install -r requirements.txt
+- python setup.py install
+- flake8 argparse argparse2tool click
+- PYTHONPATH=$(argparse2tool_check_path -q) python examples/example.py --generate_galaxy_xml
+  > tmp.xml
+- diff tmp.xml examples/example.xml
+- planemo lint --report_level all --fail_level error --xsd tmp.xml
+- PYTHONPATH=$(argparse2tool_check_path -q) python examples/example.py --generate_cwl_tool
+  > tmp.cwl
+- diff tmp.cwl examples/example.cwl
+deploy:
+  provider: pypi
+  user: erasche
+  password:
+    secure: PjtJXEgtAjPKU/dqlodk/PxR9V6izRc7Ku7Q0jJG8eQcr+u3tGTKWtGSO9ULclfEzRrZmC4ndgJMklV6TWpT9sRJon9+itOrBXxiQMHoqfZ3tRw7Iqgo4sRoTQSu810DYqgWTCTYZLkPGiHjeinAfl9tUQ2jqyhulUPOdssM2UQ=
+  on:
+    tags: true
+    distributions: sdist bdist_wheel
+    repo: erasche/argparse2tool
