@@ -15,13 +15,19 @@ script:
   > tmp.cwl
 - diff tmp.cwl examples/example.cwl
 before_deploy:
-- sed -i "s/__version__.*/__version__= '${TRAVIS_TAG}'/g" argparse2tool/__init__.py # Ensure the version is set correctly (in case anyone forgot)
+- sed -i "s/__version__.*/__version__= '${TRAVIS_TAG}'/g" argparse2tool/__init__.py
 deploy:
-  provider: pypi
+- provider: pypi
   user: erasche
   password:
     secure: PjtJXEgtAjPKU/dqlodk/PxR9V6izRc7Ku7Q0jJG8eQcr+u3tGTKWtGSO9ULclfEzRrZmC4ndgJMklV6TWpT9sRJon9+itOrBXxiQMHoqfZ3tRw7Iqgo4sRoTQSu810DYqgWTCTYZLkPGiHjeinAfl9tUQ2jqyhulUPOdssM2UQ=
   on:
     tags: true
     distributions: sdist bdist_wheel
+    repo: erasche/argparse2tool
+- provider: releases
+  api_key:
+    secure: OVkwdlqI/Y/K4Z5IF/5HqYgpH1bt/ql2RWbVWBIdvgRtQD2fEDwtReWQF2qFAQxZzO0xBkRXssunhKdaWm4TS3zwkQOrRcwIxWpdsQkUpuQTvJ9oYHVkYdN7h4QnhzmtR6Q1mcoDSx8LK08JhZ3XWa151Xi9Fk1AJTCbZLUzpYQ=
+  file: dist/*
+  on:
     repo: erasche/argparse2tool
