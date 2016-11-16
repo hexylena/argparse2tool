@@ -23,6 +23,7 @@ deploy:
     secure: PjtJXEgtAjPKU/dqlodk/PxR9V6izRc7Ku7Q0jJG8eQcr+u3tGTKWtGSO9ULclfEzRrZmC4ndgJMklV6TWpT9sRJon9+itOrBXxiQMHoqfZ3tRw7Iqgo4sRoTQSu810DYqgWTCTYZLkPGiHjeinAfl9tUQ2jqyhulUPOdssM2UQ=
   on:
     tags: true
+    all_branches: true
     distributions: sdist bdist_wheel
     repo: erasche/argparse2tool
 - provider: releases
