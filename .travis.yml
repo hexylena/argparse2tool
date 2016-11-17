@@ -27,9 +27,3 @@ deploy:
     all_branches: true
     distributions: sdist bdist_wheel
     repo: erasche/argparse2tool
-- provider: releases
-  api_key:
-    secure: OVkwdlqI/Y/K4Z5IF/5HqYgpH1bt/ql2RWbVWBIdvgRtQD2fEDwtReWQF2qFAQxZzO0xBkRXssunhKdaWm4TS3zwkQOrRcwIxWpdsQkUpuQTvJ9oYHVkYdN7h4QnhzmtR6Q1mcoDSx8LK08JhZ3XWa151Xi9Fk1AJTCbZLUzpYQ=
-  file: dist/*
-  on:
-    repo: erasche/argparse2tool
