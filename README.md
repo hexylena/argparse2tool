@@ -1,5 +1,6 @@
 # argparse2tool
 
+[![PyPI](https://img.shields.io/pypi/dm/argparse2tool.svg?style=flat-square)]()
 [![Build Status](https://travis-ci.org/erasche/argparse2tool.svg?branch=master)](https://travis-ci.org/erasche/argparse2tool)
 
 This project aims to be a drop-in replacement for argparse which allows generating Galaxy XML and CWL Tools.
