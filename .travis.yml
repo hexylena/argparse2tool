@@ -13,6 +13,7 @@ script:
 - planemo lint --report_level all --fail_level error --xsd tmp.xml
 - PYTHONPATH=$(argparse2tool_check_path -q) python examples/example.py --generate_cwl_tool
   > tmp.cwl
+- sed -i 's/argparse2tool .*/argparse2tool/g' tmp.cwl
 - diff tmp.cwl examples/example.cwl
 before_deploy:
 - sed -i "s/__version__.*/__version__= '${TRAVIS_TAG}'/g" argparse2tool/__init__.py
