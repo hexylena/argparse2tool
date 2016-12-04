@@ -54,7 +54,7 @@ class ArgparseCWLTranslation:
                              'prefix': prefix,
                              'optional': optional,
                              'items_type': param.items_type,
-                             'type': self.get_cwl_type(param.type) or 'str'}
+                             'type': self.get_cwl_type(param.type) or 'string'}
 
         if param.choices is not None:
             kwargs_positional['choices'] = param.choices
