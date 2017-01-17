@@ -36,20 +36,20 @@ $false
     <repeat min="1" name="repeat_2" title="repeat_title">
       <param label="an integer for the accumulator" name="positional_2" type="integer" value="0"/>
     </repeat>
-    <param checked="false" help="(--sum)" label="sum the integers (default: find the max)" name="sum" type="boolean" truevalue="--sum" falsevalue=""/>
-    <param area="false" help="(--foo)" label="foo help" name="foo" optional="true" type="text"/>
+    <param argument="--sum" checked="false" label="sum the integers (default: find the max)" name="sum" type="boolean" truevalue="--sum" falsevalue=""/>
+    <param area="false" argument="--foo" label="foo help" name="foo" optional="true" type="text"/>
     <repeat name="repeat_4" title="repeat_title">
-      <param area="false" help="(--bar)" label="BAR!" name="bar" optional="true" type="text" value="1"/>
+      <param area="false" argument="--bar" label="BAR!" name="bar" optional="true" type="text" value="1"/>
     </repeat>
-    <param checked="false" help="(--true)" label="Store a true" name="true" type="boolean" truevalue="--true" falsevalue=""/>
-    <param checked="false" help="(--false)" label="Store a false" name="false" type="boolean" truevalue="--false" falsevalue=""/>
+    <param argument="--true" checked="false" label="Store a true" name="true" type="boolean" truevalue="--true" falsevalue=""/>
+    <param argument="--false" checked="false" label="Store a false" name="false" type="boolean" truevalue="--false" falsevalue=""/>
     <repeat name="repeat_5" title="Repeated Variable">
-      <param area="false" help="(--append)" label="Append a value" name="append" type="text"/>
+      <param area="false" argument="--append" label="Append a value" name="append" type="text"/>
     </repeat>
     <repeat max="2" min="2" name="repeat_6" title="repeat_title">
-      <param area="false" help="(--nargs2)" label="nargs2" name="nargs2" optional="true" type="text"/>
+      <param area="false" argument="--nargs2" label="nargs2" name="nargs2" optional="true" type="text"/>
     </repeat>
-    <param help="(--mode)" label="Author did not provide help for this parameter... " name="mode" optional="true" type="select">
+    <param argument="--mode" label="Author did not provide help for this parameter... " name="mode" optional="true" type="select">
       <option selected="true" value="scissors">scissors</option>
       <option value="paper">paper</option>
       <option value="rock">rock</option>
