@@ -32,7 +32,7 @@ inputs:
       position: 2
 
   foo:
-    type: ["null", str]
+    type: ["null", string]
     doc: foo help
     inputBinding:
       prefix: --foo 
