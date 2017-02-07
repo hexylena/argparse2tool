@@ -125,4 +125,4 @@ class ArgparseCWLTranslation:
         elif type(py_type).__name__ == 'builtin_function_or_method' or type(py_type).__name__ == 'FileType':
             return 'File'
         else:  # type given as a string: 'str', 'int' etc.
-            return PY_TO_CWL_TYPES[py_type]
+            return PY_TO_CWL_TYPES.get(py_type,None)
