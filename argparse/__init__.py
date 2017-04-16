@@ -160,7 +160,7 @@ class ArgumentParser(ap.ArgumentParser):
                         self.outputs.append(gxt_parameter)
 
         # TODO: replace with argparse-esque library to do this.
-        stdout = gxtp.OutputParameter('default', 'txt')
+        stdout = gxtp.OutputData('default', 'txt')
         stdout.command_line_override = '> $default'
         self.outputs.append(stdout)
 
