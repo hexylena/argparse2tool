@@ -134,7 +134,7 @@ class ArgumentParser(ap.ArgumentParser):
     def parse_args_galaxy(self, *args, **kwargs):
         try:
             version = self.print_version() or '1.0'
-        except AttributeError: #handle the potential absence of print_version
+        except AttributeError:  # handle the potential absence of print_version
             version = '1.0'
         self.tool = gxt.Tool(
                 self.prog,
