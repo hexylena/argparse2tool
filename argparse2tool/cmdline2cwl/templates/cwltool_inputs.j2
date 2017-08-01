@@ -1,3 +1,6 @@
+{% if not('python' in basecommand[0]) and not(tool.inputs) %}
+[]
+{% endif %}
 {% if 'python' in basecommand[0] %}
 {{ tool.name }}:
     type: File
