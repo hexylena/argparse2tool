@@ -19,7 +19,7 @@ class ArgparseGalaxyTranslation(object):
         elif param.type == float:
             gxparam = gxtp.FloatParam(flag, default, label=label, num_dashes=num_dashes, **gxparam_extra_kwargs)
         elif param.type is None or param.type == str:
-            gxparam = gxtp.TextParam(flag, default=default, label=label, num_dashes=num_dashes, **gxparam_extra_kwargs)
+            gxparam = gxtp.TextParam(flag, value=default, label=label, num_dashes=num_dashes, **gxparam_extra_kwargs)
         elif param.type == locate('file'):
             gxparam = gxtp.DataParam(flag, label=label, num_dashes=num_dashes, **gxparam_extra_kwargs)
         elif isinstance(param.type, FileType):
