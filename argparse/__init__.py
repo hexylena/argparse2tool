@@ -70,15 +70,18 @@ class ArgumentParser(ap.ArgumentParser):
 
     def parse_args(self, *args, **kwargs):
 
-        arg2gxml_parser = Arg2GxmlParser()
-        arg2cwl_parser = Arg2CWLParser()
-
         if '--generate_galaxy_xml' in sys.argv:
-            kwargs = arg2gxml_parser.process_arguments()
+            parser = Arg2GxmlParser()
+            kwargs = parser.process_arguments()
             self.parse_args_galaxy(*args, **kwargs)
         elif '--generate_cwl_tool' in sys.argv:
-            kwargs = arg2cwl_parser.process_arguments()
+            parser = Arg2CWLParser()
+            kwargs = parser.process_arguments()
             self.parse_args_cwl(*args, **kwargs)
+        elif '--help_arg2cwl':
+            parser = Arg2CWLParser()
+            parser.parser.print_help()
+            sys.exit()
         else:
             return ap.ArgumentParser.parse_args(self, *args, **kwargs)
 

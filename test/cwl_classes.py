@@ -13,7 +13,7 @@ class OutputBinding:
         self.glob = ob.get('glob', None)
 
 
-class Param:
+class Param(object):
 
     def __init__(self, param):
         self.id = param['id']

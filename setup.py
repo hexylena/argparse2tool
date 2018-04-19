@@ -8,6 +8,7 @@ setup(name="argparse2tool",
         author='Eric Rasche, Anton Khodak',
         author_email='esr@tamu.edu; anton.khodak@ukr.net',
         install_requires=['galaxyxml>=0.2.3', 'jinja2', 'future'],
+        tests_requires=['pyyaml', 'mock'],
         url='https://github.com/erasche/argparse2tool',
         packages=["argparse", "argparse2tool", "click", "argparse2tool.cmdline2gxml", "argparse2tool.cmdline2cwl"],
         entry_points={
