@@ -1,0 +1,78 @@
+<tool id="example-sub.py foo" name="example-sub.py foo" version="1.0">
+  <description/>
+  <stdio>
+    <exit_code level="fatal" range="1:"/>
+  </stdio>
+  <version_command>python examples/example-sub.py --version</version_command>
+  <command interpreter="python"><![CDATA[example-sub.py foo $positional_1
+
+#set repeat_var_2 = '" "'.join([ str($var.positional_2) for $var in $repeat_2 ])
+"$repeat_var_2"
+
+$sum
+
+#if $foo and $foo is not None:
+--foo $foo
+#end if
+
+#set repeat_var_4 = '" "'.join([ str($var.bar) for $var in $repeat_4 ])
+--bar "$repeat_var_4"
+
+$true
+> $default]]></command>
+  <inputs>
+    <param area="false" label="action keyword" name="positional_1" type="text"/>
+    <repeat min="1" name="repeat_2" title="repeat_title">
+      <param label="an integer for the accumulator" name="positional_2" type="integer" value="0"/>
+    </repeat>
+    <param argument="--sum" checked="false" label="sum the integers (default: find the max)" name="sum" type="boolean" truevalue="--sum" falsevalue=""/>
+    <param area="false" argument="--foo" label="foo help" name="foo" optional="true" type="text"/>
+    <repeat name="repeat_4" title="repeat_title">
+      <param area="false" argument="--bar" default="1" label="BAR!" name="bar" optional="true" type="text"/>
+    </repeat>
+    <param argument="--true" checked="false" label="Store a true" name="true" type="boolean" truevalue="--true" falsevalue=""/>
+  </inputs>
+  <outputs>
+    <data format="txt" hidden="false" name="default"/>
+  </outputs>
+  <help><![CDATA[TODO: Write help]]></help>
+</tool>
+
+<tool id="example-sub.py bar" name="example-sub.py bar" version="2.0">
+  <description/>
+  <stdio>
+    <exit_code level="fatal" range="1:"/>
+  </stdio>
+  <version_command>python examples/example-sub.py --version</version_command>
+  <command interpreter="python"><![CDATA[example-sub.py bar $false
+#for $i in $repeat_1:
+--append $i.append
+#end for
+#for $i in $repeat_2:
+--nargs2 "$repeat_var_2"
+#end for
+
+#if $mode and $mode is not None:
+--mode $mode
+#end if
+> $default]]></command>
+  <inputs>
+    <param argument="--false" checked="false" label="Store a false" name="false" type="boolean" truevalue="--false" falsevalue=""/>
+    <repeat name="repeat_1" title="Repeated Variable">
+      <param area="false" argument="--append" label="Append a value" name="append" type="text"/>
+    </repeat>
+    <repeat max="2" min="2" name="repeat_2" title="repeat_title">
+      <param area="false" argument="--nargs2" label="nargs2" name="nargs2" optional="true" type="text"/>
+    </repeat>
+    <param argument="--mode" label="Author did not provide help for this parameter... " name="mode" optional="true" type="select">
+      <option value="paper">paper</option>
+      <option value="rock">rock</option>
+      <option selected="true" value="scissors">scissors</option>
+    </param>
+  </inputs>
+  <outputs>
+    <data format="txt" hidden="false" name="default"/>
+  </outputs>
+  <help><![CDATA[TODO: Write help]]></help>
+</tool>
+

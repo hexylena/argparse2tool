@@ -69,7 +69,6 @@ class ArgumentParser(ap.ArgumentParser):
         self.argument_names.append(result.dest)
 
     def parse_args(self, *args, **kwargs):
-
         arg2gxml_parser = Arg2GxmlParser()
         arg2cwl_parser = Arg2CWLParser()
 
@@ -132,45 +131,61 @@ class ArgumentParser(ap.ArgumentParser):
         sys.exit(0)
 
     def parse_args_galaxy(self, *args, **kwargs):
-        self.tool = gxt.Tool(
-                self.prog,
-                self.prog,
-                self.print_version() or '1.0',
-                self.description,
-                self.prog,
+        for argp in tools:
+            # make subparser description out of its help message
+            if argp._subparsers:
+                # there were cases during testing, when instances other than _SubParsesAction type
+                # got into ._subparsers._group_actions
+                for subparser in filter(lambda action: isinstance(action, ap._SubParsersAction),
+                                        argp._subparsers._group_actions):
+                    for choice_action in subparser._choices_actions:
+                        subparser.choices[choice_action.dest].description = choice_action.help
+            else:
+                if kwargs.get('command', argp.prog) in argp.prog:
+                    data = self._parse_args_galaxy_argp(argp)
+                    print(data)
+                else:
+                    continue
+        sys.exit()
+
+    def _parse_args_galaxy_argp(self, argp):
+        tool = gxt.Tool(
+                argp.prog,
+                argp.prog,
+                argp.print_version() or '1.0',
+                argp.description,
+                argp.prog,
                 interpreter='python',
                 version_command='python %s --version' % sys.argv[0])
 
-        self.inputs = gxtp.Inputs()
-        self.outputs = gxtp.Outputs()
+        inputs = gxtp.Inputs()
+        outputs = gxtp.Outputs()
 
-        self.at = agt.ArgparseGalaxyTranslation()
+        at = agt.ArgparseGalaxyTranslation()
         # Only build up arguments if the user actually requests it
-        for result in self.argument_list:
+        for result in argp.argument_list:
             # I am SO thankful they return the argument here. SO useful.
             argument_type = result.__class__.__name__
             # http://stackoverflow.com/a/3071
-            if hasattr(self.at, argument_type):
-                methodToCall = getattr(self.at, argument_type)
-                gxt_parameter = methodToCall(result, tool=self.tool)
+            if hasattr(at, argument_type):
+                methodToCall = getattr(at, argument_type)
+                gxt_parameter = methodToCall(result, tool=tool)
                 if gxt_parameter is not None:
                     if isinstance(gxt_parameter, gxtp.InputParameter):
-                        self.inputs.append(gxt_parameter)
+                        inputs.append(gxt_parameter)
                     else:
-                        self.outputs.append(gxt_parameter)
+                        outputs.append(gxt_parameter)
 
         # TODO: replace with argparse-esque library to do this.
-        stdout = gxtp.OutputParameter('default', 'txt')
+        stdout = gxtp.OutputData('default', 'txt')
         stdout.command_line_override = '> $default'
-        self.outputs.append(stdout)
+        outputs.append(stdout)
 
-        self.tool.inputs = self.inputs
-        self.tool.outputs = self.outputs
-        if self.epilog is not None:
-            self.tool.help = self.epilog
+        tool.inputs = inputs
+        tool.outputs = outputs
+        if argp.epilog is not None:
+            tool.help = argp.epilog
         else:
-            self.tool.help = "TODO: Write help"
+            tool.help = "TODO: Write help"
 
-        data = self.tool.export()
-        print(data)
-        sys.exit()
+        return tool.export()

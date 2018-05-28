@@ -1,23 +1,23 @@
 #!/usr/bin/env cwl-runner
-# This tool description was generated automatically by argparse2tool
-# To generate again: $ example.py --generate_cwl_tool
-# Help: $ example.py --help_arg2cwl
+# This tool description was generated automatically by argparse2tool ver. 0.4.3-2
+# To generate again: $ example-sub.py --generate_cwl_tool
+# Help: $ example --help_arg2cwl
 
 cwlVersion: "cwl:v1.0"
 
 class: CommandLineTool
-baseCommand: ['example.py']
+baseCommand: ['example-sub.py', 'foo']
 
 doc: |
-  Process some integers.here's some epilog text
+  None
 
 inputs:
   
   keyword:
     type:
       type: array
-      items: str
-  
+      items: string
+
     doc: action keyword
     inputBinding:
       position: 1
@@ -26,13 +26,13 @@ inputs:
     type:
       type: array
       items: int
-  
+
     doc: an integer for the accumulator
     inputBinding:
       position: 2
 
   foo:
-    type: ["null", str]
+    type: ["null", string]
     doc: foo help
     inputBinding:
       prefix: --foo 
@@ -42,7 +42,7 @@ inputs:
     - "null"
     - type: array
       items: string
-  
+
     default: [1, 2, 3]
     doc: BAR!
     inputBinding:
@@ -55,6 +55,25 @@ inputs:
     inputBinding:
       prefix: --true 
 
+
+outputs:
+    []
+
+#!/usr/bin/env cwl-runner
+# This tool description was generated automatically by argparse2tool ver. 0.4.3-2
+# To generate again: $ example-sub.py --generate_cwl_tool
+# Help: $ example --help_arg2cwl
+
+cwlVersion: "cwl:v1.0"
+
+class: CommandLineTool
+baseCommand: ['example-sub.py', 'bar']
+
+doc: |
+  None
+
+inputs:
+  
   false:
     type: ["null", boolean]
     default: True
@@ -67,7 +86,7 @@ inputs:
     - "null"
     - type: array
       items: string
-  
+
     doc: Append a value
     inputBinding:
       prefix: --append 
@@ -77,7 +96,7 @@ inputs:
     - "null"
     - type: array
       items: string
-  
+
     doc: nargs2
     inputBinding:
       prefix: --nargs2 
@@ -88,7 +107,7 @@ inputs:
     - type: enum
       symbols: ['rock', 'paper', 'scissors']
     default: scissors
-  
+
     inputBinding:
       prefix: --mode 
 
