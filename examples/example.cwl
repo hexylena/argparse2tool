@@ -17,7 +17,7 @@ inputs:
     type:
       type: array
       items: string
-  
+
     doc: action keyword
     inputBinding:
       position: 1
