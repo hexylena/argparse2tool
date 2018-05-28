@@ -1,9 +1,9 @@
 #!/usr/bin/env cwl-runner
-# This tool description was generated automatically by argparse2tool ver. 0.4.3-2
+# This tool description was generated automatically by argparse2tool
 # To generate again: $ example-sub.py --generate_cwl_tool
 # Help: $ example --help_arg2cwl
 
-cwlVersion: "cwl:v1.0"
+cwlVersion: v1.0
 
 class: CommandLineTool
 baseCommand: ['example-sub.py', 'foo']
@@ -60,11 +60,11 @@ outputs:
     []
 
 #!/usr/bin/env cwl-runner
-# This tool description was generated automatically by argparse2tool ver. 0.4.3-2
+# This tool description was generated automatically by argparse2tool
 # To generate again: $ example-sub.py --generate_cwl_tool
 # Help: $ example --help_arg2cwl
 
-cwlVersion: "cwl:v1.0"
+cwlVersion: v1.0
 
 class: CommandLineTool
 baseCommand: ['example-sub.py', 'bar']

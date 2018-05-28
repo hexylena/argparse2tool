@@ -9,12 +9,12 @@ script:
 - python setup.py install
 - flake8 argparse argparse2tool click
 - PYTHONPATH=$(argparse2tool_check_path -q) python examples/example.py --generate_galaxy_xml > tmp.xml
-- PYTHONPATH=$(argparse2tool_check_path -q) python examples/example.py --generate_galaxy_xml > tmp-sub.xml
+- PYTHONPATH=$(argparse2tool_check_path -q) python examples/example-sub.py --generate_galaxy_xml > tmp-sub.xml
 - diff tmp.xml examples/example.xml
 - diff tmp-sub.xml examples/example-sub.xml
 - planemo lint --report_level all --fail_level error --xsd tmp.xml
 - PYTHONPATH=$(argparse2tool_check_path -q) python examples/example.py --generate_cwl_tool > tmp.cwl
-- PYTHONPATH=$(argparse2tool_check_path -q) python examples/example.py --generate_cwl_tool > tmp-sub.cwl
+- PYTHONPATH=$(argparse2tool_check_path -q) python examples/example-sub.py --generate_cwl_tool > tmp-sub.cwl
 - sed -i 's/argparse2tool .*/argparse2tool/g' tmp.cwl tmp-sub.cwl
 - diff tmp.cwl examples/example.cwl
 - diff tmp-sub.cwl examples/example-sub.cwl

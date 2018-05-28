@@ -16,8 +16,8 @@ inputs:
   keyword:
     type:
       type: array
-      items: str
-  
+      items: string
+
     doc: action keyword
     inputBinding:
       position: 1
@@ -26,7 +26,7 @@ inputs:
     type:
       type: array
       items: int
-  
+
     doc: an integer for the accumulator
     inputBinding:
       position: 2
@@ -42,7 +42,7 @@ inputs:
     - "null"
     - type: array
       items: string
-  
+
     default: [1, 2, 3]
     doc: BAR!
     inputBinding:
@@ -67,7 +67,7 @@ inputs:
     - "null"
     - type: array
       items: string
-  
+
     doc: Append a value
     inputBinding:
       prefix: --append 
@@ -77,7 +77,7 @@ inputs:
     - "null"
     - type: array
       items: string
-  
+
     doc: nargs2
     inputBinding:
       prefix: --nargs2 
@@ -88,7 +88,7 @@ inputs:
     - type: enum
       symbols: ['rock', 'paper', 'scissors']
     default: scissors
-  
+
     inputBinding:
       prefix: --mode 
 
