@@ -31,7 +31,7 @@ def main():
                 good_paths.append(pathname)
             elif len(good_paths) == 0:
                 incorrect_ordering = True
-        except:
+        except Exception:
             pass
 
     if incorrect_ordering:

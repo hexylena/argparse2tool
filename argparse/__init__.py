@@ -156,7 +156,7 @@ class ArgumentParser(ap.ArgumentParser):
         tool = gxt.Tool(
                 argp.prog,
                 argp.prog,
-                argp.print_version() or '1.0',
+                version,
                 argp.description,
                 argp.prog,
                 interpreter='python',

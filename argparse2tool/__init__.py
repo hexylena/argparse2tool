@@ -2,7 +2,7 @@
 import sys
 try:
     from builtins import range
-except:
+except Exception:
     pass
 
 
@@ -40,7 +40,7 @@ def load_conflicting_package(name, not_name, module_number):
             if not_name not in pathname and desc[2] == module_number:
                 imp.load_module(random_name, f, pathname, desc)
                 return sys.modules[random_name]
-        except:
+        except Exception:
             # Many sys.paths won't contain the module of interest
             pass
     return None
