@@ -16,7 +16,7 @@ inputs:
   keyword:
     type:
       type: array
-      items: str
+      items: string
   
     doc: action keyword
     inputBinding:
