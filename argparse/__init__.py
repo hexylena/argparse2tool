@@ -146,9 +146,13 @@ class ArgumentParser(ap.ArgumentParser):
                     print(data)
                 else:
                     continue
-        sys.exit()
+        sys.exit(0)
 
     def _parse_args_galaxy_argp(self, argp):
+        try:
+            version = self.print_version() or '1.0'
+        except AttributeError:  # handle the potential absence of print_version
+            version = '1.0'
         tool = gxt.Tool(
                 argp.prog,
                 argp.prog,

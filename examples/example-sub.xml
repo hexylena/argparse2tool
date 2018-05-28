@@ -28,7 +28,7 @@ $true
     <param argument="--sum" checked="false" label="sum the integers (default: find the max)" name="sum" type="boolean" truevalue="--sum" falsevalue=""/>
     <param area="false" argument="--foo" label="foo help" name="foo" optional="true" type="text"/>
     <repeat name="repeat_4" title="repeat_title">
-      <param area="false" argument="--bar" default="1" label="BAR!" name="bar" optional="true" type="text"/>
+      <param area="false" argument="--bar" label="BAR!" name="bar" optional="true" type="text" value="1"/>
     </repeat>
     <param argument="--true" checked="false" label="Store a true" name="true" type="boolean" truevalue="--true" falsevalue=""/>
   </inputs>

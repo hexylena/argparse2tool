@@ -50,9 +50,9 @@ $false
       <param area="false" argument="--nargs2" label="nargs2" name="nargs2" optional="true" type="text"/>
     </repeat>
     <param argument="--mode" label="Author did not provide help for this parameter... " name="mode" optional="true" type="select">
-      <option selected="true" value="scissors">scissors</option>
       <option value="paper">paper</option>
       <option value="rock">rock</option>
+      <option selected="true" value="scissors">scissors</option>
     </param>
   </inputs>
   <outputs>
