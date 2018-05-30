@@ -164,7 +164,7 @@ class ArgparseGalaxyTranslation(object):
 
         # Moved because needed in developing repeat CLI
         if positional:
-            flag_wo_dashes = 'positional_%s' % self.positional_count
+            flag_wo_dashes = '%s_%s\n' %(param.dest, self.positional_count)
             # SO unclean
             gxparam_extra_kwargs['positional'] = True
 
