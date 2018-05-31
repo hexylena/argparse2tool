@@ -3,7 +3,7 @@
   <stdio>
     <exit_code level="fatal" range="1:"/>
   </stdio>
-  <version_command>python example-sub.py --version</version_command>
+  <version_command>python example-sub.py foo --version</version_command>
   <command><![CDATA[python example-sub.py foo $keyword
 
 #set repeat_var_2 = '" "'.join([ str($var.integers) for $var in $repeat_2 ])
@@ -43,7 +43,7 @@ $true
   <stdio>
     <exit_code level="fatal" range="1:"/>
   </stdio>
-  <version_command>python example-sub.py --version</version_command>
+  <version_command>python example-sub.py bar --version</version_command>
   <command><![CDATA[python example-sub.py bar $false
 #for $i in $repeat_1:
 --append $i.append
