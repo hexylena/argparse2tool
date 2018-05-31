@@ -3,8 +3,8 @@
   <stdio>
     <exit_code level="fatal" range="1:"/>
   </stdio>
-  <version_command>python examples/example-sub.py --version</version_command>
-  <command><![CDATA[python examples/example-sub.py foo $keyword
+  <version_command>python example-sub.py --version</version_command>
+  <command><![CDATA[python example-sub.py foo $keyword
 
 #set repeat_var_2 = '" "'.join([ str($var.integers) for $var in $repeat_2 ])
 "$repeat_var_2"
@@ -43,8 +43,8 @@ $true
   <stdio>
     <exit_code level="fatal" range="1:"/>
   </stdio>
-  <version_command>python examples/example-sub.py --version</version_command>
-  <command><![CDATA[python examples/example-sub.py bar $false
+  <version_command>python example-sub.py --version</version_command>
+  <command><![CDATA[python example-sub.py bar $false
 #for $i in $repeat_1:
 --append $i.append
 #end for
