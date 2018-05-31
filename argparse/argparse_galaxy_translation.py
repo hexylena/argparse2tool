@@ -1,4 +1,5 @@
 import galaxyxml.tool.parameters as gxtp
+from collections import Counter
 from pydoc import locate
 
 
@@ -11,11 +12,16 @@ class ArgparseGalaxyTranslation(object):
         if default is None and (param.type in (int, float)):
             default = 0
 
-        if param.choices is not None:
+        if param.type == int:
+            mn = None
+            mx = None
+            if param.choices is not None:
+                mn = min(param.choices)
+                mx = max(param.choices)
+            gxparam = gxtp.IntegerParam(flag, default, label=label, min=mn, max=mx, num_dashes=num_dashes, **gxparam_extra_kwargs)
+        elif param.choices is not None:
             choices = {k: k for k in param.choices}
             gxparam = gxtp.SelectParam(flag, default=default, label=label, num_dashes=num_dashes, options=choices, **gxparam_extra_kwargs)
-        elif param.type == int:
-            gxparam = gxtp.IntegerParam(flag, default, label=label, num_dashes=num_dashes, **gxparam_extra_kwargs)
         elif param.type == float:
             gxparam = gxtp.FloatParam(flag, default, label=label, num_dashes=num_dashes, **gxparam_extra_kwargs)
         elif param.type is None or param.type == str:
@@ -120,7 +126,7 @@ class ArgparseGalaxyTranslation(object):
 
     def __init__(self):
         self.repeat_count = 0
-        self.positional_count = 0
+        self.positional_count = Counter()
 
     def _VersionAction(self, param, tool=None):
         # passing tool is TERRIBLE, I know.
@@ -153,7 +159,7 @@ class ArgparseGalaxyTranslation(object):
             flag = max(param.option_strings, key=len)  # Pick the longest of the options strings
         else:
             flag = ''
-            self.positional_count += 1
+            self.positional_count['param.dest'] += 1
 
         repeat_name = 'repeat_%s' % self.repeat_count
         repeat_var_name = 'repeat_var_%s' % self.repeat_count
@@ -164,7 +170,8 @@ class ArgparseGalaxyTranslation(object):
 
         # Moved because needed in developing repeat CLI
         if positional:
-            flag_wo_dashes = 'positional_%s' % self.positional_count
+            v = self.positional_count[param.dest]
+            flag_wo_dashes = '%s%s' % (param.dest, '_' + str(v) if v > 1 else '')
             # SO unclean
             gxparam_extra_kwargs['positional'] = True
 

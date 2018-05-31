@@ -155,12 +155,12 @@ class ArgumentParser(ap.ArgumentParser):
             version = '1.0'
         tool = gxt.Tool(
                 argp.prog,
-                argp.prog,
+                argp.prog.replace(" ", "_"),
                 version,
                 argp.description,
-                argp.prog,
-                interpreter='python',
-                version_command='python %s --version' % sys.argv[0])
+                "python "+argp.prog,
+                interpreter=None,
+                version_command='python %s --version' % argp.prog)
 
         inputs = gxtp.Inputs()
         outputs = gxtp.Outputs()
