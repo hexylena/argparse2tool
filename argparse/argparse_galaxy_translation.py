@@ -1,6 +1,6 @@
 import galaxyxml.tool.parameters as gxtp
+from collections import Counter
 from pydoc import locate
-
 
 class ArgparseGalaxyTranslation(object):
 
@@ -125,7 +125,7 @@ class ArgparseGalaxyTranslation(object):
 
     def __init__(self):
         self.repeat_count = 0
-        self.positional_count = 0
+        self.positional_count = Counter()
 
     def _VersionAction(self, param, tool=None):
         # passing tool is TERRIBLE, I know.
@@ -158,7 +158,7 @@ class ArgparseGalaxyTranslation(object):
             flag = max(param.option_strings, key=len)  # Pick the longest of the options strings
         else:
             flag = ''
-            self.positional_count += 1
+            self.positional_count['param.dest'] += 1
 
         repeat_name = 'repeat_%s' % self.repeat_count
         repeat_var_name = 'repeat_var_%s' % self.repeat_count
@@ -169,7 +169,8 @@ class ArgparseGalaxyTranslation(object):
 
         # Moved because needed in developing repeat CLI
         if positional:
-            flag_wo_dashes = '%s_%s' %(param.dest, self.positional_count)
+            v = self.positional_count[param.dest]
+            flag_wo_dashes = '%s%s' % (param.dest, '_' + str(v) if v > 1 else '')
             # SO unclean
             gxparam_extra_kwargs['positional'] = True
 

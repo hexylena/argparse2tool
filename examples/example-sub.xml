@@ -1,12 +1,12 @@
-<tool id="example-sub.py foo" name="example-sub.py foo" version="1.0">
+<tool id="example-sub.py_foo" name="example-sub.py foo" version="1.0">
   <description/>
   <stdio>
     <exit_code level="fatal" range="1:"/>
   </stdio>
-  <version_command>python examples/example-sub.py --version</version_command>
-  <command interpreter="python"><![CDATA[example-sub.py foo $positional_1
+  <version_command>python example-sub.py --version</version_command>
+  <command><![CDATA[python example-sub.py foo $keyword
 
-#set repeat_var_2 = '" "'.join([ str($var.positional_2) for $var in $repeat_2 ])
+#set repeat_var_2 = '" "'.join([ str($var.integers) for $var in $repeat_2 ])
 "$repeat_var_2"
 
 $sum
@@ -21,9 +21,9 @@ $sum
 $true
 > $default]]></command>
   <inputs>
-    <param area="false" label="action keyword" name="positional_1" type="text"/>
+    <param area="false" label="action keyword" name="keyword" type="text"/>
     <repeat min="1" name="repeat_2" title="repeat_title">
-      <param label="an integer for the accumulator" name="positional_2" type="integer" value="0"/>
+      <param label="an integer for the accumulator" name="integers" type="integer" value="0"/>
     </repeat>
     <param argument="--sum" checked="false" label="sum the integers (default: find the max)" name="sum" type="boolean" truevalue="--sum" falsevalue=""/>
     <param area="false" argument="--foo" label="foo help" name="foo" optional="true" type="text"/>
@@ -38,13 +38,13 @@ $true
   <help><![CDATA[TODO: Write help]]></help>
 </tool>
 
-<tool id="example-sub.py bar" name="example-sub.py bar" version="2.0">
+<tool id="example-sub.py_bar" name="example-sub.py bar" version="2.0">
   <description/>
   <stdio>
     <exit_code level="fatal" range="1:"/>
   </stdio>
-  <version_command>python examples/example-sub.py --version</version_command>
-  <command interpreter="python"><![CDATA[example-sub.py bar $false
+  <version_command>python example-sub.py --version</version_command>
+  <command><![CDATA[python example-sub.py bar $false
 #for $i in $repeat_1:
 --append $i.append
 #end for
