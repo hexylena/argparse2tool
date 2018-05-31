@@ -160,7 +160,7 @@ class ArgumentParser(ap.ArgumentParser):
                 argp.description,
                 "python "+argp.prog,
                 interpreter=None,
-                version_command='python %s --version' % sys.argv[0])
+                version_command='python %s --version' % argp.prog)
 
         inputs = gxtp.Inputs()
         outputs = gxtp.Outputs()
