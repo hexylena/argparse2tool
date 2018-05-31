@@ -2,6 +2,7 @@ import galaxyxml.tool.parameters as gxtp
 from collections import Counter
 from pydoc import locate
 
+
 class ArgparseGalaxyTranslation(object):
 
     def __gxtp_param_from_type(self, param, flag, label, num_dashes, gxparam_extra_kwargs, default=None):
