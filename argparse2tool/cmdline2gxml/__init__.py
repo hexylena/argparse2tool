@@ -23,4 +23,8 @@ class Arg2GxmlParser:
 
     def process_arguments(self):
         self.parser.add_argument('--generate_galaxy_xml', action='store_true')
+        self.parser.add_argument('-d', '--directory',
+                                 help='Directory to store CWL tool descriptions')
+        self.parser.add_argument('-m', '--macro',
+                                 help='A global macro file to include in all tools')
         return vars(self.parser.parse_args())

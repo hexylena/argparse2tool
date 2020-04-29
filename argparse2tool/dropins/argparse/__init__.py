@@ -21,6 +21,15 @@ for x in __argparse_exports__:
     setattr(__selfmodule__, x, getattr(ap, x))
 
 tools = []
+# set of prog names where the argparser actually should be represented
+# as a macro, i.e. XYZ will be in the set if there is a
+# ArgumentParser(..., parents=[XYZ], ...)
+macros = set()
+
+# mapping tools to list of required macros (which are actually identical to the
+# parents parameter passed ArgumentParser. but I could not find out how this is
+# stored in the created ArgumentParser objects
+used_macros = dict()
 
 
 class ArgumentParser(ap.ArgumentParser):
@@ -37,10 +46,16 @@ class ArgumentParser(ap.ArgumentParser):
                  argument_default=None,
                  conflict_handler='error',
                  add_help=True):
+        global macros
+        global used_macros
 
         self.argument_list = []
         self.argument_names = []
         tools.append(self)
+        if len(parents) > 0:
+            p = set([_.prog.split()[-1] for _ in parents])
+            macros = macros.union(p)
+            used_macros[prog.split()[-1]] = p
         super(ArgumentParser, self).__init__(prog=prog,
                                              usage=usage,
                                              description=description,
@@ -128,6 +143,25 @@ class ArgumentParser(ap.ArgumentParser):
         sys.exit(0)
 
     def parse_args_galaxy(self, *args, **kwargs):
+        global used_macros
+
+        directory = kwargs.get('directory', None)
+        macro = kwargs.get('macro', None)
+
+        # since macros can also make use of macros (i.e. the parent relation
+        # specified in the arguments can be nester) we need to extend the
+        # used macros such that really all are included
+        ext_used_macros = dict()
+        for tool, macros in used_macros.items():
+            ext_used_macros[tool] = set()
+            q = list(macros)
+            while len(q) > 0:
+                m = q.pop()
+                if m in used_macros:
+                    q.extend(used_macros[m])
+                ext_used_macros[tool].add(m)
+        used_macros = ext_used_macros
+
         for argp in tools:
             # make subparser description out of its help message
             if argp._subparsers:
@@ -139,28 +173,53 @@ class ArgumentParser(ap.ArgumentParser):
                         subparser.choices[choice_action.dest].description = choice_action.help
             else:
                 if kwargs.get('command', argp.prog) in argp.prog:
-                    data = self._parse_args_galaxy_argp(argp)
-                    print(data)
+                    data = self._parse_args_galaxy_argp(argp, macro)
+                    if directory:
+                        if directory[-1] != '/':
+                            directory += '/'
+                        filename = argp.prog.split()[-1] + ".xml"
+                        filename = directory + filename
+                        with open(filename, 'a') as f:
+                            f.write(data)
+                    else:
+                        print(data)
                 else:
                     continue
         sys.exit(0)
 
-    def _parse_args_galaxy_argp(self, argp):
+    def _parse_args_galaxy_argp(self, argp, macro):
+        global macros
+        global used_macros
+
         try:
             version = self.print_version() or '1.0'
         except AttributeError:  # handle the potential absence of print_version
             version = '1.0'
-        tool = gxt.Tool(
-                argp.prog,
-                argp.prog.replace(" ", "_"),
-                version,
-                argp.description,
-                "python "+argp.prog,
-                interpreter=None,
-                version_command='python %s --version' % argp.prog)
 
-        inputs = gxtp.Inputs()
-        outputs = gxtp.Outputs()
+        tid = argp.prog.split()[-1]
+
+        # get the list of file names of the used macros
+        mx = used_macros.get(tid, [])
+        mx = ["%s.xml" % _ for _ in mx]
+
+        if tid not in macros:
+            tpe = gxt.Tool
+            if macro:
+                mx.append(macro)
+        else:
+            tpe = gxt.MacrosTool
+
+        tool = tpe(argp.prog,
+                   argp.prog.replace(" ", "_"),
+                   version,
+                   argp.description,
+                   "python "+argp.prog,
+                   interpreter=None,
+                   version_command='python %s --version' % argp.prog,
+                   macros=mx)
+
+        inputs = tool.inputs
+        outputs = tool.outputs
 
         at = agt.ArgparseGalaxyTranslation()
         # Only build up arguments if the user actually requests it
@@ -177,16 +236,19 @@ class ArgumentParser(ap.ArgumentParser):
                     else:
                         outputs.append(gxt_parameter)
 
-        # TODO: replace with argparse-esque library to do this.
-        stdout = gxtp.OutputData('default', 'txt')
-        stdout.command_line_override = '> $default'
-        outputs.append(stdout)
+        if tid in used_macros:
+            for m in used_macros[tid]:
+                inputs.append(gxtp.ExpandIO(m + "_inmacro"))
+                outputs.append(gxtp.ExpandIO(m + "_outmacro"))
 
-        tool.inputs = inputs
-        tool.outputs = outputs
+        if tid not in macros:
+            # TODO: replace with argparse-esque library to do this.
+            stdout = gxtp.OutputData('default', 'txt')
+            stdout.command_line_override = '> $default'
+            outputs.append(stdout)
+
         if argp.epilog is not None:
             tool.help = argp.epilog
         else:
             tool.help = "TODO: Write help"
-
         return tool.export()
