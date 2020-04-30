@@ -22,18 +22,18 @@ $true
 > $default]]></command>
   <inputs>
     <param label="action keyword" type="text" name="keyword"/>
-    <repeat min="1" title="repeat_title" name="repeat_2">
+    <repeat title="repeat_title" min="1" name="repeat_2">
       <param label="an integer for the accumulator" value="0" type="integer" name="integers"/>
     </repeat>
     <param label="sum the integers (default: find the max)" checked="false" type="boolean" name="sum" argument="--sum" truevalue="--sum" falsevalue=""/>
-    <param label="foo help" optional="true" type="text" name="foo" argument="--foo"/>
+    <param optional="true" label="foo help" type="text" name="foo" argument="--foo"/>
     <repeat title="repeat_title" name="repeat_4">
-      <param label="BAR!" optional="true" value="1" type="text" name="bar" argument="--bar"/>
+      <param optional="true" label="BAR!" value="1" type="text" name="bar" argument="--bar"/>
     </repeat>
     <param label="Store a true" checked="false" type="boolean" name="true" argument="--true" truevalue="--true" falsevalue=""/>
   </inputs>
   <outputs>
-    <data hidden="false" format="txt" name="default"/>
+    <data name="default" format="txt" hidden="false"/>
   </outputs>
   <help><![CDATA[TODO: Write help]]></help>
 </tool>

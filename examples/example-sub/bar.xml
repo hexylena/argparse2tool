@@ -21,17 +21,17 @@
     <repeat title="Repeated Variable" name="repeat_1">
       <param label="Append a value" type="text" name="append" argument="--append"/>
     </repeat>
-    <repeat max="2" min="2" title="repeat_title" name="repeat_2">
-      <param label="nargs2" optional="true" type="text" name="nargs2" argument="--nargs2"/>
+    <repeat title="repeat_title" min="2" max="2" name="repeat_2">
+      <param optional="true" label="nargs2" type="text" name="nargs2" argument="--nargs2"/>
     </repeat>
-    <param label="Author did not provide help for this parameter... " optional="true" type="select" name="mode" argument="--mode">
+    <param optional="true" label="Author did not provide help for this parameter... " type="select" name="mode" argument="--mode">
       <option value="paper">paper</option>
       <option value="rock">rock</option>
       <option selected="true" value="scissors">scissors</option>
     </param>
   </inputs>
   <outputs>
-    <data hidden="false" format="txt" name="default"/>
+    <data name="default" format="txt" hidden="false"/>
   </outputs>
   <help><![CDATA[TODO: Write help]]></help>
 </tool>
