@@ -179,7 +179,7 @@ class ArgumentParser(ap.ArgumentParser):
                             directory += '/'
                         filename = argp.prog.split()[-1] + ".xml"
                         filename = directory + filename
-                        with open(filename, 'a') as f:
+                        with open(filename, 'w') as f:
                             f.write(data)
                     else:
                         print(data)
@@ -196,6 +196,14 @@ class ArgumentParser(ap.ArgumentParser):
         except AttributeError:  # handle the potential absence of print_version
             version = '1.0'
 
+        prog = argp.prog
+        if prog is not None:
+            prog = prog.replace("-", "_")
+            prog = prog.replace(".py ", " ")
+            if prog.endswith(".py"):
+                prog = prog[:-3]
+        
+
         tid = argp.prog.split()[-1]
 
         # get the list of file names of the used macros
@@ -209,8 +217,8 @@ class ArgumentParser(ap.ArgumentParser):
         else:
             tpe = gxt.MacrosTool
 
-        tool = tpe(argp.prog,
-                   argp.prog.replace(" ", "_"),
+        tool = tpe(prog,
+                   prog.replace(" ", "_"),
                    version,
                    argp.description,
                    "python "+argp.prog,
