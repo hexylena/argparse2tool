@@ -1,0 +1,14 @@
+<macros>
+  <token name="EXAMPLE-SUB.PY_QUX_INMACRO"><![CDATA[]]></token>
+  <token name="EXAMPLE-SUB.PY_QUX_OUTMACRO"><![CDATA[]]></token>
+  <xml name="example-sub.py_qux_inmacro"/>
+  <xml name="example-sub.py_qux_outmacro"/>
+</macros>
+<macros>
+  <token name="EXAMPLE-SUB.PY_QUX_INMACRO"><![CDATA[--qux $qux]]></token>
+  <token name="EXAMPLE-SUB.PY_QUX_OUTMACRO"><![CDATA[]]></token>
+  <xml name="example-sub.py_qux_inmacro">
+    <param optional="true" label="qux help" type="text" name="qux" argument="--qux"/>
+  </xml>
+  <xml name="example-sub.py_qux_outmacro"/>
+</macros>

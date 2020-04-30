@@ -1,0 +1,26 @@
+<macros>
+  <token name="EXAMPLE-SUB.PY_BAZ_INMACRO"><![CDATA[--baz $baz
+--qux $qux
+@QUX_INMACRO@]]></token>
+  <token name="EXAMPLE-SUB.PY_BAZ_OUTMACRO"><![CDATA[@QUX_OUTMACRO@]]></token>
+  <xml name="example-sub.py_baz_inmacro">
+    <param optional="true" label="baz help" type="text" name="baz" argument="--baz"/>
+    <param optional="true" label="qux help" type="text" name="qux" argument="--qux"/>
+    <expand macro="qux_inmacro"/>
+  </xml>
+  <xml name="example-sub.py_baz_outmacro">
+    <expand macro="qux_outmacro"/>
+  </xml>
+</macros>
+<macros>
+  <token name="EXAMPLE-SUB.PY_BAZ_INMACRO"><![CDATA[--baz $baz
+@QUX_INMACRO@]]></token>
+  <token name="EXAMPLE-SUB.PY_BAZ_OUTMACRO"><![CDATA[@QUX_OUTMACRO@]]></token>
+  <xml name="example-sub.py_baz_inmacro">
+    <param optional="true" label="baz help" type="text" name="baz" argument="--baz"/>
+    <expand macro="qux_inmacro"/>
+  </xml>
+  <xml name="example-sub.py_baz_outmacro">
+    <expand macro="qux_outmacro"/>
+  </xml>
+</macros>
