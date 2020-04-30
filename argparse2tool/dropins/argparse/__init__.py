@@ -1,6 +1,9 @@
 import re
 import sys
-from argparse2tool import load_argparse
+from argparse2tool import (
+    load_argparse,
+    remove_extension
+)
 from argparse2tool.cmdline2gxml import Arg2GxmlParser
 from argparse2tool.cmdline2cwl import Arg2CWLParser
 
@@ -53,9 +56,9 @@ class ArgumentParser(ap.ArgumentParser):
         self.argument_names = []
         tools.append(self)
         if len(parents) > 0:
-            p = set([_.prog.split()[-1] for _ in parents])
+            p = set([remove_extension(_.prog) for _ in parents])
             macros = macros.union(p)
-            used_macros[prog.split()[-1]] = p
+            used_macros[remove_extension(prog)] = p
         super(ArgumentParser, self).__init__(prog=prog,
                                              usage=usage,
                                              description=description,
@@ -177,7 +180,7 @@ class ArgumentParser(ap.ArgumentParser):
                     if directory:
                         if directory[-1] != '/':
                             directory += '/'
-                        filename = argp.prog.split()[-1] + ".xml"
+                        filename = remove_extension(argp.prog) + ".xml"
                         filename = directory + filename
                         with open(filename, 'w') as f:
                             f.write(data)
@@ -196,21 +199,15 @@ class ArgumentParser(ap.ArgumentParser):
         except AttributeError:  # handle the potential absence of print_version
             version = '1.0'
 
-        prog = argp.prog
-        if prog is not None:
-            prog = prog.replace("-", "_")
-            prog = prog.replace(".py ", " ")
-            if prog.endswith(".py"):
-                prog = prog[:-3]
-        
+        prog = remove_extension(argp.prog)
 
-        tid = argp.prog.split()[-1]
+        # tid = argp.prog.split()[-1]
 
         # get the list of file names of the used macros
-        mx = used_macros.get(tid, [])
-        mx = ["%s.xml" % _ for _ in mx]
+        mx = used_macros.get(prog, [])
+        mx = sorted(["%s.xml" % _.split(" ")[-1] for _ in mx])
 
-        if tid not in macros:
+        if prog not in macros:
             tpe = gxt.Tool
             if macro:
                 mx.append(macro)
@@ -244,12 +241,12 @@ class ArgumentParser(ap.ArgumentParser):
                     else:
                         outputs.append(gxt_parameter)
 
-        if tid in used_macros:
-            for m in used_macros[tid]:
+        if prog in used_macros:
+            for m in sorted(used_macros[prog]):
                 inputs.append(gxtp.ExpandIO(m + "_inmacro"))
                 outputs.append(gxtp.ExpandIO(m + "_outmacro"))
 
-        if tid not in macros:
+        if prog not in macros:
             # TODO: replace with argparse-esque library to do this.
             stdout = gxtp.OutputData('default', 'txt')
             stdout.command_line_override = '> $default'

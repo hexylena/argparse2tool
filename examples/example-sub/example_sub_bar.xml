@@ -1,7 +1,7 @@
-<tool name="example_sub bar" id="example_sub_bar" version="2.0">
+<tool name="example_sub_bar" id="example_sub_bar" version="2.0">
   <description/>
   <macros>
-    <import>qux.xml</import>
+    <import>example_sub_qux.xml</import>
   </macros>
   <stdio>
     <exit_code range="1:" level="fatal"/>
@@ -18,8 +18,8 @@
 #if $mode and $mode is not None:
 --mode $mode
 #end if
-@QUX_INMACRO@
-@QUX_OUTMACRO@
+@EXAMPLE_SUB_QUX_INMACRO@
+@EXAMPLE_SUB_QUX_OUTMACRO@
 > $default]]></command>
   <inputs>
     <param label="Store a false" checked="false" type="boolean" name="false" argument="--false" truevalue="--false" falsevalue=""/>
@@ -34,10 +34,10 @@
       <option value="rock">rock</option>
       <option selected="true" value="scissors">scissors</option>
     </param>
-    <expand macro="qux_inmacro"/>
+    <expand macro="example_sub_qux_inmacro"/>
   </inputs>
   <outputs>
-    <expand macro="qux_outmacro"/>
+    <expand macro="example_sub_qux_outmacro"/>
     <data name="default" format="txt" hidden="false"/>
   </outputs>
   <help><![CDATA[TODO: Write help]]></help>

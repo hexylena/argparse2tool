@@ -1,8 +1,8 @@
-<tool name="example_sub foo" id="example_sub_foo" version="1.0">
+<tool name="example_sub_foo" id="example_sub_foo" version="1.0">
   <description/>
   <macros>
-    <import>qux.xml</import>
-    <import>baz.xml</import>
+    <import>example_sub_baz.xml</import>
+    <import>example_sub_qux.xml</import>
   </macros>
   <stdio>
     <exit_code range="1:" level="fatal"/>
@@ -23,10 +23,10 @@ $sum
 --bar "$repeat_var_4"
 
 $true
-@QUX_INMACRO@
-@BAZ_INMACRO@
-@QUX_OUTMACRO@
-@BAZ_OUTMACRO@
+@EXAMPLE_SUB_BAZ_INMACRO@
+@EXAMPLE_SUB_QUX_INMACRO@
+@EXAMPLE_SUB_BAZ_OUTMACRO@
+@EXAMPLE_SUB_QUX_OUTMACRO@
 > $default]]></command>
   <inputs>
     <param label="action keyword" type="text" name="keyword"/>
@@ -39,12 +39,12 @@ $true
       <param optional="true" label="BAR!" value="1" type="text" name="bar" argument="--bar"/>
     </repeat>
     <param label="Store a true" checked="false" type="boolean" name="true" argument="--true" truevalue="--true" falsevalue=""/>
-    <expand macro="qux_inmacro"/>
-    <expand macro="baz_inmacro"/>
+    <expand macro="example_sub_baz_inmacro"/>
+    <expand macro="example_sub_qux_inmacro"/>
   </inputs>
   <outputs>
-    <expand macro="qux_outmacro"/>
-    <expand macro="baz_outmacro"/>
+    <expand macro="example_sub_baz_outmacro"/>
+    <expand macro="example_sub_qux_outmacro"/>
     <data name="default" format="txt" hidden="false"/>
   </outputs>
   <help><![CDATA[TODO: Write help]]></help>

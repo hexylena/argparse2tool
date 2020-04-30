@@ -48,3 +48,11 @@ def load_conflicting_package(name, not_name, module_number):
             imp.load_module(random_name, f, pathname, desc)
             return sys.modules[random_name]
     return None
+
+
+def remove_extension(name):
+    if name is not None:
+        name = name.replace('.py', '')
+        name = name.replace('-', '_')
+        name = name.replace(' ', '_')
+    return name
