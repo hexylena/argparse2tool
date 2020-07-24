@@ -21,14 +21,14 @@ $sum
 $true
 > $default]]></command>
   <inputs>
-    <param area="false" label="action keyword" name="keyword" type="text"/>
+    <param label="action keyword" name="keyword" type="text"/>
     <repeat min="1" name="repeat_2" title="repeat_title">
       <param label="an integer for the accumulator" name="integers" type="integer" value="0"/>
     </repeat>
     <param argument="--sum" checked="false" label="sum the integers (default: find the max)" name="sum" type="boolean" truevalue="--sum" falsevalue=""/>
-    <param area="false" argument="--foo" label="foo help" name="foo" optional="true" type="text"/>
+    <param argument="--foo" label="foo help" name="foo" optional="true" type="text"/>
     <repeat name="repeat_4" title="repeat_title">
-      <param area="false" argument="--bar" label="BAR!" name="bar" optional="true" type="text" value="1"/>
+      <param argument="--bar" label="BAR!" name="bar" optional="true" type="text" value="1"/>
     </repeat>
     <param argument="--true" checked="false" label="Store a true" name="true" type="boolean" truevalue="--true" falsevalue=""/>
   </inputs>
@@ -59,10 +59,10 @@ $true
   <inputs>
     <param argument="--false" checked="false" label="Store a false" name="false" type="boolean" truevalue="--false" falsevalue=""/>
     <repeat name="repeat_1" title="Repeated Variable">
-      <param area="false" argument="--append" label="Append a value" name="append" type="text"/>
+      <param argument="--append" label="Append a value" name="append" type="text"/>
     </repeat>
     <repeat max="2" min="2" name="repeat_2" title="repeat_title">
-      <param area="false" argument="--nargs2" label="nargs2" name="nargs2" optional="true" type="text"/>
+      <param argument="--nargs2" label="nargs2" name="nargs2" optional="true" type="text"/>
     </repeat>
     <param argument="--mode" label="Author did not provide help for this parameter... " name="mode" optional="true" type="select">
       <option value="paper">paper</option>
