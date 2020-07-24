@@ -23,4 +23,5 @@ setup(name="argparse2tool",
             'License :: OSI Approved :: Apache Software License',
             ],
         include_package_data=True,
+        data_files = [("", ["LICENSE.TXT"])],
         )
