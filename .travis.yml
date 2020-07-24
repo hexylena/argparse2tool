@@ -1,17 +1,19 @@
 language: python
 python:
-- '2.7'
+- '3.6'
 install: pip install -r requirements.txt
 script:
 - pip install -U setuptools
-- pip install -U planemo flake8
+- pip install -U planemo flake8 xmldiff
 - pip install -r requirements.txt
 - python setup.py install
 - flake8 argparse argparse2tool click
 - PYTHONPATH=$(argparse2tool_check_path -q) python examples/example.py --generate_galaxy_xml > tmp.xml
-- PYTHONPATH=$(argparse2tool_check_path -q) python examples/example-sub.py --generate_galaxy_xml > tmp-sub.xml
-- diff tmp.xml examples/example.xml
-- diff tmp-sub.xml examples/example-sub.xml
+- echo '<root>' > tmp-sub.xml # wrap in extra level
+- PYTHONPATH=$(argparse2tool_check_path -q) python examples/example-sub.py --generate_galaxy_xml >> tmp-sub.xml
+- echo '</root>' >> tmp-sub.xml
+- xmldiff tmp.xml examples/example.xml
+- xmldiff tmp-sub.xml <(echo "<root>"; cat examples/example-sub.xml; echo "</root>")
 - planemo lint --report_level all --fail_level error --xsd tmp.xml
 - PYTHONPATH=$(argparse2tool_check_path -q) python examples/example.py --generate_cwl_tool > tmp.cwl
 - PYTHONPATH=$(argparse2tool_check_path -q) python examples/example-sub.py --generate_cwl_tool > tmp-sub.cwl
@@ -21,12 +23,11 @@ script:
 before_deploy:
 - sed -i "s/__version__.*/__version__= '${TRAVIS_TAG}'/g" argparse2tool/__init__.py
 deploy:
-- provider: pypi
-  user: erasche
-  password:
-    secure: PjtJXEgtAjPKU/dqlodk/PxR9V6izRc7Ku7Q0jJG8eQcr+u3tGTKWtGSO9ULclfEzRrZmC4ndgJMklV6TWpT9sRJon9+itOrBXxiQMHoqfZ3tRw7Iqgo4sRoTQSu810DYqgWTCTYZLkPGiHjeinAfl9tUQ2jqyhulUPOdssM2UQ=
+deploy:
+  provider: pypi
+  username: __token__
   on:
     tags: true
-    all_branches: true
-    distributions: sdist bdist_wheel
-    repo: erasche/argparse2tool
+  distributions: sdist bdist_wheel
+  edge: true
+  skip_existing: true

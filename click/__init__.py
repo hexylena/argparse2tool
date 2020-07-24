@@ -64,7 +64,7 @@ class Arg2CWLMixin:
 
     def _write_tool(self, tool, data, directory):
         filename = '{0}.cwl'.format(tool.name.replace('.py', ''))
-        filename = re.sub('\s+', '-', filename)
+        filename = re.sub(r'\s+', '-', filename)
         if directory and directory[-1] != '/':
             directory += '/'
         filename = directory + filename
