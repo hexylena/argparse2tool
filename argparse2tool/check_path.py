@@ -5,7 +5,6 @@ If argparse2tool appears after python stdlib's argparse, it won't behave properl
 thus we provide a small check utility to ensure proper ordering and provide
 suggestions if not functional.
 """
-from __future__ import print_function
 import sys
 import imp
 import os

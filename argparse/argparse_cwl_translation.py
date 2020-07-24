@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import sys
 from argparse2tool.cmdline2cwl import cwl_tool as cwlt
 

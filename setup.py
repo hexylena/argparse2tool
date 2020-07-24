@@ -13,7 +13,7 @@ setup(
     author_email="hxr@hx42.org",
     long_description=readme,
     long_description_content_type="text/x-rst",
-    install_requires=["galaxyxml==0.4.6", "jinja2", "future"],
+    install_requires=["galaxyxml==0.4.6", "jinja2"],
     url="https://github.com/erasche/argparse2tool",
     packages=[
         "argparse",

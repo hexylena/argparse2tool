@@ -1,14 +1,9 @@
-from __future__ import print_function
 from builtins import str
 from builtins import range
+from unittest import TestCase
 import sys
 import hashlib
 import copy
-
-if sys.version_info < (2, 7):
-    from unittest2 import TestCase
-else:
-    from unittest import TestCase
 
 
 class GeneralTests(TestCase):
