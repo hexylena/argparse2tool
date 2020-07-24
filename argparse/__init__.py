@@ -118,7 +118,7 @@ class ArgumentParser(ap.ArgumentParser):
 
                     data = tool.export()
                     filename = '{0}.cwl'.format(tool.name.replace('.py', ''))
-                    filename = re.sub('\s+', '-', filename)
+                    filename = re.sub(r'\s+', '-', filename)
                     directory = kwargs.get('directory', '')
                     if directory and directory[-1] != '/':
                         directory += '/'

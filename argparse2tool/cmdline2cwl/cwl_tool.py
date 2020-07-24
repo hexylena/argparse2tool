@@ -17,7 +17,7 @@ class Param:
         if description:
             self.description = description.replace(':', ' -') \
                 .replace('\n', ' ')  # `:` is a special character and must be replaced with smth
-            self.description = re.sub('\s{2,}', ' ', self.description)
+            self.description = re.sub(r'\s{2,}', ' ', self.description)
         else:
             self.description = None
         if self.type == 'enum':
