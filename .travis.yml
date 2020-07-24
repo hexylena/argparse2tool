@@ -4,14 +4,14 @@ python:
 install: pip install -r requirements.txt
 script:
 - pip install -U setuptools
-- pip install -U planemo flake8
+- pip install -U planemo flake8 xmldiff
 - pip install -r requirements.txt
 - python setup.py install
 - flake8 argparse argparse2tool click
 - PYTHONPATH=$(argparse2tool_check_path -q) python examples/example.py --generate_galaxy_xml > tmp.xml
 - PYTHONPATH=$(argparse2tool_check_path -q) python examples/example-sub.py --generate_galaxy_xml > tmp-sub.xml
-- diff tmp.xml examples/example.xml
-- diff tmp-sub.xml examples/example-sub.xml
+- xmldiff tmp.xml examples/example.xml
+- xmldiff tmp-sub.xml examples/example-sub.xml
 - planemo lint --report_level all --fail_level error --xsd tmp.xml
 - PYTHONPATH=$(argparse2tool_check_path -q) python examples/example.py --generate_cwl_tool > tmp.cwl
 - PYTHONPATH=$(argparse2tool_check_path -q) python examples/example-sub.py --generate_cwl_tool > tmp-sub.cwl
