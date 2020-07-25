@@ -18,7 +18,7 @@ system argparse, ``argparse2tool`` will capture all argparse function
 calls, and process them specially.
 
 This information captured in this process is used to produce `Galaxy
-Tool XML <https://github.com/erasche/galaxyxml>`__ when it's requested
+Tool XML <https://github.com/hexylena/galaxyxml>`__ when it's requested
 with the ``--generate_galaxy_xml`` flag, or `CWL
 Tools <http://www.commonwl.org/v1.0/CommandLineTool.html>`__ when
 requested with the ``--generate_cwl_tool`` flag.
@@ -195,5 +195,5 @@ Apache License, v2
 
 .. |PyPI| image:: https://img.shields.io/pypi/v/argparse2tool.svg
    :target: https://pypi.python.org/pypi/argparse2tool
-.. |Build Status| image:: https://travis-ci.org/erasche/argparse2tool.svg?branch=master
-   :target: https://travis-ci.org/erasche/argparse2tool
+.. |Build Status| image:: https://travis-ci.org/hexylena/argparse2tool.svg?branch=master
+   :target: https://travis-ci.org/hexylena/argparse2tool

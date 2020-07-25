@@ -14,7 +14,7 @@ setup(
     long_description=readme,
     long_description_content_type="text/x-rst",
     install_requires=["galaxyxml==0.4.6", "jinja2"],
-    url="https://github.com/erasche/argparse2tool",
+    url="https://github.com/hexylena/argparse2tool",
     packages=[
         "argparse",
         "argparse2tool",
