@@ -37,10 +37,9 @@ def load_conflicting_package(name, not_name, module_number):
     for path in sys.path:
         try:
             (f, pathname, desc) = imp.find_module(name, [path])
-            if not_name not in pathname and desc[2] == module_number:
-                imp.load_module(random_name, f, pathname, desc)
-                return sys.modules[random_name]
-        except Exception:
-            # Many sys.paths won't contain the module of interest
-            pass
+        except ImportError:
+            continue
+        if not_name not in pathname and desc[2] == module_number:
+            imp.load_module(random_name, f, pathname, desc)
+            return sys.modules[random_name]
     return None
