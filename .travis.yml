@@ -3,9 +3,9 @@ python:
 - '3.6'
 install: pip install -r requirements.txt
 script:
-- pip install -U setuptools
-- pip install -U planemo flake8 xmldiff
-- pip install -r requirements.txt
+- pip install -q -U setuptools
+- pip install -q -U planemo flake8 xmldiff
+- pip install -q -r requirements.txt
 - python setup.py install
 - flake8 argparse2tool
 - PYTHONPATH=$(argparse2tool) python examples/example.py --generate_galaxy_xml > tmp.xml
