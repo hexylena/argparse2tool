@@ -5,46 +5,24 @@ If argparse2tool appears after python stdlib's argparse, it won't behave properl
 thus we provide a small check utility to ensure proper ordering and provide
 suggestions if not functional.
 """
-import sys
 import imp
 import os
-import argparse
-
-
-def get_args():
-    help_text = """Check the path for the correct setting to be able to take advantage of argparse2tool. """
-    parser = argparse.ArgumentParser(prog='argparse2tool_check_path', description=help_text)
-    parser.add_argument('-q', dest='quiet', action='store_true', help='run quietly')
-    return parser.parse_args()
+import sys
 
 
 def main():
-    args = get_args()
+    (handle, pathname, desc) = imp.find_module('argparse2tool')
+    if desc[2] != 5:
+        sys.exit("could not find argparse2tool")
+    path = os.path.join(pathname, "dropins")
+    if not os.path.exists(path):
+        sys.exit("no dropins dir %s" % path)
+    if not os.path.exists(os.path.join(path, "argparse")):
+        sys.exit("no dropins/argparse dir %s" % path)
+    if not os.path.exists(os.path.join(path, "click")):
+        sys.exit("no dropins/click dir %s" % path)
 
-    good_paths = []
-    incorrect_ordering = False
-    for path in sys.path:
-        try:
-            (handle, pathname, desc) = imp.find_module('argparse', [path])
-            if desc[2] == 5:
-                good_paths.append(pathname)
-            elif len(good_paths) == 0:
-                incorrect_ordering = True
-        except Exception:
-            pass
-
-    if incorrect_ordering:
-        if len(good_paths) == 0:
-            if not args.quiet:
-                print("argparse2tool not installed")
-        else:
-            if args.quiet:
-                print(os.path.dirname(good_paths[0]))
-            else:
-                print("Incorrect ordering, please set\n\n\tPYTHONPATH=%s\n" % (os.path.dirname(good_paths[0])))
-    else:
-        if not args.quiet:
-            print("Ready to go!")
+    print(path)
 
 
 if __name__ == '__main__':
