@@ -6,7 +6,7 @@ except Exception:
     pass
 
 
-__version__ = '0.4.7'
+__version__ = '0.4.8'
 
 
 def load_argparse():
