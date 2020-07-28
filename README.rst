@@ -3,7 +3,7 @@ argparse2tool
 
 |PyPI| |Build Status|
 
-This project aims to be a drop-in replacement for argparse which allows
+This project aims to provide a drop-in replacement for argparse which allows
 generating Galaxy XML and CWL Tools.
 
 It is quite literally a drop-in replacement. You (or the upstream tool
@@ -13,7 +13,9 @@ author) can use argparse completely as normal
 
     import argparse
 
-When this package is installed, with its argparse module ahead of the
+
+When this package is installed and PYTHONPATH=$(argparse2tool) is set the
+dropin replacement of argparse is used ahead of the
 system argparse, ``argparse2tool`` will capture all argparse function
 calls, and process them specially.
 
@@ -35,17 +37,17 @@ flag
 
 .. code:: console
 
-    $ <tool command> --generate_galaxy_xml <other options> > tool.xml
-    $ <tool command> --generate_cwl_tool <other options> > tool.cwl
+    $ PYTHONPATH=$(argparse2tool) <tool command> --generate_galaxy_xml <other options> > tool.xml
+    $ PYTHONPATH=$(argparse2tool) <tool command> --generate_cwl_tool <other options> > tool.cwl
 
-The project inclues a sample ``example.py`` file which uses as many
+The project includes a sample ``example.py`` file which uses as many
 argparse features as possible. CWL and Galaxy XML support different
 portions feature sets which will be visible in the generated outputs.
 
 .. code:: console
 
-    $ python example.py --generate_galaxy_xml
-    $ python example.py --generate_cwl_tool
+    $ PYTHONPATH=$(argparse2tool) python example.py --generate_galaxy_xml
+    $ PYTHONPATH=$(argparse2tool) python example.py --generate_cwl_tool
 
 CWL Specific Functionality
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -125,33 +127,27 @@ If you are not able to use the
 installing, it is probably because of module load order.
 ``argparse2tool`` must precede ``argparse`` in the path.
 
-**NB**: Please do not install this system-wide. It may have bugs which
-could break your python installation. Please only install this in a
-virtualenv.
-
-To easily correct this, run the tool ``argparse2tool_check_path`` which
+To easily correct this, run the tool ``argparse2tool`` which
 is installed as part of this package. Correctly functioning paths will
 produce the following:
 
 .. code:: console
 
-    $ argparse2tool_check_path
-    Ready to go!
+    $ argparse2tool
+    PATH_TO_THE_DROPINS
 
 while incorrectly ordered paths will produce a helpful error message:
 
 .. code:: console
 
-    $ argparse2tool_check_path
-    Incorrect ordering, please set
+    $ argparse2tool
+    no dropins dir...
 
-        PYTHONPATH=/home/users/esr/Projects/test/.venv/local/lib/python2.7/site-packages
-
-This can even be used inline:
+This is intended to be used inline:
 
 .. code:: console
 
-    user@host:$ PYTHONPATH=$(argparse2tool_check_path -q) python my_script.py --generate_galaxy_xml
+    user@host:$ PYTHONPATH=$(argparse2tool) python my_script.py --generate_galaxy_xml
 
 Limitations
 -----------

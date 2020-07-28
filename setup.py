@@ -16,14 +16,14 @@ setup(
     install_requires=["galaxyxml==0.4.6", "jinja2"],
     url="https://github.com/hexylena/argparse2tool",
     packages=[
-        "argparse",
         "argparse2tool",
-        "click",
+        "argparse2tool.dropins.argparse",
+        "argparse2tool.dropins.click",
         "argparse2tool.cmdline2gxml",
         "argparse2tool.cmdline2cwl",
     ],
     entry_points={
-        "console_scripts": ["argparse2tool_check_path = argparse2tool.check_path:main"]
+        "console_scripts": ["argparse2tool = argparse2tool.check_path:main"]
     },
     classifiers=[
         "Development Status :: 4 - Beta",
