@@ -20,6 +20,7 @@ script:
 - sed -i 's/argparse2tool .*/argparse2tool/g' tmp.cwl tmp-sub.cwl
 - diff tmp.cwl examples/example.cwl
 - diff tmp-sub.cwl examples/example-sub.cwl
+- PYTHONPATH=$(argparse2tool) python examples/example-click.py --generate_cwl_tool
 before_deploy:
 - sed -i "s/__version__.*/__version__= '${TRAVIS_TAG}'/g" argparse2tool/__init__.py
 deploy:
