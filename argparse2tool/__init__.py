@@ -11,7 +11,7 @@ __version__ = '0.4.8'
 
 def load_argparse():
     ARGPARSE_NUMBER = 1
-    return load_conflicting_package('argparse', 'argparse2tool', ARGPARSE_NUMBER)
+    return load_conflicting_package('argparse', 'argparse2tool/dropins', ARGPARSE_NUMBER)
 
 
 def load_conflicting_package(name, not_name, module_number):
