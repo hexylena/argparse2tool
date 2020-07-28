@@ -1,9 +1,8 @@
 #!/usr/bin/env python
-"""argparse2tool_check_path checks for proper ordering of the system path
+"""argparse2tool outputs the path to the dropin replacements for argparse and
+click
 
-If argparse2tool appears after python stdlib's argparse, it won't behave properly,
-thus we provide a small check utility to ensure proper ordering and provide
-suggestions if not functional.
+intended use: `PYTHONPATH=$(argparse2tool) python script.py ...`
 """
 import imp
 import os

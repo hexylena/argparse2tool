@@ -23,7 +23,7 @@ setup(
         "argparse2tool.cmdline2cwl",
     ],
     entry_points={
-        "console_scripts": ["argparse2tool_check_path = argparse2tool.check_path:main"]
+        "console_scripts": ["argparse2tool = argparse2tool.check_path:main"]
     },
     classifiers=[
         "Development Status :: 4 - Beta",
