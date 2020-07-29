@@ -14,6 +14,11 @@ def load_argparse():
     return load_conflicting_package('argparse', 'argparse2tool/dropins', ARGPARSE_NUMBER)
 
 
+def load_click():
+    CLICK_NUMBER = 5
+    return load_conflicting_package('click', 'argparse2tool/dropins', CLICK_NUMBER)
+
+
 def load_conflicting_package(name, not_name, module_number):
     """Load a conflicting package
     Some assumptions are made, namely that your package includes the "official"

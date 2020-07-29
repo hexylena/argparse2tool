@@ -4,11 +4,10 @@ import sys
 
 from click import click_cwl_translation as cct
 from argparse2tool.cmdline2cwl import cwl_tool as cwlt
-from argparse2tool import load_conflicting_package
+from argparse2tool import load_click
 from argparse2tool.cmdline2cwl import Arg2CWLParser
 
-CLICK_NUMBER = 5
-click = load_conflicting_package('click', 'argparse2tool/dropins', CLICK_NUMBER)
+click = load_click()
 __selfmodule__ = sys.modules[__name__]
 # This fetches a reference to ourselves
 
