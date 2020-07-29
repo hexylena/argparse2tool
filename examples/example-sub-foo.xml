@@ -1,0 +1,40 @@
+<tool name="example-sub.py foo" id="example-sub.py_foo" version="1.0">
+  <description/>
+  <stdio>
+    <exit_code range="1:" level="fatal"/>
+  </stdio>
+  <version_command><![CDATA[python example-sub.py foo --version]]></version_command>
+  <command><![CDATA[python example-sub.py foo $keyword
+
+#set repeat_var_2 = '" "'.join([ str($var.integers) for $var in $repeat_2 ])
+"$repeat_var_2"
+
+$sum
+
+#if $foo and $foo is not None:
+--foo $foo
+#end if
+
+#set repeat_var_4 = '" "'.join([ str($var.bar) for $var in $repeat_4 ])
+--bar "$repeat_var_4"
+
+$true
+> $default]]></command>
+  <inputs>
+    <param label="action keyword" type="text" name="keyword"/>
+    <repeat min="1" title="repeat_title" name="repeat_2">
+      <param label="an integer for the accumulator" value="0" type="integer" name="integers"/>
+    </repeat>
+    <param label="sum the integers (default: find the max)" checked="false" type="boolean" name="sum" argument="--sum" truevalue="--sum" falsevalue=""/>
+    <param label="foo help" optional="true" type="text" name="foo" argument="--foo"/>
+    <repeat title="repeat_title" name="repeat_4">
+      <param label="BAR!" optional="true" value="1" type="text" name="bar" argument="--bar"/>
+    </repeat>
+    <param label="Store a true" checked="false" type="boolean" name="true" argument="--true" truevalue="--true" falsevalue=""/>
+  </inputs>
+  <outputs>
+    <data hidden="false" format="txt" name="default"/>
+  </outputs>
+  <help><![CDATA[TODO: Write help]]></help>
+</tool>
+
