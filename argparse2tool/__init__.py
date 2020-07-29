@@ -6,12 +6,17 @@ except Exception:
     pass
 
 
-__version__ = '0.4.8'
+__version__ = '0.4.9'
 
 
 def load_argparse():
     ARGPARSE_NUMBER = 1
-    return load_conflicting_package('argparse', 'argparse2tool', ARGPARSE_NUMBER)
+    return load_conflicting_package('argparse', 'argparse2tool/dropins', ARGPARSE_NUMBER)
+
+
+def load_click():
+    CLICK_NUMBER = 5
+    return load_conflicting_package('click', 'argparse2tool/dropins', CLICK_NUMBER)
 
 
 def load_conflicting_package(name, not_name, module_number):
@@ -37,10 +42,9 @@ def load_conflicting_package(name, not_name, module_number):
     for path in sys.path:
         try:
             (f, pathname, desc) = imp.find_module(name, [path])
-            if not_name not in pathname and desc[2] == module_number:
-                imp.load_module(random_name, f, pathname, desc)
-                return sys.modules[random_name]
-        except Exception:
-            # Many sys.paths won't contain the module of interest
-            pass
+        except ImportError:
+            continue
+        if not_name not in pathname and desc[2] == module_number:
+            imp.load_module(random_name, f, pathname, desc)
+            return sys.modules[random_name]
     return None
