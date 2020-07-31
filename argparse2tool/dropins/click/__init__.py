@@ -28,6 +28,7 @@ class Arg2CWLMixin:
                     self.form_tool(arg2cwl_options, command)
             else:
                 self.form_tool(arg2cwl_options)
+            sys.exit()
 
         elif '--help_arg2cwl' in sys.argv:
             arg2cwl_parser.parser.print_help()
