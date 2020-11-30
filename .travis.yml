@@ -7,9 +7,7 @@ script:
 - pip install -q -U planemo flake8 xmldiff
 - pip install -q -r requirements.txt
 - python setup.py install
-- flake8 argparse2tool
-
-# Galaxy tool generation
+- flake8 argparse2tool --ignore=E2,E3,E4,E5,W3,W505
 - PYTHONPATH=$(argparse2tool) python examples/example.py --generate_galaxy_xml > tmp.xml
 - xmldiff tmp.xml examples/example.xml
 - planemo lint --report_level all --fail_level error --xsd tmp.xml
@@ -33,7 +31,7 @@ script:
 - sed -i 's/argparse2tool .*/argparse2tool/g' tmp.cwl tmp-sub.cwl
 - diff tmp.cwl examples/example.cwl
 - diff tmp-sub.cwl examples/example-sub.cwl
-- PYTHONPATH=$(argparse2tool) python examples/example-click.py --generate_cwl_tool > tmp-click.cwl 
+- PYTHONPATH=$(argparse2tool) python examples/example-click.py --generate_cwl_tool > tmp-click.cwl
 - diff tmp-click.cwl examples/example-click.cwl
 before_deploy:
 - sed -i "s/__version__.*/__version__= '${TRAVIS_TAG}'/g" argparse2tool/__init__.py
