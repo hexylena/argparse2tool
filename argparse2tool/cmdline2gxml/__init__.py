@@ -23,4 +23,5 @@ class Arg2GxmlParser:
 
     def process_arguments(self):
         self.parser.add_argument('--generate_galaxy_xml', action='store_true')
+        self.parser.add_argument('--command', action='store', default="")
         return vars(self.parser.parse_args())
