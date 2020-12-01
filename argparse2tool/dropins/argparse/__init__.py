@@ -150,14 +150,13 @@ class ArgumentParser(ap.ArgumentParser):
             version = self.print_version() or '1.0'
         except AttributeError:  # handle the potential absence of print_version
             version = '1.0'
-        tool = gxt.Tool(
-                   argp.prog,
-                   argp.prog.replace(" ", "_"),
-                   version,
-                   argp.description,
-                   "python "+argp.prog,
-                   interpreter=None,
-                   version_command='python %s --version' % argp.prog)
+        tool = gxt.Tool(argp.prog,
+                        argp.prog.replace(" ", "_"),
+                        version,
+                        argp.description,
+                        "python "+argp.prog,
+                        interpreter=None,
+                        version_command='python %s --version' % argp.prog)
 
         inputs = gxtp.Inputs()
         outputs = gxtp.Outputs()
