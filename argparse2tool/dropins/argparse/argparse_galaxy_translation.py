@@ -67,9 +67,9 @@ class ArgparseGalaxyTranslation(object):
             if param.nargs > 1:
                 gxrepeat_args = [repeat_name, 'repeat_title']
                 gxrepeat_kwargs = {
-                        'min': param.nargs,
-                        'max': param.nargs,
-                        }
+                    'min': param.nargs,
+                    'max': param.nargs,
+                }
             else:
                 # If we have only one, we don't want a gxrepeat, so we leave well
                 # enough alone
