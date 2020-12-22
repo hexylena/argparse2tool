@@ -225,21 +225,57 @@ class ArgumentParser(ap.ArgumentParser):
 
         inputs = tool.inputs
         outputs = tool.outputs
+        sections = dict()
 
         at = agt.ArgparseGalaxyTranslation()
-        # Only build up arguments if the user actually requests it
-        for result in argp.argument_list:
+
+        for group in argp._action_groups:
+            if group in [argp._positionals, argp._optionals]:
+                continue
+            argument_type = group.__class__.__name__
+            methodToCall = getattr(at, argument_type)
+            sections[group] = methodToCall(group, tool=tool)
+
+        for action in argp._actions:
             # I am SO thankful they return the argument here. SO useful.
-            argument_type = result.__class__.__name__
+            argument_type = action.__class__.__name__
             # http://stackoverflow.com/a/3071
             if hasattr(at, argument_type):
                 methodToCall = getattr(at, argument_type)
-                gxt_parameter = methodToCall(result, tool=tool)
-                if gxt_parameter is not None:
-                    if isinstance(gxt_parameter, gxtp.InputParameter):
-                        inputs.append(gxt_parameter)
-                    else:
-                        outputs.append(gxt_parameter)
+                gxt_parameter = methodToCall(action, tool=tool)
+                if gxt_parameter is None:
+                    # TODO ERROR MESSAGE
+                    continue
+                
+                if not isinstance(gxt_parameter, gxtp.InputParameter):
+                    outputs.append(gxt_parameter)
+                if action.container in sections:
+                    sections[action.container].append(gxt_parameter)
+                else:
+                    inputs.append(gxt_parameter)
+            else:
+                # TODO ERROR MESSAGE
+                pass
+
+        for section in sections:
+            inputs.append(sections[section])
+
+
+#         print("argp._action_groups %s" % argp._action_groups)
+#         # Only build up arguments if the user actually requests it
+#         for result in argp.argument_list:
+#             # I am SO thankful they return the argument here. SO useful.
+#             argument_type = result.__class__.__name__
+#             print("_parse_args_galaxy_argp %s type %s [%s]" % (getattr(result, "title", "no title"), argument_type, hasattr(at, argument_type)))
+#             # http://stackoverflow.com/a/3071
+#             if hasattr(at, argument_type):
+#                 methodToCall = getattr(at, argument_type)
+#                 gxt_parameter = methodToCall(result, tool=tool)
+#                 if gxt_parameter is not None:
+#                     if isinstance(gxt_parameter, gxtp.InputParameter):
+#                         inputs.append(gxt_parameter)
+#                     else:
+#                         outputs.append(gxt_parameter)
 
         if prog in used_macros:
             for m in sorted(used_macros[prog]):

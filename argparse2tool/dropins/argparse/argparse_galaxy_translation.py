@@ -247,3 +247,8 @@ class ArgparseGalaxyTranslation(object):
         gxparam = gxtp.BooleanParam(flag_wo_dashes, label=param.help, num_dashes=num_dashes)
 
         return gxparam
+
+    def _ArgumentGroup(self, param, **kwargs):
+        return gxtp.Section(name= param.title.replace(" ", "_"),
+                            title=param.title,
+                            help=param.description)
