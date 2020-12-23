@@ -30,7 +30,7 @@ class ArgparseGalaxyTranslation(object):
             gxparam = gxtp.DataParam(flag, label=label, num_dashes=num_dashes, **gxparam_extra_kwargs)
         elif isinstance(param.type, FileType):
             if 'w' in param.type._mode:
-                gxparam = gxtp.OutputParameter(
+                gxparam = gxtp.OutputData(
                     flag, format='data', default=default, label=label,
                     num_dashes=num_dashes, **gxparam_extra_kwargs
                 )
