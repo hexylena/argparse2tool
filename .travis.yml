@@ -4,29 +4,41 @@ python:
 install: pip install -r requirements.txt
 script:
 - pip install -q -U setuptools
-- pip install -q -U planemo flake8 xmldiff
+- pip install -q -U planemo
+- pip install -q -U flake8
+- pip install -q -U xmldiff
 - pip install -q -r requirements.txt
 - python3 -m pip install --no-deps --no-cache-dir --force-reinstall .
 # temporarily install galaxyxml from branch https://github.com/hexylena/galaxyxml/pull/18
 - git clone -b topic/macros https://github.com/bernt-matthias/galaxyxml.git && cd galaxyxml && python3 -m pip install --no-deps --no-cache-dir --force-reinstall . && cd ..
-- flake8 argparse2tool
+- flake8 argparse2tool --ignore=E2,E3,E4,E5,W3,W505
 - PYTHONPATH=$(argparse2tool) python examples/example.py --generate_galaxy_xml > tmp.xml
+- xmldiff tmp.xml examples/example.xml
+- planemo lint --report_level all --fail_level error --xsd tmp.xml
+
+# Galaxy tool generation for example with subparsers -- generating one large (invalid) tool
 - echo '<root>' > tmp-sub.xml # wrap in extra level
 - PYTHONPATH=$(argparse2tool) python examples/example-sub.py --generate_galaxy_xml >> tmp-sub.xml
 - echo '</root>' >> tmp-sub.xml
-- xmldiff tmp.xml examples/example.xml
 - xmldiff tmp-sub.xml <(echo "<root>"; cat examples/example-sub.xml; echo "</root>")
-- planemo lint --report_level all --fail_level error --xsd tmp.xml
+
+# Galaxy tool generation for example with subparsers -- generating separate tools
+- PYTHONPATH=$(argparse2tool) python examples/example-sub.py --generate_galaxy_xml --command foo > tmp-sub-foo.xml
+- PYTHONPATH=$(argparse2tool) python examples/example-sub.py --generate_galaxy_xml --command bar > tmp-sub-bar.xml
+- xmldiff tmp-sub-foo.xml examples/example-sub-foo.xml
+- planemo lint --report_level all --fail_level error --xsd tmp-sub-foo.xml
+- xmldiff tmp-sub-bar.xml examples/example-sub-bar.xml
+- planemo lint --report_level all --fail_level error --xsd tmp-sub-bar.xml
+
 - PYTHONPATH=$(argparse2tool) python examples/example.py --generate_cwl_tool > tmp.cwl
 - PYTHONPATH=$(argparse2tool) python examples/example-sub.py --generate_cwl_tool > tmp-sub.cwl
 - sed -i 's/argparse2tool .*/argparse2tool/g' tmp.cwl tmp-sub.cwl
 - diff tmp.cwl examples/example.cwl
 - diff tmp-sub.cwl examples/example-sub.cwl
-- PYTHONPATH=$(argparse2tool) python examples/example-click.py --generate_cwl_tool > tmp-click.cwl 
+- PYTHONPATH=$(argparse2tool) python examples/example-click.py --generate_cwl_tool > tmp-click.cwl
 - diff tmp-click.cwl examples/example-click.cwl
 before_deploy:
 - sed -i "s/__version__.*/__version__= '${TRAVIS_TAG}'/g" argparse2tool/__init__.py
-deploy:
 deploy:
   provider: pypi
   username: __token__

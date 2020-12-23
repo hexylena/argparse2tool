@@ -27,4 +27,5 @@ class Arg2GxmlParser:
                                  help='Directory to store CWL tool descriptions')
         self.parser.add_argument('-m', '--macro',
                                  help='A global macro file to include in all tools')
+        self.parser.add_argument('--command', action='store', default="")
         return vars(self.parser.parse_args())
