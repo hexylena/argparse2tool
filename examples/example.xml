@@ -1,8 +1,10 @@
 <tool name="example" id="example" version="2.0">
   <description>Process some integers.</description>
-  <stdio>
-    <exit_code range="1:" level="fatal"/>
-  </stdio>
+  <macros>
+    <import>examples/macros.xml</import>
+  </macros>
+  <expand macro="requirements"/>
+  <expand macro="stdio"/>
   <version_command><![CDATA[python example.py --version]]></version_command>
   <command><![CDATA[python example.py $keyword
 
@@ -12,7 +14,7 @@
 $sum
 
 #if $foo and $foo is not None:
---foo $foo
+--foo '$foo'
 #end if
 
 #set repeat_var_4 = '" "'.join([ str($var.bar) for $var in $repeat_4 ])
@@ -58,6 +60,8 @@ $false
   <outputs>
     <data name="default" format="txt" hidden="false"/>
   </outputs>
+  <expand macro="example_tests"/>
   <help><![CDATA[here's some epilog text]]></help>
+  <expand macro="citations"/>
 </tool>
 

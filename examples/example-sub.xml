@@ -1,8 +1,35 @@
-<tool id="example-sub.py_foo" name="example-sub.py foo" version="1.0">
+<root>
+<macros>
+  <token name="EXAMPLE_SUB_QUX_INMACRO"><![CDATA[--qux '$qux']]></token>
+  <token name="EXAMPLE_SUB_QUX_OUTMACRO"><![CDATA[]]></token>
+  <xml name="example_sub_qux_inmacro">
+    <param optional="true" label="qux help" type="text" name="qux" argument="--qux"/>
+  </xml>
+  <xml name="example_sub_qux_outmacro"/>
+</macros>
+
+<macros>
+  <token name="EXAMPLE_SUB_BAZ_INMACRO"><![CDATA[--baz '$baz'
+@EXAMPLE_SUB_QUX_INMACRO@]]></token>
+  <token name="EXAMPLE_SUB_BAZ_OUTMACRO"><![CDATA[@EXAMPLE_SUB_QUX_OUTMACRO@]]></token>
+  <xml name="example_sub_baz_inmacro">
+    <param optional="true" label="baz help" type="text" name="baz" argument="--baz"/>
+    <expand macro="example_sub_qux_inmacro"/>
+  </xml>
+  <xml name="example_sub_baz_outmacro">
+    <expand macro="example_sub_qux_outmacro"/>
+  </xml>
+</macros>
+
+<tool name="example_sub_foo" id="example_sub_foo" version="1.0">
   <description/>
-  <stdio>
-    <exit_code level="fatal" range="1:"/>
-  </stdio>
+  <macros>
+    <import>example_sub_baz.xml</import>
+    <import>example_sub_qux.xml</import>
+    <import>examples/macros.xml</import>
+  </macros>
+  <expand macro="requirements"/>
+  <expand macro="stdio"/>
   <version_command><![CDATA[python example-sub.py foo --version]]></version_command>
   <command><![CDATA[python example-sub.py foo $keyword
 
@@ -12,38 +39,51 @@
 $sum
 
 #if $foo and $foo is not None:
---foo $foo
+--foo '$foo'
 #end if
 
 #set repeat_var_4 = '" "'.join([ str($var.bar) for $var in $repeat_4 ])
 --bar "$repeat_var_4"
 
 $true
+@EXAMPLE_SUB_BAZ_INMACRO@
+@EXAMPLE_SUB_QUX_INMACRO@
+@EXAMPLE_SUB_BAZ_OUTMACRO@
+@EXAMPLE_SUB_QUX_OUTMACRO@
 > $default]]></command>
   <inputs>
-    <param label="action keyword" name="keyword" type="text"/>
-    <repeat min="1" name="repeat_2" title="repeat_title">
-      <param label="an integer for the accumulator" name="integers" type="integer" value="0"/>
+    <param label="action keyword" type="text" name="keyword"/>
+    <repeat title="repeat_title" min="1" name="repeat_2">
+      <param label="an integer for the accumulator" value="0" type="integer" name="integers"/>
     </repeat>
-    <param argument="--sum" checked="false" label="sum the integers (default: find the max)" name="sum" type="boolean" truevalue="--sum" falsevalue=""/>
-    <param argument="--foo" label="foo help" name="foo" optional="true" type="text"/>
-    <repeat name="repeat_4" title="repeat_title">
-      <param argument="--bar" label="BAR!" name="bar" optional="true" type="text" value="1"/>
+    <param label="sum the integers (default: find the max)" checked="false" type="boolean" name="sum" argument="--sum" truevalue="--sum" falsevalue=""/>
+    <param optional="true" label="foo help" type="text" name="foo" argument="--foo"/>
+    <repeat title="repeat_title" name="repeat_4">
+      <param optional="true" label="BAR!" value="1" type="text" name="bar" argument="--bar"/>
     </repeat>
-    <param argument="--true" checked="false" label="Store a true" name="true" type="boolean" truevalue="--true" falsevalue=""/>
+    <param label="Store a true" checked="false" type="boolean" name="true" argument="--true" truevalue="--true" falsevalue=""/>
+    <expand macro="example_sub_baz_inmacro"/>
+    <expand macro="example_sub_qux_inmacro"/>
   </inputs>
   <outputs>
-    <data format="txt" hidden="false" name="default"/>
+    <expand macro="example_sub_baz_outmacro"/>
+    <expand macro="example_sub_qux_outmacro"/>
+    <data name="default" format="txt" hidden="false"/>
   </outputs>
+  <expand macro="example_sub_foo_tests"/>
   <help><![CDATA[TODO: Write help]]></help>
+  <expand macro="citations"/>
 </tool>
 
-<tool id="example-sub.py_bar" name="example-sub.py bar" version="2.0">
+<tool name="example_sub_bar" id="example_sub_bar" version="2.0">
   <description/>
-  <stdio>
-    <exit_code level="fatal" range="1:"/>
-  </stdio>
-  <version_command>python example-sub.py bar --version</version_command>
+  <macros>
+    <import>example_sub_qux.xml</import>
+    <import>examples/macros.xml</import>
+  </macros>
+  <expand macro="requirements"/>
+  <expand macro="stdio"/>
+  <version_command><![CDATA[python example-sub.py bar --version]]></version_command>
   <command><![CDATA[python example-sub.py bar $false
 #for $i in $repeat_1:
 --append $i.append
@@ -55,24 +95,31 @@ $true
 #if $mode and $mode is not None:
 --mode $mode
 #end if
+@EXAMPLE_SUB_QUX_INMACRO@
+@EXAMPLE_SUB_QUX_OUTMACRO@
 > $default]]></command>
   <inputs>
-    <param argument="--false" checked="false" label="Store a false" name="false" type="boolean" truevalue="--false" falsevalue=""/>
-    <repeat name="repeat_1" title="Repeated Variable">
-      <param argument="--append" label="Append a value" name="append" type="text"/>
+    <param label="Store a false" checked="false" type="boolean" name="false" argument="--false" truevalue="--false" falsevalue=""/>
+    <repeat title="Repeated Variable" name="repeat_1">
+      <param label="Append a value" type="text" name="append" argument="--append"/>
     </repeat>
-    <repeat max="2" min="2" name="repeat_2" title="repeat_title">
-      <param argument="--nargs2" label="nargs2" name="nargs2" optional="true" type="text"/>
+    <repeat title="repeat_title" min="2" max="2" name="repeat_2">
+      <param optional="true" label="nargs2" type="text" name="nargs2" argument="--nargs2"/>
     </repeat>
-    <param argument="--mode" label="Author did not provide help for this parameter... " name="mode" optional="true" type="select">
+    <param optional="true" label="Author did not provide help for this parameter... " type="select" name="mode" argument="--mode">
       <option value="paper">paper</option>
       <option value="rock">rock</option>
       <option selected="true" value="scissors">scissors</option>
     </param>
+    <expand macro="example_sub_qux_inmacro"/>
   </inputs>
   <outputs>
-    <data format="txt" hidden="false" name="default"/>
+    <expand macro="example_sub_qux_outmacro"/>
+    <data name="default" format="txt" hidden="false"/>
   </outputs>
+  <expand macro="example_sub_bar_tests"/>
   <help><![CDATA[TODO: Write help]]></help>
+  <expand macro="citations"/>
 </tool>
 
+</root>
