@@ -210,7 +210,7 @@ class ArgumentParser(ap.ArgumentParser):
         if prog not in macros:
             tpe = gxt.Tool
             if macro:
-                mx.append(macro)
+                mx.extend(macro)
         else:
             tpe = gxt.MacrosTool
 

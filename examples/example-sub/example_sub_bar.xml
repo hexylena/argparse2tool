@@ -2,11 +2,12 @@
   <description/>
   <macros>
     <import>example_sub_qux.xml</import>
+    <import>examples/macros.xml</import>
+    <import>examples/macros_tests.xml</import>
   </macros>
-  <stdio>
-    <exit_code range="1:" level="fatal"/>
-  </stdio>
-  <version_command>python example-sub.py bar --version</version_command>
+  <expand macro="requirements"/>
+  <expand macro="stdio"/>
+  <version_command><![CDATA[python example-sub.py bar --version]]></version_command>
   <command><![CDATA[python example-sub.py bar $false
 #for $i in $repeat_1:
 --append $i.append
@@ -40,5 +41,7 @@
     <expand macro="example_sub_qux_outmacro"/>
     <data name="default" format="txt" hidden="false"/>
   </outputs>
+  <expand macro="example_sub_bar_tests"/>
   <help><![CDATA[TODO: Write help]]></help>
+  <expand macro="citations"/>
 </tool>

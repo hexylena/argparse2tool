@@ -14,7 +14,7 @@ script:
 - flake8 argparse2tool --ignore=C901,E2,E3,E4,E5,W3,W505
 - PYTHONPATH=$(argparse2tool) python examples/example.py --generate_galaxy_xml -m examples/macros.xml > tmp.xml
 - xmldiff tmp.xml examples/example.xml
-- planemo lint -skip tests --report_level all --fail_level error --xsd tmp.xml
+- planemo lint --skip tests --report_level all --fail_level error --xsd tmp.xml
 
 # Galaxy tool generation for example with subparsers -- generating one large (invalid) tool
 - echo '<root>' > tmp-sub.xml # wrap in extra level
@@ -22,13 +22,22 @@ script:
 - echo '</root>' >> tmp-sub.xml
 - xmldiff tmp-sub.xml <(echo "<root>"; cat examples/example-sub.xml; echo "</root>")
 
-# Galaxy tool generation for example with subparsers -- generating separate tools
+# Galaxy tool generation for example with subparsers -- generating separate tools (this does not generate macro xmls automatically)
 - PYTHONPATH=$(argparse2tool) python examples/example-sub.py --generate_galaxy_xml -m examples/macros.xml --command foo > tmp-sub-foo.xml
 - PYTHONPATH=$(argparse2tool) python examples/example-sub.py --generate_galaxy_xml -m examples/macros.xml --command bar > tmp-sub-bar.xml
-- xmldiff tmp-sub-foo.xml examples/example-sub-foo.xml
-- planemo lint --skip tests --report_level all --fail_level error --xsd tmp-sub-foo.xml
-- xmldiff tmp-sub-bar.xml examples/example-sub-bar.xml
-- planemo lint --skip tests --report_level all --fail_level error --xsd tmp-sub-bar.xml
+- xmldiff tmp-sub-foo.xml examples/example-sub/example_sub_foo.xml
+- xmldiff tmp-sub-bar.xml examples/example-sub/example_sub_bar.xml
+
+# Galaxy tool generation for example with subparsers -- generating all tools and macros at once also include multiple macro files
+- mkdir tmp && cp examples/macros*xml tmp/
+- PYTHONPATH=$(argparse2tool) python examples/example-sub.py --generate_galaxy_xml -m examples/macros.xml -m examples/macros_tests.xml --directory tmp
+- xmldiff tmp/example_sub_foo.xml examples/example-sub/example_sub_foo.xml
+- planemo lint --skip tests --report_level all --fail_level error --xsd  tmp/example_sub_foo.xml
+- xmldiff tmp/example_sub_foo.xml examples/example-sub/example_sub_foo.xml
+- planemo lint --skip tests --report_level all --fail_level error --xsd  tmp/example_sub_foo.xml
+- xmldiff tmp/example_sub_baz.xml examples/example-sub/example_sub_baz.xml
+- xmldiff tmp/example_sub_qux.xml examples/example-sub/example_sub_qux.xml
+
 
 - PYTHONPATH=$(argparse2tool) python examples/example.py --generate_cwl_tool > tmp.cwl
 - PYTHONPATH=$(argparse2tool) python examples/example-sub.py --generate_cwl_tool > tmp-sub.cwl
