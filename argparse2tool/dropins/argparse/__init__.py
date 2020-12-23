@@ -246,7 +246,6 @@ class ArgumentParser(ap.ArgumentParser):
                 if gxt_parameter is None:
                     # TODO ERROR MESSAGE
                     continue
-                
                 if not isinstance(gxt_parameter, gxtp.InputParameter):
                     outputs.append(gxt_parameter)
                 if action.container in sections:
