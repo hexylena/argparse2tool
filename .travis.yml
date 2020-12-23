@@ -11,7 +11,7 @@ script:
 - python3 -m pip install --no-deps --no-cache-dir --force-reinstall .
 # temporarily install galaxyxml from branch https://github.com/hexylena/galaxyxml/pull/18
 - git clone -b topic/macros https://github.com/bernt-matthias/galaxyxml.git && cd galaxyxml && python3 -m pip install --no-deps --no-cache-dir --force-reinstall . && cd ..
-- flake8 argparse2tool --ignore=E2,E3,E4,E5,W3,W505
+- flake8 argparse2tool --ignore=C901,E2,E3,E4,E5,W3,W505
 - PYTHONPATH=$(argparse2tool) python examples/example.py --generate_galaxy_xml > tmp.xml
 - xmldiff tmp.xml examples/example.xml
 - planemo lint --report_level all --fail_level error --xsd tmp.xml
