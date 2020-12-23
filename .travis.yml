@@ -6,9 +6,9 @@ script:
 - pip install -q -U setuptools
 - pip install -q -U planemo flake8 xmldiff
 - pip install -q -r requirements.txt
-- python setup.py install
+- python3 -m pip install --no-deps --no-cache-dir --force-reinstall .
 # temporarily install galaxyxml from branch https://github.com/hexylena/galaxyxml/pull/18
-- git clone -b topic/macros https://github.com/bernt-matthias/galaxyxml.git && cd galaxyxml && python setup.py install && cd ..
+- git clone -b topic/macros https://github.com/bernt-matthias/galaxyxml.git && cd galaxyxml && python3 -m pip install --no-deps --no-cache-dir --force-reinstall . && cd ..
 - flake8 argparse2tool
 - PYTHONPATH=$(argparse2tool) python examples/example.py --generate_galaxy_xml > tmp.xml
 - echo '<root>' > tmp-sub.xml # wrap in extra level
