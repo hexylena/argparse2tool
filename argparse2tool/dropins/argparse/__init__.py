@@ -1,4 +1,6 @@
+import os.path
 import re
+import shutil
 import sys
 from argparse2tool import (
     load_argparse,
@@ -150,6 +152,12 @@ class ArgumentParser(ap.ArgumentParser):
 
         directory = kwargs.get('directory', None)
         macro = kwargs.get('macro', None)
+
+        # copy macros to destination dir
+        if directory and macro:
+            for m in macro:
+                mbase = os.path.basename(m)
+                shutil.copyfile(m, os.path.join(directory, mbase))
 
         # since macros can also make use of macros (i.e. the parent relation
         # specified in the arguments can be nester) we need to extend the
