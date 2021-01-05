@@ -138,6 +138,9 @@ class ArgparseGalaxyTranslation(object):
         # Count the repeats for unique names
         # TODO improve
 
+    def _HelpAction(self, param, tool=None):
+        pass
+
     def _StoreAction(self, param, tool=None):
         """
         Parse argparse arguments action type of "store", the default.

@@ -129,6 +129,8 @@ class ArgumentParser(ap.ArgumentParser):
                                 tool.inputs.append(cwlt_parameter)
                                 if isinstance(cwlt_parameter, cwlt.OutputParam):
                                     tool.outputs.append(cwlt_parameter)
+                        else:
+                            print("%s not implemented (%s)" % (argument_type, result.option_strings), file=sys.stderr)
 
                     if argp.epilog is not None:
                         tool.description += argp.epilog
@@ -251,8 +253,7 @@ class ArgumentParser(ap.ArgumentParser):
             if hasattr(at, argument_type):
                 methodToCall = getattr(at, argument_type)
                 gxt_parameter = methodToCall(action, tool=tool)
-                if gxt_parameter is None:
-                    # TODO ERROR MESSAGE
+                if gxt_parameter is None:  # e.g. for help and version actions
                     continue
                 if not isinstance(gxt_parameter, gxtp.InputParameter):
                     outputs.append(gxt_parameter)
@@ -261,8 +262,7 @@ class ArgumentParser(ap.ArgumentParser):
                 else:
                     inputs.append(gxt_parameter)
             else:
-                # TODO ERROR MESSAGE
-                pass
+                print("%s not implemented (%s)" % (argument_type, result.option_strings), file=sys.stderr)
 
         for section in sections:
             inputs.append(sections[section])
