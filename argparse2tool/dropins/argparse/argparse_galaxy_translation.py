@@ -119,7 +119,7 @@ class ArgparseGalaxyTranslation(object):
             gxrepeat_cli_after = ''
             gxrepeat_cli_before = """\n#set %s = '" "'.join([ str($var.%s) for $var in $%s ])""" % (repeat_var_name, flag, repeat_name)
         else:
-            raise Exception("TODO: Handle argparse.REMAINDER")
+            raise Exception("Unknown nargs value %s" % param.nargs)
 
         return (gxrepeat_args, gxrepeat_kwargs, gxrepeat_cli_after,
                 gxrepeat_cli_before, gxrepeat_cli_actual, gxparam_cli_before, gxparam_cli_after)
@@ -148,7 +148,6 @@ class ArgparseGalaxyTranslation(object):
         gxrepeat = None
         self.repeat_count += 1
         gxparam_extra_kwargs = {}
-
         if not param.required:
             gxparam_extra_kwargs['optional'] = True
 
