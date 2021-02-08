@@ -1,7 +1,7 @@
-import galaxyxml.tool.parameters as gxtp
 from collections import Counter
 from pydoc import locate
 
+import galaxyxml.tool.parameters as gxtp
 
 class ArgparseGalaxyTranslation(object):
 

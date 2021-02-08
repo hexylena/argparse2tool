@@ -65,7 +65,7 @@ class ArgumentParser(ap.ArgumentParser):
                                              usage=usage,
                                              description=description,
                                              epilog=epilog,
-                                             parents=parents,
+                                             parents=[],
                                              formatter_class=formatter_class,
                                              prefix_chars=prefix_chars,
                                              fromfile_prefix_chars=fromfile_prefix_chars,
@@ -208,7 +208,7 @@ class ArgumentParser(ap.ArgumentParser):
             version = self.print_version() or '1.0'
         except AttributeError:  # handle the potential absence of print_version
             version = '1.0'
-
+        print("_parse_args_galaxy_argp _subparsers %s" % argp._subparsers)
         prog = remove_extension(argp.prog)
 
         # tid = argp.prog.split()[-1]
@@ -253,6 +253,8 @@ class ArgumentParser(ap.ArgumentParser):
             if hasattr(at, argument_type):
                 methodToCall = getattr(at, argument_type)
                 gxt_parameter = methodToCall(action, tool=tool)
+                ## print(action, gxt_parameter)
+                print(action.option_strings, action.container)
                 if gxt_parameter is None:  # e.g. for help and version actions
                     continue
                 if not isinstance(gxt_parameter, gxtp.InputParameter):
@@ -262,7 +264,7 @@ class ArgumentParser(ap.ArgumentParser):
                 else:
                     inputs.append(gxt_parameter)
             else:
-                print("%s not implemented (%s)" % (argument_type, result.option_strings), file=sys.stderr)
+                print("%s not implemented (%s)" % (argument_type, action.option_strings), file=sys.stderr)
 
         for section in sections:
             inputs.append(sections[section])
