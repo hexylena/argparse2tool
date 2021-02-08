@@ -61,11 +61,15 @@ class ArgumentParser(ap.ArgumentParser):
             p = set([remove_extension(_.prog) for _ in parents])
             macros = macros.union(p)
             used_macros[remove_extension(prog)] = p
+
+        if '--generate_galaxy_xml' in sys.argv:
+            parents = []
+
         super(ArgumentParser, self).__init__(prog=prog,
                                              usage=usage,
                                              description=description,
                                              epilog=epilog,
-                                             parents=[],
+                                             parents=parents,
                                              formatter_class=formatter_class,
                                              prefix_chars=prefix_chars,
                                              fromfile_prefix_chars=fromfile_prefix_chars,
