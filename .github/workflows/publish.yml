@@ -1,0 +1,42 @@
+name: Publish
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  lint-workflows:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      # BEGIN Dependencies
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.7'
+          architecture: 'x64'
+
+      - name: Install dependencies
+        run: |
+            pip install -r requirements.txt
+            pip install -U setuptools
+            pip install -U planemo
+            pip install -U flake8
+            pip install -U xmldiff
+      # END Dependencies
+
+      - name: Install dependencies
+        run: pip install wheel
+
+      - name: Build package
+        run: python setup.py sdist bdist_wheel
+
+      - name: Publish a Python distribution to PyPI
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}
