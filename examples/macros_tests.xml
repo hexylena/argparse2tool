@@ -1,0 +1,16 @@
+<macros>
+  <xml name="example_sub_foo_tests">
+    <tests>
+      <test expect_exit_code="0">
+          <output name="default" ftype="txt"/>
+      </test>
+    </tests>
+  </xml>
+  <xml name="example_sub_bar_tests">
+    <tests>
+      <test expect_exit_code="0">
+          <output name="default" ftype="txt"/>
+      </test>
+    </tests>
+  </xml>
+</macros>

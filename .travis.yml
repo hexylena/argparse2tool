@@ -1,6 +1,6 @@
 language: python
 python:
-- '3.6'
+- '3.7'
 install: pip install -r requirements.txt
 script:
 - pip install -q -U setuptools
@@ -8,25 +8,37 @@ script:
 - pip install -q -U flake8
 - pip install -q -U xmldiff
 - pip install -q -r requirements.txt
-- python setup.py install
-- flake8 argparse2tool --ignore=E2,E3,E4,E5,W3,W505
-- PYTHONPATH=$(argparse2tool) python examples/example.py --generate_galaxy_xml > tmp.xml
+- python3 -m pip install --no-deps --no-cache-dir --force-reinstall .
+# temporarily install galaxyxml from branch https://github.com/hexylena/galaxyxml/pull/18
+- git clone -b topic/macros https://github.com/bernt-matthias/galaxyxml.git && cd galaxyxml && python3 -m pip install --no-deps --no-cache-dir --force-reinstall . && cd ..
+- flake8 argparse2tool --ignore=C901,E2,E3,E4,E5,W3,W505
+- PYTHONPATH=$(argparse2tool) python examples/example.py --generate_galaxy_xml -m examples/macros.xml > tmp.xml
 - xmldiff tmp.xml examples/example.xml
-- planemo lint --report_level all --fail_level error --xsd tmp.xml
+- planemo lint --skip tests --report_level all --fail_level error --xsd tmp.xml
 
 # Galaxy tool generation for example with subparsers -- generating one large (invalid) tool
 - echo '<root>' > tmp-sub.xml # wrap in extra level
-- PYTHONPATH=$(argparse2tool) python examples/example-sub.py --generate_galaxy_xml >> tmp-sub.xml
+- PYTHONPATH=$(argparse2tool) python examples/example-sub.py --generate_galaxy_xml -m examples/macros.xml >> tmp-sub.xml
 - echo '</root>' >> tmp-sub.xml
 - xmldiff tmp-sub.xml <(echo "<root>"; cat examples/example-sub.xml; echo "</root>")
 
-# Galaxy tool generation for example with subparsers -- generating separate tools
-- PYTHONPATH=$(argparse2tool) python examples/example-sub.py --generate_galaxy_xml --command foo > tmp-sub-foo.xml
-- PYTHONPATH=$(argparse2tool) python examples/example-sub.py --generate_galaxy_xml --command bar > tmp-sub-bar.xml
-- xmldiff tmp-sub-foo.xml examples/example-sub-foo.xml
-- planemo lint --report_level all --fail_level error --xsd tmp-sub-foo.xml
-- xmldiff tmp-sub-bar.xml examples/example-sub-bar.xml
-- planemo lint --report_level all --fail_level error --xsd tmp-sub-bar.xml
+# Galaxy tool generation for example with subparsers -- generating separate tools (this does not generate macro xml files automatically)
+- PYTHONPATH=$(argparse2tool) python examples/example-sub.py --generate_galaxy_xml -m examples/macros.xml --command foo > tmp-sub-foo.xml
+- PYTHONPATH=$(argparse2tool) python examples/example-sub.py --generate_galaxy_xml -m examples/macros.xml --command bar > tmp-sub-bar.xml
+- xmldiff tmp-sub-foo.xml examples/example-sub/example_sub_foo.xml
+- xmldiff tmp-sub-bar.xml examples/example-sub/example_sub_bar.xml
+
+# Galaxy tool generation for example with subparsers -- generating all tools and macros at once also include multiple macro files
+- mkdir tmp && cp examples/macros*xml tmp/
+- PYTHONPATH=$(argparse2tool) python examples/example-sub.py --generate_galaxy_xml -m examples/macros.xml -m examples/macros_tests.xml --directory tmp
+- ls tmp/
+- xmldiff tmp/example_sub_foo.xml examples/example-sub/example_sub_foo.xml
+- planemo lint --skip tests --report_level all --fail_level error --xsd  tmp/example_sub_foo.xml
+- xmldiff tmp/example_sub_bar.xml examples/example-sub/example_sub_bar.xml
+- planemo lint --skip tests --report_level all --fail_level error --xsd  tmp/example_sub_bar.xml
+- xmldiff tmp/example_sub_baz.xml examples/example-sub/example_sub_baz.xml
+- xmldiff tmp/example_sub_qux.xml examples/example-sub/example_sub_qux.xml
+
 
 - PYTHONPATH=$(argparse2tool) python examples/example.py --generate_cwl_tool > tmp.cwl
 - PYTHONPATH=$(argparse2tool) python examples/example-sub.py --generate_cwl_tool > tmp-sub.cwl
@@ -37,7 +49,6 @@ script:
 - diff tmp-click.cwl examples/example-click.cwl
 before_deploy:
 - sed -i "s/__version__.*/__version__= '${TRAVIS_TAG}'/g" argparse2tool/__init__.py
-deploy:
 deploy:
   provider: pypi
   username: __token__

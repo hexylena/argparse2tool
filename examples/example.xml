@@ -1,8 +1,10 @@
-<tool id="example.py" name="example.py" version="2.0">
+<tool name="example" id="example" version="2.0">
   <description>Process some integers.</description>
-  <stdio>
-    <exit_code level="fatal" range="1:"/>
-  </stdio>
+  <macros>
+    <import>examples/macros.xml</import>
+  </macros>
+  <expand macro="requirements"/>
+  <expand macro="stdio"/>
   <version_command><![CDATA[python example.py --version]]></version_command>
   <command><![CDATA[python example.py $keyword
 
@@ -12,7 +14,7 @@
 $sum
 
 #if $foo and $foo is not None:
---foo $foo
+--foo '$foo'
 #end if
 
 #set repeat_var_4 = '" "'.join([ str($var.bar) for $var in $repeat_4 ])
@@ -32,32 +34,34 @@ $false
 #end if
 > $default]]></command>
   <inputs>
-    <param label="action keyword" name="keyword" type="text"/>
-    <repeat min="1" name="repeat_2" title="repeat_title">
-      <param label="an integer for the accumulator" name="integers" type="integer" value="0"/>
+    <param label="action keyword" type="text" name="keyword"/>
+    <repeat title="repeat_title" min="1" name="repeat_2">
+      <param label="an integer for the accumulator" value="0" type="integer" name="integers"/>
     </repeat>
-    <param argument="--sum" checked="false" label="sum the integers (default: find the max)" name="sum" type="boolean" truevalue="--sum" falsevalue=""/>
-    <param argument="--foo" label="foo help" name="foo" optional="true" type="text"/>
-    <repeat name="repeat_4" title="repeat_title">
-      <param argument="--bar" label="BAR!" name="bar" optional="true" type="text" value="1"/>
+    <param label="sum the integers (default: find the max)" checked="false" type="boolean" name="sum" argument="--sum" truevalue="--sum" falsevalue=""/>
+    <param optional="true" label="foo help" type="text" name="foo" argument="--foo"/>
+    <repeat title="repeat_title" name="repeat_4">
+      <param optional="true" label="BAR!" value="1" type="text" name="bar" argument="--bar"/>
     </repeat>
-    <param argument="--true" checked="false" label="Store a true" name="true" type="boolean" truevalue="--true" falsevalue=""/>
-    <param argument="--false" checked="false" label="Store a false" name="false" type="boolean" truevalue="--false" falsevalue=""/>
-    <repeat name="repeat_5" title="Repeated Variable">
-      <param argument="--append" label="Append a value" name="append" type="text"/>
+    <param label="Store a true" checked="false" type="boolean" name="true" argument="--true" truevalue="--true" falsevalue=""/>
+    <param label="Store a false" checked="false" type="boolean" name="false" argument="--false" truevalue="--false" falsevalue=""/>
+    <repeat title="Repeated Variable" name="repeat_5">
+      <param label="Append a value" type="text" name="append" argument="--append"/>
     </repeat>
-    <repeat max="2" min="2" name="repeat_6" title="repeat_title">
-      <param argument="--nargs2" label="nargs2" name="nargs2" optional="true" type="text"/>
+    <repeat title="repeat_title" min="2" max="2" name="repeat_6">
+      <param optional="true" label="nargs2" type="text" name="nargs2" argument="--nargs2"/>
     </repeat>
-    <param argument="--mode" label="Author did not provide help for this parameter... " name="mode" optional="true" type="select">
+    <param optional="true" label="Author did not provide help for this parameter... " type="select" name="mode" argument="--mode">
       <option value="paper">paper</option>
       <option value="rock">rock</option>
       <option selected="true" value="scissors">scissors</option>
     </param>
   </inputs>
   <outputs>
-    <data format="txt" hidden="false" name="default"/>
+    <data name="default" format="txt" hidden="false"/>
   </outputs>
+  <expand macro="example_tests"/>
   <help><![CDATA[here's some epilog text]]></help>
+  <expand macro="citations"/>
 </tool>
 

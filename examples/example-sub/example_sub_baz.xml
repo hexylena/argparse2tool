@@ -1,0 +1,12 @@
+<macros>
+  <token name="EXAMPLE_SUB_BAZ_INMACRO"><![CDATA[--baz '$baz'
+@EXAMPLE_SUB_QUX_INMACRO@]]></token>
+  <token name="EXAMPLE_SUB_BAZ_OUTMACRO"><![CDATA[@EXAMPLE_SUB_QUX_OUTMACRO@]]></token>
+  <xml name="example_sub_baz_inmacro">
+    <param optional="true" label="baz help" type="text" name="baz" argument="--baz"/>
+    <expand macro="example_sub_qux_inmacro"/>
+  </xml>
+  <xml name="example_sub_baz_outmacro">
+    <expand macro="example_sub_qux_outmacro"/>
+  </xml>
+</macros>

@@ -77,6 +77,12 @@ class ArgparseCWLTranslation:
 
         return param
 
+    def _VersionAction(self, param, tool=None):
+        pass
+
+    def _HelpAction(self, param, tool=None):
+        pass
+
     def _StoreAction(self, param):
         param = self.__args_from_nargs(param)
         cwlparam = self.__cwl_param_from_type(param)
@@ -106,6 +112,11 @@ class ArgparseCWLTranslation:
         return cwlparam
 
     def __StoreBoolAction(self, param):
+        param.type = bool
+        cwlparam = self.__cwl_param_from_type(param)
+        return cwlparam
+
+    def _StoreConstAction(self, param):
         param.type = bool
         cwlparam = self.__cwl_param_from_type(param)
         return cwlparam

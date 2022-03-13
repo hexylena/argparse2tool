@@ -1,0 +1,8 @@
+<macros>
+  <token name="EXAMPLE_SUB_QUX_INMACRO"><![CDATA[--qux '$qux']]></token>
+  <token name="EXAMPLE_SUB_QUX_OUTMACRO"><![CDATA[]]></token>
+  <xml name="example_sub_qux_inmacro">
+    <param optional="true" label="qux help" type="text" name="qux" argument="--qux"/>
+  </xml>
+  <xml name="example_sub_qux_outmacro"/>
+</macros>

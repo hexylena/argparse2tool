@@ -1,8 +1,12 @@
-<tool name="example-sub.py bar" id="example-sub.py_bar" version="2.0">
+<tool name="example_sub_bar" id="example_sub_bar" version="2.0">
   <description/>
-  <stdio>
-    <exit_code range="1:" level="fatal"/>
-  </stdio>
+  <macros>
+    <import>example_sub_qux.xml</import>
+    <import>examples/macros.xml</import>
+    <import>examples/macros_tests.xml</import>
+  </macros>
+  <expand macro="requirements"/>
+  <expand macro="stdio"/>
   <version_command><![CDATA[python example-sub.py bar --version]]></version_command>
   <command><![CDATA[python example-sub.py bar $false
 #for $i in $repeat_1:
@@ -15,24 +19,29 @@
 #if $mode and $mode is not None:
 --mode $mode
 #end if
+@EXAMPLE_SUB_QUX_INMACRO@
+@EXAMPLE_SUB_QUX_OUTMACRO@
 > $default]]></command>
   <inputs>
     <param label="Store a false" checked="false" type="boolean" name="false" argument="--false" truevalue="--false" falsevalue=""/>
     <repeat title="Repeated Variable" name="repeat_1">
       <param label="Append a value" type="text" name="append" argument="--append"/>
     </repeat>
-    <repeat max="2" min="2" title="repeat_title" name="repeat_2">
-      <param label="nargs2" optional="true" type="text" name="nargs2" argument="--nargs2"/>
+    <repeat title="repeat_title" min="2" max="2" name="repeat_2">
+      <param optional="true" label="nargs2" type="text" name="nargs2" argument="--nargs2"/>
     </repeat>
-    <param label="Author did not provide help for this parameter... " optional="true" type="select" name="mode" argument="--mode">
+    <param optional="true" label="Author did not provide help for this parameter... " type="select" name="mode" argument="--mode">
       <option value="paper">paper</option>
       <option value="rock">rock</option>
       <option selected="true" value="scissors">scissors</option>
     </param>
+    <expand macro="example_sub_qux_inmacro"/>
   </inputs>
   <outputs>
-    <data hidden="false" format="txt" name="default"/>
+    <expand macro="example_sub_qux_outmacro"/>
+    <data name="default" format="txt" hidden="false"/>
   </outputs>
+  <expand macro="example_sub_bar_tests"/>
   <help><![CDATA[TODO: Write help]]></help>
+  <expand macro="citations"/>
 </tool>
-
