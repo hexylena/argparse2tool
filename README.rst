@@ -1,7 +1,7 @@
 argparse2tool
 =============
 
-|PyPI| |Build Status|
+|PyPI|
 
 This project aims to provide a drop-in replacement for argparse which allows
 generating Galaxy XML and CWL Tools.
