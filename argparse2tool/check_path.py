@@ -4,16 +4,19 @@ click
 
 intended use: `PYTHONPATH=$(argparse2tool) python script.py ...`
 """
-import imp
+import importlib.util
 import os
 import sys
 
 
 def main():
-    (handle, pathname, desc) = imp.find_module('argparse2tool')
-    if desc[2] != 5:
+    spec = importlib.util.find_spec("argparse2tool")
+    if spec is None:
         sys.exit("could not find argparse2tool")
+
+    pathname = os.path.dirname(spec.origin)
     path = os.path.join(pathname, "dropins")
+
     if not os.path.exists(path):
         sys.exit("no dropins dir %s" % path)
     if not os.path.exists(os.path.join(path, "argparse")):
@@ -24,5 +27,5 @@ def main():
     print(path)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
