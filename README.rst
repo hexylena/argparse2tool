@@ -191,5 +191,3 @@ Apache License, v2
 
 .. |PyPI| image:: https://img.shields.io/pypi/v/argparse2tool.svg
    :target: https://pypi.python.org/pypi/argparse2tool
-.. |Build Status| image:: https://travis-ci.org/hexylena/argparse2tool.svg?branch=master
-   :target: https://travis-ci.org/hexylena/argparse2tool
